@@ -31,9 +31,9 @@ public class Projectile : MonoBehaviour
 			moveSpeed = 50;
 		}
 
-		if (Random.value < 0.01f)
+		if (Random.value < 0.1f)
 		{
-			moveSpeed = 20;
+			moveSpeed = 0.1f + (Random.value * 10);
 		}
 	}
 
@@ -53,6 +53,7 @@ public class Projectile : MonoBehaviour
 	{
 		if (collision.transform.CompareTag("Projectile"))
 		{
+			Debug.Log("HIT ANOTHER BOMB");
 			collision.gameObject.GetComponent<Projectile>().DestroyProjectile();
 			DestroyProjectile();
 		}

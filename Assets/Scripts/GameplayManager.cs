@@ -159,7 +159,7 @@ public class GameplayManager : MonoBehaviour
 	public void Explosion(Vector3 position)
 	{
 		EffectsController.CreateExplosion(position);
-		audioManager.PlaySound(AudioManager.SoundID.explosion, 0.5f);
+		audioManager.PlaySound(AudioManager.SoundID.explosion, 0.25f);
 	}
 
 	public void IncreaseSpeed(bool reset = false)

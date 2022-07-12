@@ -25,7 +25,7 @@ public class BombLauncher : MonoBehaviour
             return;
         }
 
-        if (gameplayManager.score >= 1)
+        if (gameplayManager.score >= 50)
         {
             if (Random.value <= gameplayManager.GetDoubleBombChance())
             {

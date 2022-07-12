@@ -294,6 +294,11 @@ public class GameplayManager : MonoBehaviour
 		firingABomb = false;
 	}
 
+	public float GetDoubleBombChance()
+	{
+		return 0.1f + (score / 1000);
+	}
+
 	public void SpawnedNewBomb()
 	{
 		totalBombs++;

@@ -16,8 +16,7 @@ public class BombLauncher : MonoBehaviour
     
     private Coroutine currentLaunchingCoroutine;
     private GameObject currentProjectile;
-
-    
+    private int amountReceiving;
 
     public void CommenceLaunch()
     {
@@ -26,25 +25,37 @@ public class BombLauncher : MonoBehaviour
             return;
         }
 
-        currentLaunchingCoroutine = StartCoroutine(LaunchBomb());
+        if (gameplayManager.score >= 1)
+        {
+            if (Random.value <= gameplayManager.GetDoubleBombChance())
+            {
+                currentLaunchingCoroutine = StartCoroutine(LaunchTwoBombs());
+                return;
+            }
+        }
+
+        currentLaunchingCoroutine = StartCoroutine(LaunchOneBomb());
     }
 
-    public void CommenceReceiving()
+    public void CommenceReceiving(int amountToReceive)
     {
         spriteRenderer.sprite = receivingSprite;
         cantLaunch = true;
+        amountReceiving = amountToReceive;
+    }
+
+    public void ReceiveBomb()
+    {
+        amountReceiving--;
+        if (amountReceiving <= 0)
+        {
+            Reset();
+        }
     }
 
     public bool CheckIfCanLaunch()
     {
-        if (cantLaunch || adjacentLauncher.cantLaunch)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return cantLaunch || adjacentLauncher.cantLaunch ? false : true;
     }
 
     public void Reset()
@@ -56,14 +67,15 @@ public class BombLauncher : MonoBehaviour
 
         cantLaunch = false;
         spriteRenderer.sprite = idleSprite;
+        amountReceiving = 0;
     }
 
-    IEnumerator LaunchBomb()
+    IEnumerator LaunchOneBomb()
     {
         cantLaunch = true;
 
         spriteRenderer.sprite = activeSprite;
-        adjacentLauncher.CommenceReceiving();
+        adjacentLauncher.CommenceReceiving(1);
 
         yield return new WaitForSeconds(0.4f);
         spriteRenderer.sprite = idleSprite;
@@ -88,7 +100,57 @@ public class BombLauncher : MonoBehaviour
         yield return new WaitForSeconds(0.02f);
         spriteRenderer.sprite = fireSprite;
 
-        // LAUNCH BOMB
+        FireBomb();
+        
+        yield return new WaitForSeconds(0.2f);
+        spriteRenderer.sprite = idleSprite;
+    }
+
+    IEnumerator LaunchTwoBombs()
+    {
+        cantLaunch = true;
+
+        spriteRenderer.sprite = activeSprite;
+        adjacentLauncher.CommenceReceiving(2);
+
+        yield return new WaitForSeconds(0.4f);
+        spriteRenderer.sprite = idleSprite;
+        yield return new WaitForSeconds(0.35f);
+        spriteRenderer.sprite = activeSprite;
+        yield return new WaitForSeconds(0.3f);
+        spriteRenderer.sprite = idleSprite;
+        yield return new WaitForSeconds(0.25f);
+        spriteRenderer.sprite = activeSprite;
+        yield return new WaitForSeconds(0.2f);
+        spriteRenderer.sprite = idleSprite;
+        yield return new WaitForSeconds(0.15f);
+        spriteRenderer.sprite = activeSprite;
+        yield return new WaitForSeconds(0.1f);
+        spriteRenderer.sprite = idleSprite;
+        yield return new WaitForSeconds(0.08f);
+        spriteRenderer.sprite = activeSprite;
+        yield return new WaitForSeconds(0.06f);
+        spriteRenderer.sprite = idleSprite;
+        yield return new WaitForSeconds(0.04f);
+        spriteRenderer.sprite = activeSprite;
+        yield return new WaitForSeconds(0.02f);
+        spriteRenderer.sprite = fireSprite;
+
+        FireBomb();
+
+        yield return new WaitForSeconds(0.4f);
+        spriteRenderer.sprite = activeSprite;
+        yield return new WaitForSeconds(0.02f);
+        spriteRenderer.sprite = fireSprite;
+
+        FireBomb();
+
+        yield return new WaitForSeconds(0.2f);
+        spriteRenderer.sprite = idleSprite;
+    }
+
+    private void FireBomb()
+    {
         currentProjectile = Instantiate(gameplayManager.bombProjectile, transform);
         currentProjectile.transform.localPosition = new Vector3(0, 0, 0);
 
@@ -112,10 +174,6 @@ public class BombLauncher : MonoBehaviour
 
         currentProjectile.GetComponent<Projectile>().InitializeProjectile(Mathf.Min(gameplayManager.maxBombSpeed, gameplayManager.currentSpeedIncrease), firingDirectionVector, adjacentLauncher);
         gameplayManager.SpawnedNewBomb();
-
-        yield return new WaitForSeconds(0.2f);
-
-        spriteRenderer.sprite = idleSprite;
     }
 }
 

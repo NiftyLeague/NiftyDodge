@@ -39,7 +39,7 @@ public class Projectile : MonoBehaviour
 
 	public void DestroyProjectile(bool withExplosion = true)
 	{
-		launcherTarget.Reset();
+		launcherTarget.ReceiveBomb();
 
 		if (withExplosion)
 		{

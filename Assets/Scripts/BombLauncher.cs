@@ -151,8 +151,26 @@ public class BombLauncher : MonoBehaviour
 
     private void FireBomb()
     {
-        currentProjectile = Instantiate(gameplayManager.bombProjectile, transform);
+        if (Random.value <= gameplayManager.powerupSpawnChance)
+        {
+            gameplayManager.audioManager.PlaySound("PowerupSpawn");
+            if (Random.value <= 0.5f)
+            {
+                currentProjectile = Instantiate(gameplayManager.shieldPowerup, transform);
+            }
+            else
+            {
+                currentProjectile = Instantiate(gameplayManager.slowPowerup, transform);
+            }
+        }
+        else
+        {
+            currentProjectile = Instantiate(gameplayManager.bombProjectile, transform);
+            gameplayManager.SpawnedNewBomb();
+        }
+        
         currentProjectile.transform.localPosition = new Vector3(0, 0, 0);
+        currentProjectile.transform.eulerAngles = new Vector3(0, 0, 0);
 
         Vector2 firingDirectionVector = new Vector2(0, 1);
 
@@ -173,7 +191,6 @@ public class BombLauncher : MonoBehaviour
         }
 
         currentProjectile.GetComponent<Projectile>().InitializeProjectile(Mathf.Min(gameplayManager.maxBombSpeed, gameplayManager.currentSpeedIncrease), firingDirectionVector, adjacentLauncher);
-        gameplayManager.SpawnedNewBomb();
     }
 }
 

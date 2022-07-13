@@ -6,8 +6,6 @@ using TMPro;
 public class PlayerController : MonoBehaviour
 {
 	public GameplayManager gameplayManager;
-	public AudioManager audioManager;
-	[Space]
 	public Transform playerTransform;
 
 	private InputState input = new InputState();
@@ -32,7 +30,7 @@ public class PlayerController : MonoBehaviour
 			{
 				return;
 			}
-			audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
+			gameplayManager.audioManager.PlaySound("MenuOptionSelect");
 			PlayerSpriteManager.I.ChangeCharacter();
 		}
 	}
@@ -47,14 +45,46 @@ public class PlayerController : MonoBehaviour
 			}
 
 			Projectile hitProjectile = collision.GetComponent<Projectile>();
-			hitProjectile.DestroyProjectile();
-			gameplayManager.Lose();
+
+			if (hitProjectile.shieldPowerup)
+			{
+				gameplayManager.audioManager.PlaySound("PowerupGetShield");
+				gameplayManager.SetShieldPowerup(true);
+				hitProjectile.DestroyProjectile(false);
+				return;
+			}
+			else if (hitProjectile.slowPowerup)
+			{
+				gameplayManager.audioManager.PlaySound("PowerupGetSlow");
+				gameplayManager.SetSlowPowerup(true);
+				hitProjectile.DestroyProjectile(false);
+				return;
+			}
+			else
+			{
+				if (gameplayManager.shieldPowerupOnCharacter.activeInHierarchy)
+				{
+					gameplayManager.SetShieldPowerup(false);
+					return;
+				}
+
+				hitProjectile.DestroyProjectile();
+				gameplayManager.Lose();
+				return;
+			}
+
 		}
 
 		if (collision.CompareTag("Explosion"))
 		{
 			if (gameplayManager.hasGameEnded)
 			{
+				return;
+			}
+
+			if (gameplayManager.shieldPowerupOnCharacter.activeInHierarchy)
+			{
+				gameplayManager.SetShieldPowerup(false);
 				return;
 			}
 

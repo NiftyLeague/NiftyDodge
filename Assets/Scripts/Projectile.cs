@@ -6,13 +6,23 @@ public class Projectile : MonoBehaviour
 {
 	public Rigidbody2D rigidBody;
 	public float moveSpeed;
+	public bool shieldPowerup;
+	public bool slowPowerup;
 	
 	private BombLauncher launcherTarget;
 	private Vector2 moveDirection;
 
 	void Update()
 	{
-		rigidBody.velocity = moveDirection * moveSpeed;
+		if (GameplayManager.I.slowPowerupOnCharacter.activeInHierarchy)
+		{
+			rigidBody.velocity = moveDirection * GameplayManager.I.slowPowerupProjectileSpeed;
+		}
+		else
+		{
+			rigidBody.velocity = moveDirection * moveSpeed;
+		}
+		
 
 		if (transform.position.x >= GameplayManager.I.worldRightLimit.position.x || transform.position.x <= GameplayManager.I.worldLeftLimit.position.x || transform.position.y >= GameplayManager.I.worldTopLimit.position.y || transform.position.y <= GameplayManager.I.worldBottomLimit.position.y)
 		{
@@ -24,6 +34,11 @@ public class Projectile : MonoBehaviour
 	{
 		this.launcherTarget = launcherTarget;
 		this.moveDirection = moveDirection;
+
+		if (IsAPowerup())
+		{
+			return;
+		}
 
 		moveSpeed += speedAmount;
 		if (moveSpeed > 50)
@@ -49,11 +64,25 @@ public class Projectile : MonoBehaviour
 		Destroy(gameObject);
 	}
 
+	bool IsAPowerup()
+	{
+		if (shieldPowerup || slowPowerup)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
 	void OnCollisionEnter2D(Collision2D collision)
 	{
 		if (collision.transform.CompareTag("Projectile"))
 		{
-			Debug.Log("HIT ANOTHER BOMB");
+			if (IsAPowerup())
+			{
+				return;
+			}
+
 			collision.gameObject.GetComponent<Projectile>().DestroyProjectile();
 			DestroyProjectile();
 		}

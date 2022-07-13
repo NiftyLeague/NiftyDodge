@@ -32,6 +32,10 @@ public class GameplayManager : MonoBehaviour
 	public Transform worldRightLimit;
 	[Space]
 	public GameObject bombProjectile;
+	public GameObject shieldPowerup;
+	public GameObject slowPowerup;
+	public GameObject shieldPowerupOnCharacter;
+	public GameObject slowPowerupOnCharacter;
 	public List<BombLauncher> bombLaunchers;
 
 	public ObscuredFloat maxBombSpeed;
@@ -42,9 +46,13 @@ public class GameplayManager : MonoBehaviour
 	public Vector2 textDisplayTimeRange;
 	public ObscuredBool hasGameEnded;
 	public Vector2 newBombTimeRange;
+	public ObscuredFloat powerupSpawnChance = 0.05f;
+	public ObscuredFloat slowPowerupProjectileSpeed = 2f;
 
 	ObscuredBool firingABomb = false;
 	ObscuredFloat scoreTimer;
+
+	ObscuredFloat slowPowerupTimer;
 
 	float gameOverTimer1;
 	float gameOverTimer2;
@@ -74,13 +82,13 @@ public class GameplayManager : MonoBehaviour
 				if (gameOverTimer1 > 0)
 				{
 					gameOverTimer1 = 0;
-					audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
+					audioManager.PlaySound("MenuOptionSelect");
 					return;
 				}
 				else if (gameOverTimer2 > 0)
 				{
 					gameOverTimer2 = 0;
-					audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
+					audioManager.PlaySound("MenuOptionSelect");
 					return;
 				}
 			}
@@ -116,12 +124,20 @@ public class GameplayManager : MonoBehaviour
 			ScorePoint();
 			scoreTimer = 0;
 		}
+
+		if (slowPowerupTimer > 0)
+		{
+			slowPowerupTimer -= Time.deltaTime;
+			if (slowPowerupTimer <= 0)
+			{
+				SetSlowPowerup(false);
+			}
+		}
 	}
 
 	public void ScorePoint()
 	{
 		score += 1;
-		//IncreaseSpeed();
 		UpdateScoreText();
 		//EventController.AddScore(1);
 	}
@@ -159,7 +175,35 @@ public class GameplayManager : MonoBehaviour
 	public void Explosion(Vector3 position)
 	{
 		EffectsController.CreateExplosion(position);
-		audioManager.PlaySound(AudioManager.SoundID.explosion, 0.25f);
+		audioManager.PlaySound("Explosion", 0.25f);
+	}
+
+	public void SetShieldPowerup(bool activate)
+	{
+		if (activate)
+		{
+			
+		}
+		else
+		{
+			audioManager.PlaySound("PowerupEnd");
+		}
+
+		shieldPowerupOnCharacter.SetActive(activate);
+	}
+
+	public void SetSlowPowerup(bool activate)
+	{
+		if (activate)
+		{
+			slowPowerupTimer = 10;
+		}
+		else
+		{
+			audioManager.PlaySound("PowerupEnd");
+		}
+
+		slowPowerupOnCharacter.SetActive(activate);
 	}
 
 	public void IncreaseSpeed(bool reset = false)
@@ -192,7 +236,7 @@ public class GameplayManager : MonoBehaviour
 
 	IEnumerator PlayGameOverScreen()
 	{
-		audioManager.PlaySound(AudioManager.SoundID.lose);
+		audioManager.PlaySound("Lose");
 
 		scoreText.text = "GAME OVER";
 
@@ -302,7 +346,7 @@ public class GameplayManager : MonoBehaviour
 	public void SpawnedNewBomb()
 	{
 		totalBombs++;
-		audioManager.PlaySound(AudioManager.SoundID.projectileShoot);
+		audioManager.PlaySound("BombShoot");
 		IncreaseSpeed();
 	}
 }

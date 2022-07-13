@@ -75,7 +75,7 @@ public class MenuManager : Singleton<MenuManager>
 
 		if (currentMenu > 0 && input.PressedB)
 		{
-			audioManager.PlaySound(AudioManager.SoundID.batSwing);
+			audioManager.PlaySound("MenuOptionBack");
 			if (mainMenuManager != null)
 			{
 				ChangeMenu("MainMenu");
@@ -139,7 +139,7 @@ public class MenuManager : Singleton<MenuManager>
 
 	void ChangeMenuOption(int menuOptionChange)
 	{
-		audioManager.PlaySound(AudioManager.SoundID.messagePopup);
+		audioManager.PlaySound("MessagePopup");
 
 		currentMenuOption = currentMenuOption + menuOptionChange;
 
@@ -189,7 +189,7 @@ public class MenuManager : Singleton<MenuManager>
 		yield return RefreshArcadeBalance();
 
 		UpdateTokenAmount();
-		audioManager.PlaySound(AudioManager.SoundID.gainPoint);
+		audioManager.PlaySound("GainPoint");
 		TokenPurchaseAnim();
 
 		canSelectMenuOptions = true;
@@ -241,7 +241,7 @@ public class MenuManager : Singleton<MenuManager>
 		canSelectMenuOptions = false;
 		MenuOption menuOption = menus[currentMenu].menuOptions[currentMenuOption];
 		lastSelectedMenuOption = menuOption;
-		audioManager.PlaySound(AudioManager.SoundID.menuOptionSelect);
+		audioManager.PlaySound("MenuOptionSelect");
 
 		if (currentMenu == 0)
 		{
@@ -256,7 +256,7 @@ public class MenuManager : Singleton<MenuManager>
 			{
 				if (ArcadeTokens > 0)
 				{
-					audioManager.PlaySound(AudioManager.SoundID.insertCoin);
+					audioManager.PlaySound("InsertCoin");
 					SpendToken();
 				}
 				else
@@ -680,7 +680,7 @@ public class MenuManager : Singleton<MenuManager>
 
 	void ErrorMessage(string message)
 	{
-		audioManager.PlaySound(AudioManager.SoundID.projectileHit);
+		audioManager.PlaySound("Error");
 
 		StopErrorMessage();
 

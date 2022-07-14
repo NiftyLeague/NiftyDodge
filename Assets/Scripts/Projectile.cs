@@ -11,6 +11,8 @@ public class Projectile : MonoBehaviour
 	
 	private BombLauncher launcherTarget;
 	private Vector2 moveDirection;
+	private float scalePulse;
+	private float currentScalePulse;
 
 	void Update()
 	{
@@ -22,7 +24,14 @@ public class Projectile : MonoBehaviour
 		{
 			rigidBody.velocity = moveDirection * moveSpeed;
 		}
-		
+
+		if (IsAPowerup())
+		{
+			currentScalePulse = Mathf.PingPong(Time.time * 2, 0.25f);
+			scalePulse = 0.75f + currentScalePulse;
+
+			transform.localScale = new Vector2(scalePulse, scalePulse);
+		}
 
 		if (transform.position.x >= GameplayManager.I.worldRightLimit.position.x || transform.position.x <= GameplayManager.I.worldLeftLimit.position.x || transform.position.y >= GameplayManager.I.worldTopLimit.position.y || transform.position.y <= GameplayManager.I.worldBottomLimit.position.y)
 		{

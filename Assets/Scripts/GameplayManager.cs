@@ -22,6 +22,7 @@ public class GameplayManager : MonoBehaviour
 	public CameraShake cameraShake;
 	[Space]
 	public TextMeshProUGUI scoreText;
+	public TextMeshProUGUI slowPowerupTimerText;
 	public TextMeshProUGUI gameOverStatNamesText;
 	public TextMeshProUGUI gameOverStatNumbersText;
 	public GameObject gameOverSkipPrompt;
@@ -132,6 +133,8 @@ public class GameplayManager : MonoBehaviour
 			{
 				SetSlowPowerup(false);
 			}
+
+			slowPowerupTimerText.text = slowPowerupTimer.ToString("0.0");
 		}
 	}
 
@@ -176,6 +179,7 @@ public class GameplayManager : MonoBehaviour
 	{
 		EffectsController.CreateExplosion(position);
 		audioManager.PlaySound("Explosion", 0.25f);
+		cameraShake.Shake(0.2f, 5);
 	}
 
 	public void SetShieldPowerup(bool activate)
@@ -204,6 +208,7 @@ public class GameplayManager : MonoBehaviour
 		}
 
 		slowPowerupOnCharacter.SetActive(activate);
+		slowPowerupTimerText.gameObject.SetActive(activate);
 	}
 
 	public void IncreaseSpeed(bool reset = false)

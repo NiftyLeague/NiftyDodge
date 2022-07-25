@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2101283796660733792}
   - component: {fileID: 8825958817702963430}
   m_Layer: 7
-  m_Name: Powerup Slow
+  m_Name: Powerup Points
   m_TagString: Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 0c03d2f7ea8fae34cbaf2ad4e19ee1a6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 97ac11af0bcd8cc488122c0d8e53efb4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -101,8 +101,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animSpeed: 0.1
   frames:
-  - {fileID: 21300000, guid: 0c03d2f7ea8fae34cbaf2ad4e19ee1a6, type: 3}
-  - {fileID: 21300000, guid: 75c6a6987068d2c45b9804d3e142d618, type: 3}
+  - {fileID: 21300000, guid: 97ac11af0bcd8cc488122c0d8e53efb4, type: 3}
+  - {fileID: 21300000, guid: 0574cf57131881845a9cce6d44eed17c, type: 3}
   playOnce: 0
   disableAfterPlayOnce: 0
   stayAfterPlayOnce: 1
@@ -121,7 +121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rigidBody: {fileID: 2101283796660733792}
   moveSpeed: 10
-  powerupType: 4
+  powerupType: 3
 --- !u!50 &2101283796660733792
 Rigidbody2D:
   serializedVersion: 4

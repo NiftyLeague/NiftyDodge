@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2101283796660733792}
   - component: {fileID: 8825958817702963430}
   m_Layer: 7
-  m_Name: Powerup Shield
+  m_Name: Powerup Lifeup
   m_TagString: Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 1678a67dbd65c604c945118f39dc4c5b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: eed625daac8ebff4f9dd0a30cdb3bde5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -101,8 +101,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animSpeed: 0.1
   frames:
-  - {fileID: 21300000, guid: 1678a67dbd65c604c945118f39dc4c5b, type: 3}
-  - {fileID: 21300000, guid: 47aec925742c13c489b3e535ec9c78f9, type: 3}
+  - {fileID: 21300000, guid: eed625daac8ebff4f9dd0a30cdb3bde5, type: 3}
+  - {fileID: 21300000, guid: 24913f5d26b0da34ca7fa39c53b99e71, type: 3}
   playOnce: 0
   disableAfterPlayOnce: 0
   stayAfterPlayOnce: 1
@@ -121,8 +121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rigidBody: {fileID: 2101283796660733792}
   moveSpeed: 10
-  shieldPowerup: 1
-  slowPowerup: 0
+  powerupType: 2
 --- !u!50 &2101283796660733792
 Rigidbody2D:
   serializedVersion: 4

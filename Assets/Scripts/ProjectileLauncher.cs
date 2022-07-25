@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BombLauncher : MonoBehaviour
+public class ProjectileLauncher : MonoBehaviour
 {
-    public BombLauncher adjacentLauncher;
+    public ProjectileLauncher adjacentLauncher;
     [HideInInspector] public bool cantLaunch;
     public GameplayManager gameplayManager;
     public FiringDirection firingDirection;
@@ -25,16 +25,21 @@ public class BombLauncher : MonoBehaviour
             return;
         }
 
+        if (currentLaunchingCoroutine != null)
+        {
+            StopCoroutine(currentLaunchingCoroutine);
+        }
+
         if (gameplayManager.score >= 50)
         {
-            if (Random.value <= gameplayManager.GetDoubleBombChance())
+            if (Random.value <= gameplayManager.GetDoubleProjectileChance())
             {
-                currentLaunchingCoroutine = StartCoroutine(LaunchTwoBombs());
+                currentLaunchingCoroutine = StartCoroutine(LaunchTwoProjectiles());
                 return;
             }
         }
 
-        currentLaunchingCoroutine = StartCoroutine(LaunchOneBomb());
+        currentLaunchingCoroutine = StartCoroutine(LaunchOneProjectile());
     }
 
     public void CommenceReceiving(int amountToReceive)
@@ -44,7 +49,7 @@ public class BombLauncher : MonoBehaviour
         amountReceiving = amountToReceive;
     }
 
-    public void ReceiveBomb()
+    public void ReceiveProjectile()
     {
         amountReceiving--;
         if (amountReceiving <= 0)
@@ -65,12 +70,14 @@ public class BombLauncher : MonoBehaviour
             StopCoroutine(currentLaunchingCoroutine);
         }
 
+        StopAllCoroutines();
+
         cantLaunch = false;
         spriteRenderer.sprite = idleSprite;
         amountReceiving = 0;
     }
 
-    IEnumerator LaunchOneBomb()
+    IEnumerator LaunchOneProjectile()
     {
         cantLaunch = true;
 
@@ -100,13 +107,13 @@ public class BombLauncher : MonoBehaviour
         yield return new WaitForSeconds(0.02f);
         spriteRenderer.sprite = fireSprite;
 
-        FireBomb();
+        FireProjectile();
         
         yield return new WaitForSeconds(0.2f);
         spriteRenderer.sprite = idleSprite;
     }
 
-    IEnumerator LaunchTwoBombs()
+    IEnumerator LaunchTwoProjectiles()
     {
         cantLaunch = true;
 
@@ -136,37 +143,40 @@ public class BombLauncher : MonoBehaviour
         yield return new WaitForSeconds(0.02f);
         spriteRenderer.sprite = fireSprite;
 
-        FireBomb();
+        FireProjectile();
 
         yield return new WaitForSeconds(0.4f);
         spriteRenderer.sprite = activeSprite;
         yield return new WaitForSeconds(0.02f);
         spriteRenderer.sprite = fireSprite;
 
-        FireBomb();
+        FireProjectile();
 
         yield return new WaitForSeconds(0.2f);
         spriteRenderer.sprite = idleSprite;
     }
 
-    private void FireBomb()
+    private void FireProjectile()
     {
+        bool spawnedIcicle = false;
+
         if (Random.value <= gameplayManager.powerupSpawnChance)
         {
             gameplayManager.audioManager.PlaySound("PowerupSpawn");
-            if (Random.value <= 0.5f)
-            {
-                currentProjectile = Instantiate(gameplayManager.shieldPowerup, transform);
-            }
-            else
-            {
-                currentProjectile = Instantiate(gameplayManager.slowPowerup, transform);
-            }
+            currentProjectile = Instantiate(gameplayManager.GetRandomPowerup(), transform);
         }
         else
         {
-            currentProjectile = Instantiate(gameplayManager.bombProjectile, transform);
-            gameplayManager.SpawnedNewBomb();
+            if (Random.value <= 0.5f)
+            {
+                currentProjectile = Instantiate(gameplayManager.snowballProjectile, transform);
+            }
+            else
+            {
+                currentProjectile = Instantiate(gameplayManager.icicleProjectile, transform);
+                spawnedIcicle = true;
+            }
+            gameplayManager.SpawnedNewProjectile();
         }
         
         currentProjectile.transform.localPosition = new Vector3(0, 0, 0);
@@ -181,16 +191,28 @@ public class BombLauncher : MonoBehaviour
                 break;
             case FiringDirection.Down:
                 firingDirectionVector = new Vector2(0, -1);
+                if (spawnedIcicle)
+                {
+                    currentProjectile.transform.eulerAngles = new Vector3(0, 0, 180);
+                }
                 break;
             case FiringDirection.Left:
                 firingDirectionVector = new Vector2(-1, 0);
+                if (spawnedIcicle)
+                {
+                    currentProjectile.transform.eulerAngles = new Vector3(0, 0, 90);
+                }
                 break;
             case FiringDirection.Right:
                 firingDirectionVector = new Vector2(1, 0);
+                if (spawnedIcicle)
+                {
+                    currentProjectile.transform.eulerAngles = new Vector3(0, 0, -90);
+                }
                 break;
         }
 
-        currentProjectile.GetComponent<Projectile>().InitializeProjectile(Mathf.Min(gameplayManager.maxBombSpeed, gameplayManager.currentSpeedIncrease), firingDirectionVector, adjacentLauncher);
+        currentProjectile.GetComponent<Projectile>().InitializeProjectile(Mathf.Min(gameplayManager.maxProjectileSpeed, gameplayManager.currentSpeedIncrease), firingDirectionVector, adjacentLauncher);
     }
 }
 

@@ -45,6 +45,7 @@ public class Character : MonoBehaviour
     public ObscuredBool hasLost;
 
     public AudioManager audioManager;
+    public ProjectileHitter projectileHitter;
 
     int facingDir = 1;
 
@@ -317,8 +318,8 @@ public class Character : MonoBehaviour
         RunPhysics();
         ClampMotion();
         ApplyMotionVector();
-        //if (state == CharacterState.Attacking)
-        //    RunAttack();
+        if (state == CharacterState.Attacking)
+            RunAttack();
         //else if (state == CharacterState.Tounge)
         //    RunTongue();
 
@@ -444,11 +445,11 @@ public class Character : MonoBehaviour
         {
             attackState = AttackState.Attacking;
             //SoundController.PlaySoundEffect("BatSwing", 0.4f + attackChargeM * 0.4f, transform.position);
-            //audioManager.PlaySound(AudioManager.SoundID.batSwing, 0.4f + attackChargeM * 0.4f);
+            audioManager.PlaySound("BatSwing", 0.4f + attackChargeM * 0.4f);
             if (attackChargeM > 0.25f || IngestedFly)
             {
                 //SoundController.PlaySoundEffect("BatSwingVoice", 0.4f, transform.position);
-                //audioManager.PlaySound(AudioManager.SoundID.playerBatSwingVoice, 0.4f);
+                audioManager.PlaySound("BatSwingVoice", 0.4f);
             }
             attackTimeLeft = attackTime;
             if (attackChargeM > 0.5f)
@@ -1174,6 +1175,8 @@ public class Character : MonoBehaviour
             }
             if (velocity.x > maxRunSpeed)
                 velocity.x = maxRunSpeed;
+
+            projectileHitter.TurnRight();
         }
         else if (input.left && state == CharacterState.Normal)
         {
@@ -1197,6 +1200,8 @@ public class Character : MonoBehaviour
             }
             if (velocity.x < -maxRunSpeed)
                 velocity.x = -maxRunSpeed;
+
+            projectileHitter.TurnLeft();
         }
         else
         {
@@ -1217,35 +1222,37 @@ public class Character : MonoBehaviour
             }
         }
 
-        //if (input.xButton)
-        //{
-        //    if (state == CharacterState.Normal)
-        //    {
-        //        state = CharacterState.Attacking;
-        //        if (attackState == AttackState.Idle)
-        //        {
-        //            attackState = AttackState.Charging;
-        //            //SoundController.PlaySoundEffect("BatChargeUp", 0.5f, transform.position);
-        //            audioManager.PlaySound(AudioManager.SoundID.batCharge);
-        //            attackChargeCounter = 0f;
-        //        }
-        //    }
+        if (input.xButton)
+        {
+            if (state == CharacterState.Normal)
+            {
+                state = CharacterState.Attacking;
+                if (attackState == AttackState.Idle)
+                {
+                    attackState = AttackState.Charging;
+                    //SoundController.PlaySoundEffect("BatChargeUp", 0.5f, transform.position);
+                    audioManager.PlaySound("BatCharge");
+                    attackChargeCounter = 0f;
+                }
+            }
 
-        //    if (attackState == AttackState.Charging)
-        //    {
-        //        if (input.right)
-        //        {
-        //            facingDir = 1;
-        //        }
-        //        else if (input.left)
-        //        {
-        //            facingDir = -1;
-        //        }
+            if (attackState == AttackState.Charging)
+            {
+                if (input.right)
+                {
+                    facingDir = 1;
+                    projectileHitter.TurnRight();
+                }
+                else if (input.left)
+                {
+                    facingDir = -1;
+                    projectileHitter.TurnLeft();
+                }
 
-        //        //ATTACK FACING DIRECTION
-        //        //facingDir = 1;
-        //    }
-        //}
+                //ATTACK FACING DIRECTION
+                //facingDir = 1;
+            }
+        }
 
         //if (input.bButton)
         //{
@@ -1549,7 +1556,7 @@ public class Character : MonoBehaviour
 
     public void Lose()
     {
-        transform.position = new Vector2(transform.position.x, -5.2f);
+        transform.position = new Vector2(transform.position.x, -5f);
         hasLost = true;
         velocity.x = 0;
         onGround = true;

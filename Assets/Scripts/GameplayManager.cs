@@ -12,48 +12,66 @@ public class GameplayManager : MonoBehaviour
 	public MenuManager menuManager;
 	public AudioManager audioManager;
 	public Character playerCharacter;
+	public PlayerController playerController;
 	[Space]
+	public ObscuredInt lives = 3;
+	public ObscuredInt wave = 1;
 	public ObscuredInt score;
 	public ObscuredFloat timePlayed;
-	public ObscuredInt totalBombs;
+	public ObscuredInt totalProjectiles;
 	public ObscuredInt xp;
 	[Space]
 	public ObscuredFloat currentSpeedIncrease;
 	public CameraShake cameraShake;
 	[Space]
+	public List<SpriteRenderer> playerLifePips;
 	public TextMeshProUGUI scoreText;
-	public TextMeshProUGUI slowPowerupTimerText;
+	//public TextMeshProUGUI invincibilityPowerupTimerText;
+	//public TextMeshProUGUI slowPowerupTimerText;
 	public TextMeshProUGUI gameOverStatNamesText;
 	public TextMeshProUGUI gameOverStatNumbersText;
 	public GameObject gameOverSkipPrompt;
+	public GameObject scoreGainedUIPrefab;
+	public Transform playerCanvas;
 	[Space]
 	public Transform worldTopLimit;
 	public Transform worldBottomLimit;
 	public Transform worldLeftLimit;
 	public Transform worldRightLimit;
 	[Space]
-	public GameObject bombProjectile;
-	public GameObject shieldPowerup;
+	public GameObject snowballProjectile;
+	public GameObject icicleProjectile;
+	[Space]
+	public GameObject invincibilityPowerup;
 	public GameObject slowPowerup;
-	public GameObject shieldPowerupOnCharacter;
-	public GameObject slowPowerupOnCharacter;
-	public List<BombLauncher> bombLaunchers;
+	public GameObject lifeUpPowerup;
+	public GameObject pointsPowerup;
+	public SpriteRenderer invincibilityPowerupOnCharacter;
+	public SpriteRenderer slowPowerupOnCharacter;
+	public List<ProjectileLauncher> projectileLaunchers;
 
-	public ObscuredFloat maxBombSpeed;
+	public ObscuredFloat maxProjectileSpeed;
 	public Vector2 startTimeoutRange;
 	public Vector2 shootRandomTimeoutRange;
 	public TweenEaseType textTweenType;
 	public ObscuredFloat textTweenDuration;
 	public Vector2 textDisplayTimeRange;
 	public ObscuredBool hasGameEnded;
-	public Vector2 newBombTimeRange;
+	public Vector2 newProjectileTimeRange;
 	public ObscuredFloat powerupSpawnChance = 0.05f;
 	public ObscuredFloat slowPowerupProjectileSpeed = 2f;
+	[Space]
+	public bool godMode;
 
-	ObscuredBool firingABomb = false;
-	ObscuredFloat scoreTimer;
+	Coroutine currentScoreTextCoroutine;
 
+	ObscuredBool firingAProjectile = false;
+
+	ObscuredFloat invincibilityPowerupTimer;
 	ObscuredFloat slowPowerupTimer;
+
+	float invincibilityIconFlasher;
+	float slowIconFlasher;
 
 	float gameOverTimer1;
 	float gameOverTimer2;
@@ -114,35 +132,87 @@ public class GameplayManager : MonoBehaviour
 		}
 
 		timePlayed += Time.deltaTime;
-		if (!firingABomb)
+		if (!firingAProjectile)
 		{
 			StartCoroutine(FireNextProjectile());
 		}
 
-		scoreTimer += Time.deltaTime;
-		if (scoreTimer >= 1)
+		if (invincibilityPowerupTimer > 0)
 		{
-			ScorePoint();
-			scoreTimer = 0;
+			invincibilityPowerupTimer -= Time.deltaTime;
+
+			if (invincibilityPowerupTimer <= 3)
+			{
+				invincibilityIconFlasher = Mathf.PingPong(Time.time * ((10 - invincibilityPowerupTimer) / 2), 1f);
+
+				invincibilityPowerupOnCharacter.color = new Color(1, 1, 1, invincibilityIconFlasher);
+			}
+
+			if (invincibilityPowerupTimer <= 0)
+			{
+				invincibilityIconFlasher = 0;
+				DisablePowerup(PowerupType.Invinicibility);
+			}
+
+			//invincibilityPowerupTimerText.text = invincibilityPowerupTimer.ToString("0.0");
 		}
 
 		if (slowPowerupTimer > 0)
 		{
 			slowPowerupTimer -= Time.deltaTime;
-			if (slowPowerupTimer <= 0)
+
+			if (slowPowerupTimer <= 3)
 			{
-				SetSlowPowerup(false);
+				slowIconFlasher = Mathf.PingPong(Time.time * ((10 - slowPowerupTimer) / 2), 1f);
+
+				slowPowerupOnCharacter.color = new Color(1, 1, 1, slowIconFlasher);
 			}
 
-			slowPowerupTimerText.text = slowPowerupTimer.ToString("0.0");
+			if (slowPowerupTimer <= 0)
+			{
+				slowIconFlasher = 0;
+				DisablePowerup(PowerupType.Slow);
+			}
+
+			//slowPowerupTimerText.text = slowPowerupTimer.ToString("0.0");
 		}
 	}
 
-	public void ScorePoint()
+	public void ScorePoint(int amount)
 	{
-		score += 1;
+		if (hasGameEnded)
+		{
+			return;
+		}
+		score += amount;
+
+		if (currentScoreTextCoroutine != null)
+		{
+			StopCoroutine(currentScoreTextCoroutine);
+		}
+
+		var newScoreGainedUI = Instantiate(scoreGainedUIPrefab, playerCanvas);
+		newScoreGainedUI.GetComponent<ScoreGainUI>().Initialize(amount);
+		currentScoreTextCoroutine = StartCoroutine(AnimateScoreText());
+
 		UpdateScoreText();
-		//EventController.AddScore(1);
+		//EventController.AddScore(amount);
+	}
+
+	IEnumerator AnimateScoreText()
+	{
+		float a = 0.09f;
+		float b = 0.1f;
+
+		Tween<float> scaleTween = new Tween<float>(a, b, 0.5f, TweenEaseType.CubicIn);
+
+		while (!scaleTween.IsEnded())
+		{
+			yield return new WaitForEndOfFrame();
+			scoreText.transform.localScale = new Vector3(scaleTween.Update(Time.deltaTime), scaleTween.Update(Time.deltaTime), scaleTween.Update(Time.deltaTime));
+		}
+
+		audioManager.PlaySound("GainPoint");
 	}
 
 	void UpdateScoreText()
@@ -160,9 +230,15 @@ public class GameplayManager : MonoBehaviour
 		cameraShake.Shake(0.5f, 5);
 		IncreaseSpeed(true);
 
-		foreach (BombLauncher launcher in bombLaunchers)
+		foreach (ProjectileLauncher launcher in projectileLaunchers)
 		{
 			launcher.Reset();
+		}
+
+		var projectilesInExistence = FindObjectsOfType<Projectile>();
+		foreach (Projectile projectileInExistence in projectilesInExistence)
+		{
+			projectileInExistence.DestroyProjectile(false);
 		}
 
 		playerCharacter.Lose();
@@ -182,35 +258,6 @@ public class GameplayManager : MonoBehaviour
 		cameraShake.Shake(0.2f, 5);
 	}
 
-	public void SetShieldPowerup(bool activate)
-	{
-		if (activate)
-		{
-			
-		}
-		else
-		{
-			audioManager.PlaySound("PowerupEnd");
-		}
-
-		shieldPowerupOnCharacter.SetActive(activate);
-	}
-
-	public void SetSlowPowerup(bool activate)
-	{
-		if (activate)
-		{
-			slowPowerupTimer = 10;
-		}
-		else
-		{
-			audioManager.PlaySound("PowerupEnd");
-		}
-
-		slowPowerupOnCharacter.SetActive(activate);
-		slowPowerupTimerText.gameObject.SetActive(activate);
-	}
-
 	public void IncreaseSpeed(bool reset = false)
 	{
 		currentSpeedIncrease += 0.5f;
@@ -226,6 +273,10 @@ public class GameplayManager : MonoBehaviour
 		xp = 0;
 		timePlayed = 0;
 
+		wave = 1;
+		lives = 3;
+		UpdateLives();
+
 		gameOverStatNamesText.text = "";
 		gameOverStatNumbersText.text = "";
 
@@ -237,6 +288,103 @@ public class GameplayManager : MonoBehaviour
 
 		UpdateScoreText();
 		//Analytics.SendPlayerEvent("StartMatch");
+	}
+
+	public void LoseLife()
+	{
+		if (godMode)
+		{
+			return;
+		}
+
+		lives--;
+		UpdateLives();
+		if (lives <= 0)
+		{
+			audioManager.PlaySound("Lose");
+			Lose();
+		}
+		else
+		{
+			audioManager.PlaySound("LoseLife");
+			playerController.AnimateHurtFlash();
+			cameraShake.Shake(0.2f, 5);
+		}
+	}
+
+	public void GainLife()
+	{
+		lives++;
+		lives = Mathf.Clamp(lives, 0, 3);
+		UpdateLives();
+	}
+
+	public void UpdateLives()
+	{
+		foreach (SpriteRenderer pip in playerLifePips)
+		{
+			pip.enabled = false;
+		}
+
+		for (int i = 0; i < lives; i++)
+		{
+			playerLifePips[i].enabled = true;
+		}
+
+		if (lives <= 1)
+		{
+			playerLifePips[0].color = Color.red;
+			playerLifePips[0].GetComponent<SimpleAnim>().animSpeed = 0.1f;
+		}
+		else
+		{
+			playerLifePips[0].color = Color.white;
+			playerLifePips[0].GetComponent<SimpleAnim>().animSpeed = 0.5f;
+		}
+	}
+
+	public void EnablePowerup(PowerupType powerupType)
+	{
+		audioManager.PlaySound("PowerupGet");
+
+		switch (powerupType)
+		{
+			case PowerupType.Invinicibility:
+				invincibilityPowerupTimer = 10;
+				invincibilityPowerupOnCharacter.gameObject.SetActive(true);
+				//invincibilityPowerupTimerText.gameObject.SetActive(true);
+				break;
+			case PowerupType.Lifeup:
+				GainLife();
+				break;
+			case PowerupType.Points:
+				ScorePoint(20);
+				break;
+			case PowerupType.Slow:
+				slowPowerupTimer = 10;
+				slowPowerupOnCharacter.gameObject.SetActive(true);
+				//slowPowerupTimerText.gameObject.SetActive(true);
+				break;
+		}
+	}
+
+	public void DisablePowerup(PowerupType powerupType)
+	{
+		audioManager.PlaySound("PowerupEnd");
+
+		switch (powerupType)
+		{
+			case PowerupType.Invinicibility:
+				invincibilityPowerupTimer = 0;
+				invincibilityPowerupOnCharacter.gameObject.SetActive(false);
+				//invincibilityPowerupTimerText.gameObject.SetActive(false);
+				break;
+			case PowerupType.Slow:
+				slowPowerupTimer = 0;
+				slowPowerupOnCharacter.gameObject.SetActive(false);
+				//slowPowerupTimerText.gameObject.SetActive(false);
+				break;
+		}
 	}
 
 	IEnumerator PlayGameOverScreen()
@@ -263,7 +411,7 @@ public class GameplayManager : MonoBehaviour
 
 		string statNames = "SCORE\nTIME PLAYED\nTOTAL BALLs\nHITS\nMISSES";
 		string statValeues = score.ToString("0") + "\n" + hoursPlayed.ToString("0") + ":" + minutesPlayed.ToString("00") + ":" + secondsPlayed.ToString("00") + "\n";
-		statValeues += totalBombs.ToString("0");
+		statValeues += totalProjectiles.ToString("0");
 
 		if (xp > 0)
 		{
@@ -314,13 +462,13 @@ public class GameplayManager : MonoBehaviour
 
 	IEnumerator FireNextProjectile()
 	{
-		if (firingABomb)
+		if (firingAProjectile)
 		{
 			yield break;
 		}
-		firingABomb = true;
+		firingAProjectile = true;
 
-		float timeout = Mathf.Lerp(startTimeoutRange.y, startTimeoutRange.x, totalBombs / 50f);
+		float timeout = Mathf.Lerp(startTimeoutRange.y, startTimeoutRange.x, totalProjectiles / 50f);
 
         //yield return new WaitForSeconds(timeout);
 
@@ -328,29 +476,48 @@ public class GameplayManager : MonoBehaviour
 
         yield return new WaitForSeconds(timeout + XRandom.NextFloat(shootRandomTimeoutRange));
 
-		List<BombLauncher> bombLaunchersToChooseFrom = new List<BombLauncher>();
+		List<ProjectileLauncher> launchersToChooseFrom = new List<ProjectileLauncher>();
 
-		foreach (BombLauncher launcher in bombLaunchers)
+		foreach (ProjectileLauncher launcher in projectileLaunchers)
 		{
 			if (!launcher.cantLaunch)
 			{
-				bombLaunchersToChooseFrom.Add(launcher);
+				launchersToChooseFrom.Add(launcher);
 			}
 		}
 
-		bombLaunchersToChooseFrom[Random.Range(0, bombLaunchersToChooseFrom.Count)].CommenceLaunch();
+		launchersToChooseFrom[Random.Range(0, launchersToChooseFrom.Count)].CommenceLaunch();
 
-		firingABomb = false;
+		firingAProjectile = false;
 	}
 
-	public float GetDoubleBombChance()
+	public float GetDoubleProjectileChance()
 	{
 		return 0.1f + (score / 1000);
 	}
 
-	public void SpawnedNewBomb()
+	public GameObject GetRandomPowerup()
 	{
-		totalBombs++;
+		int powerupChosen = Random.Range(1, 4);
+
+		switch (powerupChosen)
+		{
+			case 1:
+				return invincibilityPowerup;
+			case 2:
+				return lifeUpPowerup;
+			case 3:
+				return pointsPowerup;
+			case 4:
+				return slowPowerup;
+		}
+
+		return invincibilityPowerup;
+	}
+
+	public void SpawnedNewProjectile()
+	{
+		totalProjectiles++;
 		audioManager.PlaySound("BombShoot");
 		IncreaseSpeed();
 	}

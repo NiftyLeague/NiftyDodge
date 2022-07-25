@@ -269,6 +269,36 @@ public class PlayerSpriteManager : MonoBehaviour
 		characterAnimator.wallSlideJumpLaunch.Clear();
 		characterAnimator.wallSlideJumpLaunch.Add(spritesToUse[59]);
 		characterAnimator.wallSlideJumpLaunch.Add(spritesToUse[59]);
+
+		characterAnimator.attackCharge.Clear();
+		for (int i = 19; i <= 24; i++)
+			characterAnimator.attackCharge.Add(spritesToUse[i]);
+		characterAnimator.attack.Clear();
+		for (int i = 25; i <= 28; i++)
+			characterAnimator.attack.Add(spritesToUse[i]);
+		characterAnimator.attackRecover.Clear();
+		for (int i = 27; i <= 28; i++)
+			characterAnimator.attackRecover.Add(spritesToUse[i]);
+
+		characterAnimator.attackChargeDiagUp.Clear();
+		for (int i = 29; i <= 34; i++)
+			characterAnimator.attackChargeDiagUp.Add(spritesToUse[i]);
+		characterAnimator.attackDiagUp.Clear();
+		for (int i = 35; i <= 38; i++)
+			characterAnimator.attackDiagUp.Add(spritesToUse[i]);
+		characterAnimator.attackRecoverDiagUp.Clear();
+		for (int i = 37; i <= 38; i++)
+			characterAnimator.attackRecoverDiagUp.Add(spritesToUse[i]);
+
+		characterAnimator.attackChargeUp.Clear();
+		for (int i = 39; i <= 44; i++)
+			characterAnimator.attackChargeUp.Add(spritesToUse[i]);
+		characterAnimator.attackUp.Clear();
+		for (int i = 45; i <= 48; i++)
+			characterAnimator.attackUp.Add(spritesToUse[i]);
+		characterAnimator.attackRecoverUp.Clear();
+		for (int i = 47; i <= 48; i++)
+			characterAnimator.attackRecoverUp.Add(spritesToUse[i]);
 	}
 
 	public void SetLoadingDegensText(int min, int max)

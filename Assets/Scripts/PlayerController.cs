@@ -7,7 +7,9 @@ public class PlayerController : MonoBehaviour
 {
 	public GameplayManager gameplayManager;
 	public Transform playerTransform;
+	public SpriteRenderer playerSpriteRenderer;
 
+	private bool canGetHit = true;
 	private InputState input = new InputState();
 
 	private void Start()
@@ -35,6 +37,26 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
+	IEnumerator HurtFlash()
+	{
+		canGetHit = false;
+
+		for (int i = 0; i < 30; i++)
+		{
+			playerSpriteRenderer.gameObject.SetActive(!playerSpriteRenderer.gameObject.activeInHierarchy);
+			yield return new WaitForSeconds(0.05f);
+		}
+
+		playerSpriteRenderer.gameObject.SetActive(true);
+
+		canGetHit = true;
+	}
+
+	public void AnimateHurtFlash()
+	{
+		StartCoroutine(HurtFlash());
+	}
+
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
 		if (collision.CompareTag("Projectile"))
@@ -46,49 +68,44 @@ public class PlayerController : MonoBehaviour
 
 			Projectile hitProjectile = collision.GetComponent<Projectile>();
 
-			if (hitProjectile.shieldPowerup)
+			if (hitProjectile.powerupType != PowerupType.None)
 			{
-				gameplayManager.audioManager.PlaySound("PowerupGetShield");
-				gameplayManager.SetShieldPowerup(true);
-				hitProjectile.DestroyProjectile(false);
-				return;
-			}
-			else if (hitProjectile.slowPowerup)
-			{
-				gameplayManager.audioManager.PlaySound("PowerupGetSlow");
-				gameplayManager.SetSlowPowerup(true);
+				gameplayManager.EnablePowerup(hitProjectile.powerupType);
 				hitProjectile.DestroyProjectile(false);
 				return;
 			}
 			else
 			{
-				if (gameplayManager.shieldPowerupOnCharacter.activeInHierarchy)
+				if (!canGetHit)
 				{
-					gameplayManager.SetShieldPowerup(false);
 					return;
 				}
 
-				hitProjectile.DestroyProjectile();
-				gameplayManager.Lose();
+				if (gameplayManager.invincibilityPowerupOnCharacter.gameObject.activeInHierarchy)
+				{
+					return;
+				}
+
+				gameplayManager.LoseLife();
 				return;
 			}
 
 		}
 
-		if (collision.CompareTag("Explosion"))
-		{
-			if (gameplayManager.hasGameEnded)
-			{
-				return;
-			}
+		//if (collision.CompareTag("Explosion"))
+		//{
+		//	if (gameplayManager.hasGameEnded)
+		//	{
+		//		return;
+		//	}
 
-			if (gameplayManager.shieldPowerupOnCharacter.activeInHierarchy)
-			{
-				gameplayManager.SetShieldPowerup(false);
-				return;
-			}
+		//	if (gameplayManager.shieldPowerupOnCharacter.activeInHierarchy)
+		//	{
+		//		gameplayManager.SetShieldPowerup(false);
+		//		return;
+		//	}
 
-			gameplayManager.Lose();
-		}
+		//	gameplayManager.Lose();
+		//}
 	}
 }

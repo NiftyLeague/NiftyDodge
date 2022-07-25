@@ -6,17 +6,16 @@ public class Projectile : MonoBehaviour
 {
 	public Rigidbody2D rigidBody;
 	public float moveSpeed;
-	public bool shieldPowerup;
-	public bool slowPowerup;
+	public PowerupType powerupType;
 	
-	private BombLauncher launcherTarget;
+	private ProjectileLauncher launcherTarget;
 	private Vector2 moveDirection;
 	private float scalePulse;
 	private float currentScalePulse;
 
 	void Update()
 	{
-		if (GameplayManager.I.slowPowerupOnCharacter.activeInHierarchy)
+		if (GameplayManager.I.slowPowerupOnCharacter.gameObject.activeInHierarchy)
 		{
 			rigidBody.velocity = moveDirection * GameplayManager.I.slowPowerupProjectileSpeed;
 		}
@@ -25,7 +24,7 @@ public class Projectile : MonoBehaviour
 			rigidBody.velocity = moveDirection * moveSpeed;
 		}
 
-		if (IsAPowerup())
+		if (powerupType != PowerupType.None)
 		{
 			currentScalePulse = Mathf.PingPong(Time.time * 2, 0.25f);
 			scalePulse = 0.75f + currentScalePulse;
@@ -35,16 +34,20 @@ public class Projectile : MonoBehaviour
 
 		if (transform.position.x >= GameplayManager.I.worldRightLimit.position.x || transform.position.x <= GameplayManager.I.worldLeftLimit.position.x || transform.position.y >= GameplayManager.I.worldTopLimit.position.y || transform.position.y <= GameplayManager.I.worldBottomLimit.position.y)
 		{
+			if (powerupType == PowerupType.None)
+			{
+				GameplayManager.I.ScorePoint(1);
+			}
 			DestroyProjectile(false);
 		}
 	}
 
-	public void InitializeProjectile(float speedAmount, Vector2 moveDirection, BombLauncher launcherTarget)
+	public void InitializeProjectile(float speedAmount, Vector2 moveDirection, ProjectileLauncher launcherTarget)
 	{
 		this.launcherTarget = launcherTarget;
 		this.moveDirection = moveDirection;
 
-		if (IsAPowerup())
+		if (powerupType != PowerupType.None)
 		{
 			return;
 		}
@@ -63,37 +66,22 @@ public class Projectile : MonoBehaviour
 
 	public void DestroyProjectile(bool withExplosion = true)
 	{
-		launcherTarget.ReceiveBomb();
+		launcherTarget.ReceiveProjectile();
 
 		if (withExplosion)
 		{
-			launcherTarget.gameplayManager.Explosion(transform.position);
+			//launcherTarget.gameplayManager.Explosion(transform.position);
 		}
 
 		Destroy(gameObject);
 	}
+}
 
-	bool IsAPowerup()
-	{
-		if (shieldPowerup || slowPowerup)
-		{
-			return true;
-		}
-
-		return false;
-	}
-
-	void OnCollisionEnter2D(Collision2D collision)
-	{
-		if (collision.transform.CompareTag("Projectile"))
-		{
-			if (IsAPowerup())
-			{
-				return;
-			}
-
-			collision.gameObject.GetComponent<Projectile>().DestroyProjectile();
-			DestroyProjectile();
-		}
-	}
+public enum PowerupType
+{
+	None,
+	Invinicibility,
+	Lifeup,
+	Points,
+	Slow,
 }

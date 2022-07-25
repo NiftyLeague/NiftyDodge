@@ -31,28 +31,26 @@ public class CharacterAnimator : MonoBehaviour
 
     AttackDirection DetermineAttackDirection()
     {
-        return AttackDirection.Forward;
-
-        //if (character.attackDir.y == 1f && character.attackDir.x == 0f)
-        //{
-        //    return AttackDirection.Up;
-        //}
-        //else if (character.attackDir.y > 0.45f && Mathf.Abs(character.attackDir.x) > 0.45f)
-        //{
-        //    return AttackDirection.DiagonalUp;
-        //}
-        //else if (character.attackDir.y < -0.45f && Mathf.Abs(character.attackDir.x) > 0.45f)
-        //{
-        //    return AttackDirection.DownForward;
-        //}
-        //else if (character.attackDir.y == -1f)
-        //{
-        //    return AttackDirection.Down;
-        //}
-        //else
-        //{
-        //    return AttackDirection.Forward;
-        //}
+        if (character.attackDir.y == 1f && character.attackDir.x == 0f)
+        {
+            return AttackDirection.Up;
+        }
+        else if (character.attackDir.y > 0.45f && Mathf.Abs(character.attackDir.x) > 0.45f)
+        {
+            return AttackDirection.DiagonalUp;
+        }
+        else if (character.attackDir.y < -0.45f && Mathf.Abs(character.attackDir.x) > 0.45f)
+        {
+            return AttackDirection.DownForward;
+        }
+        else if (character.attackDir.y == -1f)
+        {
+            return AttackDirection.Down;
+        }
+        else
+        {
+            return AttackDirection.Forward;
+        }
     }
 
     //Vector3 defaultOffset;
@@ -88,7 +86,7 @@ public class CharacterAnimator : MonoBehaviour
     public List<Sprite> attackCharge;
     public List<Sprite> attack;
     public List<Sprite> attackRecover;
-    public List<Sprite> attachChargeUp;
+    public List<Sprite> attackChargeUp;
     public List<Sprite> attackUp;
     public List<Sprite> attackRecoverUp;
     public List<Sprite> attackChargeDiagUp;
@@ -356,7 +354,7 @@ public class CharacterAnimator : MonoBehaviour
         float chargeSpeedTarget = 0.06f;
 
         if (ad == AttackDirection.Up)
-            RunAnimation(attachChargeUp, Mathf.Lerp(0.2f, chargeSpeedTarget, character.attackChargeM));
+            RunAnimation(attackChargeUp, Mathf.Lerp(0.2f, chargeSpeedTarget, character.attackChargeM));
         else if (ad == AttackDirection.DiagonalUp)
         {
             RunAnimation(attackChargeDiagUp, Mathf.Lerp(0.2f, chargeSpeedTarget, character.attackChargeM));
@@ -374,7 +372,7 @@ public class CharacterAnimator : MonoBehaviour
             RunAnimation(attackCharge, Mathf.Lerp(0.2f, chargeSpeedTarget, character.attackChargeM));
         }
 
-        RunAnimation(attackCharge, Mathf.Lerp(0.2f, chargeSpeedTarget, character.attackChargeM));
+        //RunAnimation(attackCharge, Mathf.Lerp(0.2f, chargeSpeedTarget, character.attackChargeM));
     }
     bool wasBurp;
     void AnimateTongue()
@@ -449,21 +447,31 @@ public class CharacterAnimator : MonoBehaviour
         var ad = DetermineAttackDirection();
 
         if (ad == AttackDirection.Up)
+        {
             RunAnimation(attackUp, 0.05f, true);
+            character.projectileHitter.TurnOn(HitterDirection.Up);
+        }
         else if (ad == AttackDirection.DiagonalUp)
         {
             RunAnimation(attackDiagUp, 0.05f, true);
+            character.projectileHitter.TurnOn(HitterDirection.Diagonal);
         }
         else if (ad == AttackDirection.Down)
         {
             RunAnimation(attackDown, 0.05f, true);
+            character.projectileHitter.TurnOn(HitterDirection.Forward);
+
         }
         else if (ad == AttackDirection.DownForward)
         {
             RunAnimation(attackDownForward, 0.05f, true);
+            character.projectileHitter.TurnOn(HitterDirection.Forward);
         }
         else
+        {
             rend.sprite = attack[0];
+            character.projectileHitter.TurnOn(HitterDirection.Forward);
+        }
     }
 
     void AnimateAttackRecover()

@@ -103,18 +103,22 @@ public class ProjectileHitter : MonoBehaviour
 		currentTurnDirection = TurnDirection.Right;
 	}
 
-	//private void OnTriggerEnter2D(Collider2D collision)
-	//{
-	//	Ball ball = collision.gameObject.GetComponent<Ball>();
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Projectile projectile = collision.gameObject.GetComponent<Projectile>();
 
-	//	if (ball != null)
-	//	{
-	//		ball.rigidBody.velocity =  hitDirection * (10 * currentChargeAmount);
-	//		ball.HitBall();
-	//		EffectsController.CreateHitEffect(collision.transform.position, currentChargeAmount / 10, false);
-	//		gameplayManager.cameraShake.Shake(0.2f * currentChargeAmount, 1);
-	//	}
-	//}
+        if (projectile != null)
+        {
+			if (projectile.icicle)
+			{
+				return;
+			}
+			projectile.DestroyProjectile();
+			gameplayManager.ScorePoint((int)(1 + playerCharacter.attackChargeM));
+			EffectsController.CreateHitEffect(collision.transform.position, currentChargeAmount / 10, false);
+            gameplayManager.cameraShake.Shake(0.2f * currentChargeAmount, 1);
+        }
+    }
 }
 
 public enum HitterDirection

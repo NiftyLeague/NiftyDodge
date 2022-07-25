@@ -167,14 +167,14 @@ public class ProjectileLauncher : MonoBehaviour
         }
         else
         {
-            if (Random.value <= 0.5f)
-            {
-                currentProjectile = Instantiate(gameplayManager.snowballProjectile, transform);
-            }
-            else
+            if (Random.value <= 0.25f)
             {
                 currentProjectile = Instantiate(gameplayManager.icicleProjectile, transform);
                 spawnedIcicle = true;
+            }
+            else
+            {
+                currentProjectile = Instantiate(gameplayManager.snowballProjectile, transform);
             }
             gameplayManager.SpawnedNewProjectile();
         }
@@ -212,7 +212,13 @@ public class ProjectileLauncher : MonoBehaviour
                 break;
         }
 
-        currentProjectile.GetComponent<Projectile>().InitializeProjectile(Mathf.Min(gameplayManager.maxProjectileSpeed, gameplayManager.currentSpeedIncrease), firingDirectionVector, adjacentLauncher);
+        float speedIncrease = gameplayManager.currentSpeedIncrease;
+        if (spawnedIcicle)
+        {
+            speedIncrease = speedIncrease * 2;
+        }
+
+        currentProjectile.GetComponent<Projectile>().InitializeProjectile(Mathf.Min(gameplayManager.maxProjectileSpeed, speedIncrease), firingDirectionVector, adjacentLauncher);
     }
 }
 

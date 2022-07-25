@@ -121,8 +121,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rigidBody: {fileID: 2101283796660733792}
   moveSpeed: 10
-  shieldPowerup: 0
-  slowPowerup: 0
+  powerupType: 0
+  icicle: 1
 --- !u!50 &2101283796660733792
 Rigidbody2D:
   serializedVersion: 4

@@ -7,6 +7,7 @@ public class Projectile : MonoBehaviour
 	public Rigidbody2D rigidBody;
 	public float moveSpeed;
 	public PowerupType powerupType;
+	public bool icicle;
 	
 	private ProjectileLauncher launcherTarget;
 	private Vector2 moveDirection;

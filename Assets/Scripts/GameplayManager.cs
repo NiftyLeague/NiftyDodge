@@ -11,11 +11,12 @@ public class GameplayManager : MonoBehaviour
 
 	public MenuManager menuManager;
 	public AudioManager audioManager;
+	public DialogueManager dialogueManager;
 	public Character playerCharacter;
 	public PlayerController playerController;
 	[Space]
 	public ObscuredInt lives = 3;
-	public ObscuredInt wave = 1;
+	public ObscuredInt wave;
 	public ObscuredInt score;
 	public ObscuredFloat timePlayed;
 	public ObscuredInt totalProjectiles;
@@ -25,6 +26,7 @@ public class GameplayManager : MonoBehaviour
 	public CameraShake cameraShake;
 	[Space]
 	public List<SpriteRenderer> playerLifePips;
+	public TextMeshProUGUI waveText;
 	public TextMeshProUGUI scoreText;
 	//public TextMeshProUGUI invincibilityPowerupTimerText;
 	//public TextMeshProUGUI slowPowerupTimerText;
@@ -56,10 +58,11 @@ public class GameplayManager : MonoBehaviour
 	public TweenEaseType textTweenType;
 	public ObscuredFloat textTweenDuration;
 	public Vector2 textDisplayTimeRange;
-	public ObscuredBool hasGameEnded;
+	public ObscuredBool hasGameEnded = true;
 	public Vector2 newProjectileTimeRange;
 	public ObscuredFloat powerupSpawnChance = 0.05f;
 	public ObscuredFloat slowPowerupProjectileSpeed = 2f;
+	public ObscuredFloat waveTimeLength = 60;
 	[Space]
 	public bool godMode;
 
@@ -69,6 +72,7 @@ public class GameplayManager : MonoBehaviour
 
 	ObscuredFloat invincibilityPowerupTimer;
 	ObscuredFloat slowPowerupTimer;
+	ObscuredFloat waveTimer;
 
 	float invincibilityIconFlasher;
 	float slowIconFlasher;
@@ -85,7 +89,6 @@ public class GameplayManager : MonoBehaviour
 
 	void Start()
 	{
-		UpdateScoreText();
 		ResetEverythingForANewGame();
 		menuManager.menuPanel.SetActive(false);
 	}
@@ -176,6 +179,28 @@ public class GameplayManager : MonoBehaviour
 
 			//slowPowerupTimerText.text = slowPowerupTimer.ToString("0.0");
 		}
+
+		waveTimer += Time.deltaTime;
+
+		if (waveTimer >= waveTimeLength)
+		{
+			SetUpNextWave();
+		}
+	}
+
+	public void SetUpNextWave()
+	{
+		wave++;
+		waveTimer = 0;
+		StopAllLaunchers();
+		hasGameEnded = true;
+		waveText.text = "WAVE " + wave.ToString("0");
+		dialogueManager.StartADialogue();
+	}
+
+	public void StartNextWave()
+	{
+		hasGameEnded = false;
 	}
 
 	public void ScorePoint(int amount)
@@ -230,6 +255,20 @@ public class GameplayManager : MonoBehaviour
 		cameraShake.Shake(0.5f, 5);
 		IncreaseSpeed(true);
 
+		StopAllLaunchers();
+
+		playerCharacter.Lose();
+		menuManager.UpdateLeaderboards();
+		//EventController.AddMatchEnd(PlayerSpriteManager.lastDegenIdUsed);
+
+		StartCoroutine(PlayGameOverScreen());
+
+		//Analytics.SendPlayerEvent("EndMatch", new Dictionary<string, string>() { { "Score", score.ToString() } });
+
+	}
+
+	void StopAllLaunchers()
+	{
 		foreach (ProjectileLauncher launcher in projectileLaunchers)
 		{
 			launcher.Reset();
@@ -240,15 +279,6 @@ public class GameplayManager : MonoBehaviour
 		{
 			projectileInExistence.DestroyProjectile(false);
 		}
-
-		playerCharacter.Lose();
-		menuManager.UpdateLeaderboards();
-		//EventController.AddMatchEnd(PlayerSpriteManager.lastDegenIdUsed);
-
-		StartCoroutine(PlayGameOverScreen());
-
-		//Analytics.SendPlayerEvent("EndMatch", new Dictionary<string, string>() { { "Score", score.ToString() } });
-
 	}
 
 	public void Explosion(Vector3 position)
@@ -273,7 +303,8 @@ public class GameplayManager : MonoBehaviour
 		xp = 0;
 		timePlayed = 0;
 
-		wave = 1;
+		wave = 0;
+		waveTimer = 0;
 		lives = 3;
 		UpdateLives();
 
@@ -282,11 +313,10 @@ public class GameplayManager : MonoBehaviour
 
 		menuManager.ResetLeaderboardDisplay();
 
-		hasGameEnded = false;
-
 		playerCharacter.UnLose();
 
 		UpdateScoreText();
+		SetUpNextWave();
 		//Analytics.SendPlayerEvent("StartMatch");
 	}
 
@@ -299,6 +329,12 @@ public class GameplayManager : MonoBehaviour
 
 		lives--;
 		UpdateLives();
+
+		if (lives == 1)
+		{
+			audioManager.PlaySound("AlmostDead");
+		}
+
 		if (lives <= 0)
 		{
 			audioManager.PlaySound("Lose");
@@ -462,6 +498,11 @@ public class GameplayManager : MonoBehaviour
 
 	IEnumerator FireNextProjectile()
 	{
+		if (hasGameEnded)
+		{
+			yield break;
+		}
+
 		if (firingAProjectile)
 		{
 			yield break;
@@ -484,6 +525,12 @@ public class GameplayManager : MonoBehaviour
 			{
 				launchersToChooseFrom.Add(launcher);
 			}
+		}
+
+		if (hasGameEnded)
+		{
+			firingAProjectile = false;
+			yield break;
 		}
 
 		launchersToChooseFrom[Random.Range(0, launchersToChooseFrom.Count)].CommenceLaunch();

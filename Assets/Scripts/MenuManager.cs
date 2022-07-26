@@ -20,6 +20,8 @@ public class MenuManager : Singleton<MenuManager>
 	public int currentMenu;
 	public int currentMenuOption;
 	public List<TextMeshProUGUI> menuTexts;
+	private TextMeshProUGUI currentSelectedMenu;
+	private float currentSelectedMenuColor;
 	[Space]
 	public RectTransform menuCursor;
 	public GameObject menuPanel;
@@ -111,6 +113,8 @@ public class MenuManager : Singleton<MenuManager>
 		{
 			StartCoroutine(SelectOption());
 		}
+
+		//currentSelectedMenu
 	}
 
 	public void SetMenuEnabled(bool enabled)
@@ -159,6 +163,8 @@ public class MenuManager : Singleton<MenuManager>
 	void SetSelectedMenuOption()
 	{
 		menuCursor.anchoredPosition = new Vector2(menuCursor.anchoredPosition.x, menuTexts[currentMenuOption].rectTransform.anchoredPosition.y + menuCursorYOffset);
+		//foreach(
+		//currentSelectedMenu = menuTexts[currentMenuOption];
 	}
 
 	void ResetMenuOptions()

@@ -45,6 +45,7 @@ public class Character : MonoBehaviour
     public ObscuredBool hasLost;
 
     public AudioManager audioManager;
+    public PlayerController playerController;
     public ProjectileHitter projectileHitter;
 
     int facingDir = 1;
@@ -403,6 +404,10 @@ public class Character : MonoBehaviour
         {
             attackDir = facingDir * Vector2.right;
             attackChargeCounter += t;
+            if (attackChargeM >= 1)
+            {
+                playerController.CommenceChargeEffect();
+            }
             if (input.up)
             {
                 if (!input.left && !input.right)
@@ -454,29 +459,29 @@ public class Character : MonoBehaviour
             attackTimeLeft = attackTime;
             if (attackChargeM > 0.5f)
             {
-                attackDir = new Vector2(attackDir.x, 0);
-                EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 3f + Vector3.up * 0.2f, attackDir);
+                //attackDir = new Vector2(attackDir.x, 0);
+                //EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 3f + Vector3.up * 0.2f, attackDir);
 
-                //if (attackDir == Vector2.left || attackDir == Vector2.right)
-                //{
-                //    EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 3f + Vector3.up * 0.2f, attackDir);
-                //}
-                //else if (attackDir == Vector2.up)
-                //{
-                //    EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 3.75f, attackDir);
-                //}
-                //else if (attackDir == Vector2.down)
-                //{
-                //    EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 2.75f, attackDir);
-                //}
-                //else if (attackDir.y > 0f)
-                //{
-                //    EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 2.75f, attackDir);
-                //}
-                //else
-                //{
-                //    EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 2.75f, attackDir);
-                //}
+                if (attackDir == Vector2.left || attackDir == Vector2.right)
+                {
+                    EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 3f + Vector3.up * 0.2f, attackDir);
+                }
+                else if (attackDir == Vector2.up)
+                {
+                    EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 3.75f, attackDir);
+                }
+                else if (attackDir == Vector2.down)
+                {
+                    EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 2.75f, attackDir);
+                }
+                else if (attackDir.y > 0f)
+                {
+                    EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 2.75f, attackDir);
+                }
+                else
+                {
+                    EffectsController.CreateShingEffect(Center + (Vector3)attackDir * 2.75f, attackDir);
+                }
             }
 
         }
@@ -1556,7 +1561,7 @@ public class Character : MonoBehaviour
 
     public void Lose()
     {
-        transform.position = new Vector2(transform.position.x, -5f);
+        transform.position = new Vector2(transform.position.x, -4.8f);
         hasLost = true;
         velocity.x = 0;
         onGround = true;

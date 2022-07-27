@@ -8,13 +8,18 @@ public class PlayerController : MonoBehaviour
 	public GameplayManager gameplayManager;
 	public Transform playerTransform;
 	public SpriteRenderer playerSpriteRenderer;
+	public SpriteRenderer chargeEffectSpriteRenderer;
+	public GameObject chargeEffectClouds;
 
 	private bool canGetHit = true;
 	private InputState input = new InputState();
 
+	bool canPlayChargeEffect = true;
+
 	private void Start()
 	{
 		PlayerSpriteManager.I.SetCharacterSprites();
+		ChargeEffectReset();
 	}
 
 	void FixedUpdate()
@@ -37,7 +42,13 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	IEnumerator HurtFlash()
+    private void Update()
+    {
+		chargeEffectSpriteRenderer.sprite = playerSpriteRenderer.sprite;
+		chargeEffectSpriteRenderer.transform.localScale = playerSpriteRenderer.transform.localScale;
+	}
+
+    IEnumerator HurtFlash()
 	{
 		canGetHit = false;
 
@@ -55,6 +66,49 @@ public class PlayerController : MonoBehaviour
 	public void AnimateHurtFlash()
 	{
 		StartCoroutine(HurtFlash());
+	}
+
+	public void CommenceChargeEffect()
+	{
+		if (!canPlayChargeEffect)
+		{
+			return;
+		}
+		gameplayManager.audioManager.PlaySound("ChargedHitIndicator");
+		canPlayChargeEffect = false;
+		chargeEffectClouds.SetActive(true);
+		StartCoroutine(ChargeEffect());
+	}
+
+	public void ChargeEffectReset()
+	{
+		canPlayChargeEffect = true;
+		chargeEffectClouds.SetActive(false);
+	}
+
+	IEnumerator ChargeEffect()
+	{
+		float a = 0;
+		float b = 1;
+
+		Tween<float> alphaTween = new Tween<float>(a, b, 0.1f, TweenEaseType.CubicIn);
+
+		while (!alphaTween.IsEnded())
+		{
+			yield return new WaitForEndOfFrame();
+			chargeEffectSpriteRenderer.color = new Color(1, 1, 1, alphaTween.Update(Time.deltaTime));
+		}
+
+		a = 1;
+		b = 0;
+
+		alphaTween = new Tween<float>(a, b, 0.2f, TweenEaseType.CubicIn);
+
+		while (!alphaTween.IsEnded())
+		{
+			yield return new WaitForEndOfFrame();
+			chargeEffectSpriteRenderer.color = new Color(1, 1, 1, alphaTween.Update(Time.deltaTime));
+		}
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision)

@@ -1,16 +1,18 @@
 using UnityEngine;
+using System.Collections;
 
 public class ProjectileHitter : MonoBehaviour
 {
 	public GameplayManager gameplayManager;
 	public AudioManager audioManager;
+	public PlayerController playerController;
 	public Character playerCharacter;
-	public Collider2D hitCollider;
+	public Collider2D hitCollider; 
 	float hitterTimer;
 	float currentChargeAmount;
 
 	TurnDirection currentTurnDirection = TurnDirection.Right;
-	Vector2 hitDirection;
+	//Vector2 hitDirection;
 
     private void Start()
     {
@@ -39,43 +41,42 @@ public class ProjectileHitter : MonoBehaviour
 		}
 
 		float attackDirectionX = 0;
-		float hitDirectionX = 0;
 		switch (currentTurnDirection)
 		{
 			case TurnDirection.Left:
 				attackDirectionX = -1f;
-				hitDirectionX = -0.5f;
 				break;
 			case TurnDirection.Right:
 				attackDirectionX = 1f;
-				hitDirectionX = 0.5f;
 				break;
 		}
 
-		float hitDirectionY = 0;
 		switch (attackDirection)
 		{
 			case HitterDirection.Up:
 				transform.localPosition = new Vector2(0, 1.3f);
 				transform.localEulerAngles = new Vector3(0, 0, 90);
-				hitDirectionX = hitDirectionX / 4;
-				hitDirectionY = 1;
 				break;
 			case HitterDirection.Forward:
 				transform.localPosition = new Vector2(attackDirectionX, -1.15f);
 				transform.localEulerAngles = new Vector3(0, 0, 0);
-				hitDirectionX = hitDirectionX * 2;
-				hitDirectionY = 0.5f;
 				break;
-			case HitterDirection.Diagonal:
+			case HitterDirection.DiagonalUp:
 				transform.localPosition = new Vector2(attackDirectionX * 1.2f, 0.6f);
 				transform.localEulerAngles = new Vector3(0, 0, attackDirectionX * 45);
-				hitDirectionY = 0.7f;
+				break;
+			case HitterDirection.DiagonalDown:
+				transform.localPosition = new Vector2(attackDirectionX * 1.2f, -2f);
+				transform.localEulerAngles = new Vector3(0, 0, attackDirectionX * -45);
+				break;
+			case HitterDirection.Down:
+				transform.localPosition = new Vector2(0, -1.8f);
+				transform.localEulerAngles = new Vector3(0, 0, 90);
 				break;
 		}
 		currentChargeAmount = 1 + (playerCharacter.attackChargeM / 2);
-		hitDirection = new Vector2(hitDirectionX, hitDirectionY);
 		hitterTimer = 0;
+		playerController.ChargeEffectReset();
 		gameObject.SetActive(true);
 	}
 
@@ -115,6 +116,7 @@ public class ProjectileHitter : MonoBehaviour
 			}
 			projectile.DestroyProjectile();
 			gameplayManager.ScorePoint((int)(1 + playerCharacter.attackChargeM));
+			audioManager.PlaySound("ProjectileHit");
 			EffectsController.CreateHitEffect(collision.transform.position, currentChargeAmount / 10, false);
             gameplayManager.cameraShake.Shake(0.2f * currentChargeAmount, 1);
         }
@@ -125,7 +127,9 @@ public enum HitterDirection
 {
 	Forward,
 	Up,
-	Diagonal,
+	DiagonalUp,
+	DiagonalDown,
+	Down,
 }
 
 enum TurnDirection

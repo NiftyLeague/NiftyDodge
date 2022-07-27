@@ -371,8 +371,6 @@ public class CharacterAnimator : MonoBehaviour
         {
             RunAnimation(attackCharge, Mathf.Lerp(0.2f, chargeSpeedTarget, character.attackChargeM));
         }
-
-        //RunAnimation(attackCharge, Mathf.Lerp(0.2f, chargeSpeedTarget, character.attackChargeM));
     }
     bool wasBurp;
     void AnimateTongue()
@@ -454,18 +452,18 @@ public class CharacterAnimator : MonoBehaviour
         else if (ad == AttackDirection.DiagonalUp)
         {
             RunAnimation(attackDiagUp, 0.05f, true);
-            character.projectileHitter.TurnOn(HitterDirection.Diagonal);
+            character.projectileHitter.TurnOn(HitterDirection.DiagonalUp);
         }
         else if (ad == AttackDirection.Down)
         {
             RunAnimation(attackDown, 0.05f, true);
-            character.projectileHitter.TurnOn(HitterDirection.Forward);
+            character.projectileHitter.TurnOn(HitterDirection.Down);
 
         }
         else if (ad == AttackDirection.DownForward)
         {
             RunAnimation(attackDownForward, 0.05f, true);
-            character.projectileHitter.TurnOn(HitterDirection.Forward);
+            character.projectileHitter.TurnOn(HitterDirection.DiagonalDown);
         }
         else
         {

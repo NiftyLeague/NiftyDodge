@@ -26,6 +26,7 @@ public class GameplayManager : MonoBehaviour
 	public CameraShake cameraShake;
 	[Space]
 	public List<SpriteRenderer> playerLifePips;
+	public GameObject playerInfo;
 	public TextMeshProUGUI waveText;
 	public TextMeshProUGUI scoreText;
 	//public TextMeshProUGUI invincibilityPowerupTimerText;
@@ -195,11 +196,13 @@ public class GameplayManager : MonoBehaviour
 		StopAllLaunchers();
 		hasGameEnded = true;
 		waveText.text = "WAVE " + wave.ToString("0");
+		playerInfo.SetActive(false);
 		dialogueManager.StartADialogue();
 	}
 
 	public void StartNextWave()
 	{
+		playerInfo.SetActive(true);
 		hasGameEnded = false;
 	}
 

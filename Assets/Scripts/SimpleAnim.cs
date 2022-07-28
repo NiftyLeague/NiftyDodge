@@ -16,7 +16,7 @@ public class SimpleAnim : MonoBehaviour
 	private SpriteRenderer sr;
 	private Image img;
 	private bool ping = true;
-
+	private int currentFrame;
 
 	private void Awake()
 	{
@@ -78,8 +78,8 @@ public class SimpleAnim : MonoBehaviour
 					frame = 0;
 				}
 			}
-
-			SetFrame(frames[frame % frames.Length]);
+			currentFrame = frame % frames.Length;
+			SetFrame(frames[currentFrame]);
 			if (playOnce && frame >= frames.Length)
 			{
 				if (disableAfterPlayOnce)
@@ -106,5 +106,10 @@ public class SimpleAnim : MonoBehaviour
 			img.sprite = sprite;
 			img.enabled = sprite != null;
 		}
+	}
+
+	public int GetCurrentFrame()
+	{
+		return currentFrame;
 	}
 }

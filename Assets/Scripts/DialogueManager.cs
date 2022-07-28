@@ -9,20 +9,18 @@ public class DialogueManager : MonoBehaviour
 {
 	public GameplayManager gameplayManager;
 	public AudioManager audioManager;
+	public PengweevilController pengweevilController;
 	[Space]
 	public RectTransform dialogueBox;
-	public Transform dialogueBoxSprite;
 	public int offScreenAnchorY;
 	public int onScreenAnchorY;
 	[Space]
 	public SimpleAnim faceBoxAnimation1;
 	public Image faceBoxImage1;
 	public Sprite faceDefaultSprite1;
-	public GameObject nameTag1;
 	public SimpleAnim faceBoxAnimation2;
 	public Image faceBoxImage2;
 	public Sprite faceDefaultSprite2;
-	public GameObject nameTag2;
 	[Space]
 	public TextMeshProUGUI dialogueText;
 	public float textTypeSpeed;
@@ -63,11 +61,21 @@ public class DialogueManager : MonoBehaviour
 		if (textTypeTimer >= 1 && !waitingForNextText)
 		{
 			currentLetter++;
-			audioManager.PlaySound("DialogueLetterType");
+			if (currentDialogue == 1)
+			{
+				audioManager.PlaySound("PengLetterType");
+			}
+			else
+			{
+				audioManager.PlaySound("WeevilLetterType");
+			}
+			
 			if (currentLetter >= dialogueSetList[currentDialogueSet].speechString[currentDialogue].Length)
 			{
 				currentLetter = dialogueSetList[currentDialogueSet].speechString[currentDialogue].Length;
 				waitingForNextText = true;
+
+				pengweevilController.SetSpriteState(PengweevilSpriteState.Walk);
 			}
 			textTypeTimer = 0;
 		}
@@ -77,12 +85,13 @@ public class DialogueManager : MonoBehaviour
 			ProgressDialogue();
 		}
 
-		dialogueText.text = dialogueSetList[currentDialogueSet].speechString[currentDialogue].Substring(0, currentLetter);
+		dialogueText.text = dialogueSetList[currentDialogueSet].speechString[currentDialogue];
+		dialogueText.maxVisibleCharacters = currentLetter;
 	}
 
 	public void StartADialogue()
 	{
-		StartCoroutine(StartDialogue());
+		StartCoroutine(pengweevilController.JumpOntoStage());
 	}
 
 	void ProgressDialogue()
@@ -102,11 +111,16 @@ public class DialogueManager : MonoBehaviour
 			}
 			StartCoroutine(EndDialogue());
 		}
+		else
+		{
+			SetTalkingPenguinHead();
+		}
 	}
 
-	IEnumerator StartDialogue()
+	public IEnumerator StartDialogue()
 	{
 		dialogueText.text = "";
+
 		FaceBoxStop();
 		dialogueBox.anchoredPosition = new Vector3(dialogueBox.anchoredPosition.x, offScreenAnchorY, 0);
 		dialogueBox.gameObject.SetActive(true);
@@ -127,11 +141,16 @@ public class DialogueManager : MonoBehaviour
 		}
 
 		FaceBoxPlay();
+		SetTalkingPenguinHead();
 	}
 
 	IEnumerator EndDialogue()
 	{
 		dialogueHasEnded = true;
+
+		faceBoxImage1.gameObject.SetActive(false);
+		faceBoxImage2.gameObject.SetActive(false);
+
 		Tween<float> xPositionTween = new Tween<float>(onScreenAnchorY, offScreenAnchorY, 1, TweenEaseType.CubicIn);
 
 		while (!xPositionTween.IsEnded())
@@ -141,9 +160,10 @@ public class DialogueManager : MonoBehaviour
 		}
 
 		dialogueBox.gameObject.SetActive(false);
-		nameTag1.SetActive(false);
-		nameTag2.SetActive(false);
-		dialogueBoxSprite.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
+
+		StartCoroutine(pengweevilController.JumpOffOfStage());
+
+		yield return new WaitForSeconds(2);
 
 		gameplayManager.StartNextWave();
 	}
@@ -154,17 +174,27 @@ public class DialogueManager : MonoBehaviour
 		{
 			faceBoxAnimation1.enabled = false;
 			faceBoxAnimation2.enabled = true;
-			nameTag1.SetActive(false);
-			nameTag2.SetActive(true);
-			dialogueBoxSprite.transform.localScale = new Vector3(-0.05f, 0.05f, 0.05f);
+			faceBoxImage1.gameObject.SetActive(false);
+			faceBoxImage2.gameObject.SetActive(true);
 		}
 		else
 		{
 			faceBoxAnimation1.enabled = true;
 			faceBoxAnimation2.enabled = false;
-			nameTag1.SetActive(true);
-			nameTag2.SetActive(false);
-			dialogueBoxSprite.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
+			faceBoxImage1.gameObject.SetActive(true);
+			faceBoxImage2.gameObject.SetActive(false);
+		}
+	}
+
+	void SetTalkingPenguinHead()
+	{
+		if (currentDialogue == 1)
+		{
+			pengweevilController.SetSpriteState(PengweevilSpriteState.WalkAndTalkPeng);
+		}
+		else
+		{
+			pengweevilController.SetSpriteState(PengweevilSpriteState.WalkAndTalkWeevil);
 		}
 	}
 

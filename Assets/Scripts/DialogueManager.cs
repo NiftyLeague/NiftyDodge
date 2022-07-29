@@ -21,6 +21,7 @@ public class DialogueManager : MonoBehaviour
 	public SimpleAnim faceBoxAnimation2;
 	public Image faceBoxImage2;
 	public Sprite faceDefaultSprite2;
+	public GameObject skipDialogueButtonPrompt;
 	[Space]
 	public TextMeshProUGUI dialogueText;
 	public float textTypeSpeed;
@@ -35,9 +36,18 @@ public class DialogueManager : MonoBehaviour
 	private bool getRandomDialogue;
 	public List<DialogueTextEntry> dialogueSetList;
 
+	private InputState input = new InputState();
+
 	void Update()
 	{
 		UpdateTextBox();
+
+		InputReader.GetInput(input);
+
+		if (input.PressedA && !dialogueHasEnded)
+		{
+			currentLetter = dialogueSetList[currentDialogueSet].speechString[currentDialogue].Length;
+		}
 	}
 
 	void UpdateTextBox()
@@ -74,7 +84,7 @@ public class DialogueManager : MonoBehaviour
 			{
 				currentLetter = dialogueSetList[currentDialogueSet].speechString[currentDialogue].Length;
 				waitingForNextText = true;
-
+				skipDialogueButtonPrompt.SetActive(false);
 				pengweevilController.SetSpriteState(PengweevilSpriteState.Walk);
 			}
 			textTypeTimer = 0;
@@ -196,6 +206,8 @@ public class DialogueManager : MonoBehaviour
 		{
 			pengweevilController.SetSpriteState(PengweevilSpriteState.WalkAndTalkWeevil);
 		}
+
+		skipDialogueButtonPrompt.SetActive(true);
 	}
 
 	void FaceBoxStop()

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
+	public GameObject snowballBreakage;
 	public Rigidbody2D rigidBody;
 	public float moveSpeed;
 	public PowerupType powerupType;
@@ -71,7 +72,8 @@ public class Projectile : MonoBehaviour
 
 		if (withExplosion)
 		{
-			//launcherTarget.gameplayManager.Explosion(transform.position);
+			var newSnowballBreakage = Instantiate(snowballBreakage, GameplayManager.I.transform);
+			newSnowballBreakage.transform.position = transform.position;
 		}
 
 		Destroy(gameObject);

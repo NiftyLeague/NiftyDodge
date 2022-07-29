@@ -24,11 +24,6 @@ public class PengweevilController : MonoBehaviour
     private bool isWalking;
     private bool canPlayWalkSound = true;
 
-    void Start()
-    {
-        SetSpriteState(PengweevilSpriteState.Idle);
-    }
-
     void Update()
     {
         if (pengweevilTransform.position.x < -10)

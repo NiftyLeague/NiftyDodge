@@ -20,17 +20,18 @@ public class GameplayManager : MonoBehaviour
 	public ObscuredInt score;
 	public ObscuredFloat timePlayed;
 	public ObscuredInt totalProjectiles;
+	public ObscuredInt projectilesHit;
+	public ObscuredInt powerupsCollected;
 	public ObscuredInt xp;
 	[Space]
 	public ObscuredFloat currentSpeedIncrease;
 	public CameraShake cameraShake;
 	[Space]
 	public List<SpriteRenderer> playerLifePips;
+	public GameObject playerLifePipsMax;
 	public GameObject playerInfo;
 	public TextMeshProUGUI waveText;
 	public TextMeshProUGUI scoreText;
-	//public TextMeshProUGUI invincibilityPowerupTimerText;
-	//public TextMeshProUGUI slowPowerupTimerText;
 	public TextMeshProUGUI gameOverStatNamesText;
 	public TextMeshProUGUI gameOverStatNumbersText;
 	public GameObject gameOverSkipPrompt;
@@ -204,6 +205,7 @@ public class GameplayManager : MonoBehaviour
 	{
 		playerInfo.SetActive(true);
 		hasGameEnded = false;
+		IncreaseSpeed(true);
 	}
 
 	public void ScorePoint(int amount)
@@ -262,6 +264,8 @@ public class GameplayManager : MonoBehaviour
 
 		playerCharacter.Lose();
 		menuManager.UpdateLeaderboards();
+		playerLifePipsMax.SetActive(false);
+		waveText.gameObject.SetActive(false);
 		//EventController.AddMatchEnd(PlayerSpriteManager.lastDegenIdUsed);
 
 		StartCoroutine(PlayGameOverScreen());
@@ -305,6 +309,9 @@ public class GameplayManager : MonoBehaviour
 		score = 0;
 		xp = 0;
 		timePlayed = 0;
+		totalProjectiles = 0;
+		projectilesHit = 0;
+		powerupsCollected = 0;
 
 		wave = 0;
 		waveTimer = 0;
@@ -315,6 +322,8 @@ public class GameplayManager : MonoBehaviour
 		gameOverStatNumbersText.text = "";
 
 		menuManager.ResetLeaderboardDisplay();
+		playerLifePipsMax.SetActive(true);
+		waveText.gameObject.SetActive(true);
 
 		playerCharacter.UnLose();
 
@@ -385,13 +394,12 @@ public class GameplayManager : MonoBehaviour
 	public void EnablePowerup(PowerupType powerupType)
 	{
 		audioManager.PlaySound("PowerupGet");
-
+		powerupsCollected++;
 		switch (powerupType)
 		{
 			case PowerupType.Invinicibility:
 				invincibilityPowerupTimer = 10;
 				invincibilityPowerupOnCharacter.gameObject.SetActive(true);
-				//invincibilityPowerupTimerText.gameObject.SetActive(true);
 				break;
 			case PowerupType.Lifeup:
 				GainLife();
@@ -402,7 +410,6 @@ public class GameplayManager : MonoBehaviour
 			case PowerupType.Slow:
 				slowPowerupTimer = 10;
 				slowPowerupOnCharacter.gameObject.SetActive(true);
-				//slowPowerupTimerText.gameObject.SetActive(true);
 				break;
 		}
 	}
@@ -416,12 +423,10 @@ public class GameplayManager : MonoBehaviour
 			case PowerupType.Invinicibility:
 				invincibilityPowerupTimer = 0;
 				invincibilityPowerupOnCharacter.gameObject.SetActive(false);
-				//invincibilityPowerupTimerText.gameObject.SetActive(false);
 				break;
 			case PowerupType.Slow:
 				slowPowerupTimer = 0;
 				slowPowerupOnCharacter.gameObject.SetActive(false);
-				//slowPowerupTimerText.gameObject.SetActive(false);
 				break;
 		}
 	}
@@ -448,18 +453,21 @@ public class GameplayManager : MonoBehaviour
 		float minutesPlayed = timePlayed / 60;
 		float hoursPlayed = timePlayed / 60 / 60;
 
-		string statNames = "SCORE\nTIME PLAYED\nTOTAL BALLs\nHITS\nMISSES";
-		string statValeues = score.ToString("0") + "\n" + hoursPlayed.ToString("0") + ":" + minutesPlayed.ToString("00") + ":" + secondsPlayed.ToString("00") + "\n";
-		statValeues += totalProjectiles.ToString("0");
+		string statNames = "SCORE\nTIME PLAYED\nWAVES\nTOTAL PROJECTILES\nPROJECTILES HIT\nPOWERUPS COLLECTED";
+		string statValues = score.ToString("0") + "\n" + hoursPlayed.ToString("0") + ":" + minutesPlayed.ToString("00") + ":" + secondsPlayed.ToString("00");
+		statValues += "\n" + wave.ToString("0");
+		statValues += "\n" + totalProjectiles.ToString("0");
+		statValues += "\n" + projectilesHit.ToString("0");
+		statValues += "\n" + powerupsCollected.ToString("0");
 
 		if (xp > 0)
 		{
 			statNames += "\nXP";
-			statValeues += "\n+" + xp.ToString("0");
+			statValues += "\n+" + xp.ToString("0");
 		}
 
 		gameOverStatNamesText.text = statNames.ToUpper();
-		gameOverStatNumbersText.text = statValeues.ToUpper();
+		gameOverStatNumbersText.text = statValues.ToUpper();
 		yield return new WaitUntil(() => gameOverTimer2 <= 0);
 
 		gameOverSkipPrompt.SetActive(false);

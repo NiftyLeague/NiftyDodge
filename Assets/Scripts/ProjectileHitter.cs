@@ -116,6 +116,7 @@ public class ProjectileHitter : MonoBehaviour
 			}
 			projectile.DestroyProjectile();
 			gameplayManager.ScorePoint((int)(1 + playerCharacter.attackChargeM));
+			gameplayManager.projectilesHit++;
 			audioManager.PlaySound("ProjectileHit");
 			EffectsController.CreateHitEffect(collision.transform.position, currentChargeAmount / 10, false);
             gameplayManager.cameraShake.Shake(0.2f * currentChargeAmount, 1);

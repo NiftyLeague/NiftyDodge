@@ -7,6 +7,7 @@ public class ProjectileLauncher : MonoBehaviour
     public ProjectileLauncher adjacentLauncher;
     [HideInInspector] public bool cantLaunch;
     public GameplayManager gameplayManager;
+    public CameraShake shaker;
     public FiringDirection firingDirection;
     public SpriteRenderer spriteRenderer;
     public Sprite idleSprite;
@@ -159,6 +160,7 @@ public class ProjectileLauncher : MonoBehaviour
     private void FireProjectile()
     {
         bool spawnedIcicle = false;
+        shaker.Shake(0.2f, 10);
 
         if (Random.value <= gameplayManager.powerupSpawnChance)
         {

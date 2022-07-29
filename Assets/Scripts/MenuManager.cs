@@ -20,10 +20,7 @@ public class MenuManager : Singleton<MenuManager>
 	public int currentMenu;
 	public int currentMenuOption;
 	public List<TextMeshProUGUI> menuTexts;
-	private TextMeshProUGUI currentSelectedMenu;
-	private float currentSelectedMenuColor;
 	[Space]
-	public RectTransform menuCursor;
 	public GameObject menuPanel;
 	public GameObject tokensPanel;
 	public GameObject purchaseTokensPanel;
@@ -40,6 +37,7 @@ public class MenuManager : Singleton<MenuManager>
 	private Vector2 tokenPanelStartPosition;
 	[Space]
 	public Color32 optionColorDefault;
+	public Color32 optionColorSelected;
 	public Color32 optionColorPressed;
 	[Space]
 	public TextMeshProUGUI leaderboardTitleText;
@@ -162,9 +160,14 @@ public class MenuManager : Singleton<MenuManager>
 
 	void SetSelectedMenuOption()
 	{
-		menuCursor.anchoredPosition = new Vector2(menuCursor.anchoredPosition.x, menuTexts[currentMenuOption].rectTransform.anchoredPosition.y + menuCursorYOffset);
-		//foreach(
-		//currentSelectedMenu = menuTexts[currentMenuOption];
+		//menuCursor.anchoredPosition = new Vector2(menuCursor.anchoredPosition.x, menuTexts[currentMenuOption].rectTransform.anchoredPosition.y + menuCursorYOffset);
+		foreach (TextMeshProUGUI menuText in menuTexts)
+		{
+			menuText.color = optionColorDefault;
+			menuText.transform.localScale = new Vector3(0.1f, 0.09f, 0.1f);
+		}
+		menuTexts[currentMenuOption].color = optionColorSelected;
+		menuTexts[currentMenuOption].transform.localScale = new Vector3(0.11f, 0.10f, 0.1f);
 	}
 
 	void ResetMenuOptions()

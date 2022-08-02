@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: d0f4ba26bf513d040aee1cc24daddd8a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 83cfdede32233cb42b310944f9d34c21, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -103,10 +103,10 @@ MonoBehaviour:
   shaker: {fileID: 1938367174057810086}
   firingDirection: 0
   spriteRenderer: {fileID: 7554132436565314288}
-  idleSprite: {fileID: 21300000, guid: d0f4ba26bf513d040aee1cc24daddd8a, type: 3}
-  activeSprite: {fileID: 21300000, guid: 4a7fa23f413f5914496e1b8f8fe6bcec, type: 3}
-  fireSprite: {fileID: 21300000, guid: 7face706c2dabca4a8ed41967d25376e, type: 3}
-  receivingSprite: {fileID: 21300000, guid: 42cf3d6232a65af4db44568f441817f6, type: 3}
+  idleSprite: {fileID: 21300000, guid: 83cfdede32233cb42b310944f9d34c21, type: 3}
+  activeSprite: {fileID: 21300000, guid: 71710e0daf577a14b96f8f14f1eb2829, type: 3}
+  fireSprite: {fileID: 21300000, guid: 49ccb00218fc22040abd26468f0948c2, type: 3}
+  receivingSprite: {fileID: 21300000, guid: 969269d27fcdbba4086bd73dae09988b, type: 3}
 --- !u!114 &1938367174057810086
 MonoBehaviour:
   m_ObjectHideFlags: 0

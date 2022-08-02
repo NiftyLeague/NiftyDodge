@@ -29,14 +29,13 @@ public class GameplayManager : MonoBehaviour
 	[Space]
 	public List<SpriteRenderer> playerLifePips;
 	public GameObject playerLifePipsMax;
-	public GameObject playerInfo;
 	public TextMeshProUGUI waveText;
 	public TextMeshProUGUI scoreText;
 	public TextMeshProUGUI gameOverStatNamesText;
 	public TextMeshProUGUI gameOverStatNumbersText;
-	public GameObject gameOverSkipPrompt;
 	public GameObject scoreGainedUIPrefab;
 	public Transform playerCanvas;
+	public Transform[] infoPanels;
 	[Space]
 	public Transform worldTopLimit;
 	public Transform worldBottomLimit;
@@ -78,6 +77,8 @@ public class GameplayManager : MonoBehaviour
 
 	float invincibilityIconFlasher;
 	float slowIconFlasher;
+	float lastHeartPumper;
+	bool lastHeartIsPumping;
 
 	float gameOverTimer1;
 	float gameOverTimer2;
@@ -158,8 +159,6 @@ public class GameplayManager : MonoBehaviour
 				invincibilityIconFlasher = 0;
 				DisablePowerup(PowerupType.Invinicibility);
 			}
-
-			//invincibilityPowerupTimerText.text = invincibilityPowerupTimer.ToString("0.0");
 		}
 
 		if (slowPowerupTimer > 0)
@@ -178,14 +177,19 @@ public class GameplayManager : MonoBehaviour
 				slowIconFlasher = 0;
 				DisablePowerup(PowerupType.Slow);
 			}
+		}
 
-			//slowPowerupTimerText.text = slowPowerupTimer.ToString("0.0");
+		if (lastHeartIsPumping)
+		{
+			lastHeartPumper = Mathf.PingPong(Time.time * 10, 1f);
+			playerLifePips[0].color = new Color(1, 0, 0, lastHeartPumper);
 		}
 
 		waveTimer += Time.deltaTime;
 
 		if (waveTimer >= waveTimeLength)
 		{
+			BringOutPlayerInfo(0);
 			SetUpNextWave();
 		}
 	}
@@ -197,15 +201,51 @@ public class GameplayManager : MonoBehaviour
 		StopAllLaunchers();
 		hasGameEnded = true;
 		waveText.text = "WAVE " + wave.ToString("0");
-		playerInfo.SetActive(false);
 		dialogueManager.StartADialogue();
 	}
 
 	public void StartNextWave()
 	{
-		playerInfo.SetActive(true);
 		hasGameEnded = false;
 		IncreaseSpeed(true);
+	}
+
+	public void BringInPlayerInfo(int panelID)
+	{
+		StartCoroutine(BringInInfoPanelAnimation(panelID));
+	}
+
+	public void BringOutPlayerInfo(int panelID)
+	{
+		StartCoroutine(BringOutInfoPanelAnimation(panelID));
+	}
+
+	IEnumerator BringInInfoPanelAnimation(int panelID)
+	{
+		float a = 15;
+		float b = 0;
+
+		Tween<float> moveTween = new Tween<float>(a, b, 1f, TweenEaseType.CubicIn);
+
+		while (!moveTween.IsEnded())
+		{
+			yield return new WaitForEndOfFrame();
+			infoPanels[panelID].localPosition = new Vector3(0, moveTween.Update(Time.deltaTime), 0);
+		}
+	}
+
+	IEnumerator BringOutInfoPanelAnimation(int panelID)
+	{
+		float a = 0;
+		float b = 15;
+
+		Tween<float> moveTween = new Tween<float>(a, b, 1f, TweenEaseType.CubicOut);
+
+		while (!moveTween.IsEnded())
+		{
+			yield return new WaitForEndOfFrame();
+			infoPanels[panelID].transform.localPosition = new Vector3(0, moveTween.Update(Time.deltaTime), 0);
+		}
 	}
 
 	public void ScorePoint(int amount)
@@ -266,6 +306,7 @@ public class GameplayManager : MonoBehaviour
 		menuManager.UpdateLeaderboards();
 		playerLifePipsMax.SetActive(false);
 		waveText.gameObject.SetActive(false);
+		StartCoroutine(BringOutInfoPanelAnimation(0));
 		//EventController.AddMatchEnd(PlayerSpriteManager.lastDegenIdUsed);
 
 		StartCoroutine(PlayGameOverScreen());
@@ -381,14 +422,15 @@ public class GameplayManager : MonoBehaviour
 
 		if (lives <= 1)
 		{
-			playerLifePips[0].color = Color.red;
 			playerLifePips[0].GetComponent<SimpleAnim>().animSpeed = 0.1f;
 		}
 		else
 		{
-			playerLifePips[0].color = Color.white;
+			playerLifePips[0].color = Color.red;
 			playerLifePips[0].GetComponent<SimpleAnim>().animSpeed = 0.5f;
 		}
+
+		lastHeartIsPumping = lives <= 1;
 	}
 
 	public void EnablePowerup(PowerupType powerupType)
@@ -435,19 +477,19 @@ public class GameplayManager : MonoBehaviour
 	{
 		audioManager.PlaySound("Lose");
 
-		scoreText.text = "GAME OVER";
-
-		gameOverSkipPrompt.SetActive(true);
-
 		gameOverTimer1 = 3;
-		gameOverTimer2 = 3;
+
+		StartCoroutine(BringInInfoPanelAnimation(1));
 
 		yield return new WaitUntil(() => gameOverTimer1 <= 0);
 		//yield return GetMatchResults();
 
-		playerCharacter.StandBackUp();
+		gameOverTimer2 = 3;
 
-		scoreText.text = "";
+		StartCoroutine(BringOutInfoPanelAnimation(1));
+		StartCoroutine(BringInInfoPanelAnimation(2));
+
+		playerCharacter.StandBackUp();
 
 		float secondsPlayed = timePlayed % 60;
 		float minutesPlayed = timePlayed / 60;
@@ -470,10 +512,8 @@ public class GameplayManager : MonoBehaviour
 		gameOverStatNumbersText.text = statValues.ToUpper();
 		yield return new WaitUntil(() => gameOverTimer2 <= 0);
 
-		gameOverSkipPrompt.SetActive(false);
-
-		gameOverStatNamesText.text = "";
-		gameOverStatNumbersText.text = "";
+		StartCoroutine(BringOutInfoPanelAnimation(2));
+		StartCoroutine(BringInInfoPanelAnimation(3));
 
 		menuManager.leaderboardType = 0;
 		menuManager.UpdateLeaderboardDisplay();

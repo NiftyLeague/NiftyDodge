@@ -98,10 +98,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animSpeed: 0.08
   frames:
-  - {fileID: 5072695944415435955, guid: 33d3ec849ac3b0345824078510a69d2e, type: 3}
-  - {fileID: -174118129029806161, guid: 33d3ec849ac3b0345824078510a69d2e, type: 3}
-  - {fileID: 6978412566211555198, guid: 33d3ec849ac3b0345824078510a69d2e, type: 3}
-  - {fileID: 8772526239493684033, guid: 33d3ec849ac3b0345824078510a69d2e, type: 3}
+  - {fileID: 21300000, guid: f0ba5a08a8ff504468f1a6b8e0af3613, type: 3}
+  - {fileID: 21300000, guid: d36713931e590ea47a40c33e59b8cb85, type: 3}
+  - {fileID: 21300000, guid: 3422612ecd26e0141a3000484d4f2203, type: 3}
+  - {fileID: 21300000, guid: 0ed4bcc4b13dbf443867e5fd57d5a483, type: 3}
+  - {fileID: 21300000, guid: dade4fc1c3488ce46b1939712bab6b16, type: 3}
+  - {fileID: 21300000, guid: e871b6b1bfe79bf42b6bc817184743f4, type: 3}
+  - {fileID: 21300000, guid: f07a0ca1b8652ff4f98fd2e685d3927e, type: 3}
   playOnce: 1
   disableAfterPlayOnce: 0
   stayAfterPlayOnce: 0

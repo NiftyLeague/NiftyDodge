@@ -16,10 +16,10 @@ public class DialogueManager : MonoBehaviour
 	public int onScreenAnchorY;
 	[Space]
 	public SimpleAnim faceBoxAnimation1;
-	public Image faceBoxImage1;
+	public SpriteRenderer faceBoxImage1;
 	public Sprite faceDefaultSprite1;
 	public SimpleAnim faceBoxAnimation2;
-	public Image faceBoxImage2;
+	public SpriteRenderer faceBoxImage2;
 	public Sprite faceDefaultSprite2;
 	public GameObject skipDialogueButtonPrompt;
 	[Space]
@@ -173,7 +173,11 @@ public class DialogueManager : MonoBehaviour
 
 		StartCoroutine(pengweevilController.JumpOffOfStage());
 
-		yield return new WaitForSeconds(2);
+		yield return new WaitForSeconds(0.5f);
+
+		gameplayManager.BringInPlayerInfo(0);
+
+		yield return new WaitForSeconds(0.5f);
 
 		gameplayManager.StartNextWave();
 	}

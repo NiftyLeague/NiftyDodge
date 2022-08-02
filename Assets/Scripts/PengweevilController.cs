@@ -54,16 +54,8 @@ public class PengweevilController : MonoBehaviour
         {
             canPlayWalkSound = true;
         }
-    }
 
-    private void LateUpdate()
-    {
-        if (!isWalking)
-        {
-            return;
-        }
-
-        pengweevilTransform.Translate(currentMoveDirection * pengweevilMoveSpeed);
+        pengweevilTransform.Translate((currentMoveDirection * pengweevilMoveSpeed) * Time.deltaTime);
     }
 
     public void SetSpriteState(PengweevilSpriteState spriteState)
@@ -128,15 +120,23 @@ public class PengweevilController : MonoBehaviour
 
         gameplayManager.cameraShake.Shake(0.5f, 5);
 
+        SetSpriteState(PengweevilSpriteState.Land);
+
+        yield return new WaitForSeconds(0.4f);
+
         SetSpriteState(PengweevilSpriteState.Idle);
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.5f);
 
         StartCoroutine(dialogueManager.StartDialogue());
     }
 
     public IEnumerator JumpOffOfStage()
     {
+        SetSpriteState(PengweevilSpriteState.Land);
+
+        yield return new WaitForSeconds(0.4f);
+
         SetSpriteState(PengweevilSpriteState.Jump);
 
         audioManager.PlaySound("PengweevilJump");
@@ -192,6 +192,7 @@ public enum PengweevilSpriteState
     WalkAndTalkWeevil,
     WalkAndTalkPengweevil,
     Jump,
+    Land,
 }
 
 public enum FacingDirection

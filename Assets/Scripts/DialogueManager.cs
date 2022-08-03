@@ -44,8 +44,9 @@ public class DialogueManager : MonoBehaviour
 
 		InputReader.GetInput(input);
 
-		if (input.PressedA && !dialogueHasEnded)
+		if (input.PressedA && !dialogueHasEnded && !waitingForNextText)
 		{
+			audioManager.PlaySound("MenuOptionSelect");
 			currentLetter = dialogueSetList[currentDialogueSet].speechString[currentDialogue].Length;
 		}
 	}

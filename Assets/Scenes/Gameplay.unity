@@ -6698,6 +6698,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1277569668}
   - component: {fileID: 1277569669}
+  - component: {fileID: 1277569670}
   m_Layer: 0
   m_Name: Background Background
   m_TagString: Untagged
@@ -6759,8 +6760,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -10
-  m_Sprite: {fileID: 21300000, guid: 49543046940b3fc438ab4ac43877b42d, type: 3}
+  m_SortingOrder: -11
+  m_Sprite: {fileID: 21300000, guid: b91493b97dacc4544a18ddd2cff1ecdb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -6771,6 +6772,29 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1277569670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1277569667}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1caaa3ec81241d46a98f985efbb358d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animSpeed: 0.1
+  frames:
+  - {fileID: 21300000, guid: b91493b97dacc4544a18ddd2cff1ecdb, type: 3}
+  - {fileID: 21300000, guid: 0e214a04951250141a22993e8831f75d, type: 3}
+  - {fileID: 21300000, guid: bc34e9fc366b6744395e1b9df205c753, type: 3}
+  - {fileID: 21300000, guid: 3893ffcf393524345aed8ca1499df6ea, type: 3}
+  - {fileID: 21300000, guid: 54ec064afbd5be544aabf0b7602062bf, type: 3}
+  playOnce: 0
+  disableAfterPlayOnce: 0
+  stayAfterPlayOnce: 0
+  pingPong: 0
 --- !u!1 &1289273418
 GameObject:
   m_ObjectHideFlags: 0
@@ -8257,7 +8281,7 @@ GameObject:
   - component: {fileID: 1503725566}
   - component: {fileID: 1503725567}
   m_Layer: 0
-  m_Name: Background Background Sky
+  m_Name: Background Background Cloud
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8317,8 +8341,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -11
-  m_Sprite: {fileID: 21300000, guid: 1f55d51a24d23774f8fa0d784e61f7e1, type: 3}
+  m_SortingOrder: -10
+  m_Sprite: {fileID: 21300000, guid: 7067606688ed56b42b08dcd4f945a915, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

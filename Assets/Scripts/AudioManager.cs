@@ -40,7 +40,7 @@ public class AudioManager : MonoBehaviour
         AudioSource soundEffectSource = audioSourcesInSound[UnityEngine.Random.Range(0, audioSourcesInSound.Count)];
         AudioSource currentEffectSource = soundEffectAudioSources[lastAudioSourceUsed];
         currentEffectSource.clip = soundEffectSource.clip;
-        currentEffectSource.pitch = soundEffectSource.pitch;
+        currentEffectSource.pitch = soundEffectSource.pitch + GetPitch(soundDictionary[soundID].pitchVariance);
         currentEffectSource.volume = volume;
         currentEffectSource.Play();
 
@@ -51,10 +51,16 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    private float GetPitch(float variance)
+    {
+        return UnityEngine.Random.Range(-variance, variance);
+    }
+
     [Serializable]
     public class Sound
     {
         public List<AudioSource> audioSources;
+        public float pitchVariance;
         public string soundID;
     }
 }

@@ -26,7 +26,7 @@ public class Projectile : MonoBehaviour
 			rigidBody.velocity = moveDirection * moveSpeed;
 		}
 
-		if (powerupType != PowerupType.None)
+		if (powerupType != PowerupType.None && powerupType != PowerupType.Cupcake)
 		{
 			currentScalePulse = Mathf.PingPong(Time.time * 2, 0.25f);
 			scalePulse = 0.75f + currentScalePulse;
@@ -48,11 +48,6 @@ public class Projectile : MonoBehaviour
 	{
 		this.launcherTarget = launcherTarget;
 		this.moveDirection = moveDirection;
-
-		if (powerupType != PowerupType.None)
-		{
-			return;
-		}
 
 		moveSpeed += speedAmount;
 		if (moveSpeed > 50)
@@ -87,4 +82,5 @@ public enum PowerupType
 	Lifeup,
 	Points,
 	Slow,
+	Cupcake,
 }

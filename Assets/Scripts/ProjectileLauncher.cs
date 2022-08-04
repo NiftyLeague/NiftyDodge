@@ -160,25 +160,36 @@ public class ProjectileLauncher : MonoBehaviour
     private void FireProjectile()
     {
         bool spawnedIcicle = false;
+        float speedIncrease = gameplayManager.currentSpeedIncrease;
         shaker.Shake(0.2f, 10);
 
-        if (Random.value <= gameplayManager.powerupSpawnChance)
+        if (gameplayManager.bonusWave)
         {
-            gameplayManager.audioManager.PlaySound("PowerupSpawn");
-            currentProjectile = Instantiate(gameplayManager.GetRandomPowerup(), transform);
+            currentProjectile = Instantiate(gameplayManager.cupcakePowerup, transform);
+            gameplayManager.audioManager.PlaySound("BombShoot");
+            speedIncrease = 15;
         }
         else
         {
-            if (Random.value <= 0.25f)
+            if (Random.value <= gameplayManager.powerupSpawnChance)
             {
-                currentProjectile = Instantiate(gameplayManager.icicleProjectile, transform);
-                spawnedIcicle = true;
+                gameplayManager.audioManager.PlaySound("PowerupSpawn");
+                currentProjectile = Instantiate(gameplayManager.GetRandomPowerup(), transform);
             }
             else
             {
-                currentProjectile = Instantiate(gameplayManager.snowballProjectile, transform);
+                if (Random.value <= 0.25f)
+                {
+                    currentProjectile = Instantiate(gameplayManager.icicleProjectile, transform);
+                    speedIncrease = speedIncrease * 2;
+                    spawnedIcicle = true;
+                }
+                else
+                {
+                    currentProjectile = Instantiate(gameplayManager.snowballProjectile, transform);
+                }
+                gameplayManager.SpawnedNewProjectile();
             }
-            gameplayManager.SpawnedNewProjectile();
         }
         
         currentProjectile.transform.localPosition = new Vector3(0, 0, 0);
@@ -212,12 +223,6 @@ public class ProjectileLauncher : MonoBehaviour
                     currentProjectile.transform.eulerAngles = new Vector3(0, 0, -90);
                 }
                 break;
-        }
-
-        float speedIncrease = gameplayManager.currentSpeedIncrease;
-        if (spawnedIcicle)
-        {
-            speedIncrease = speedIncrease * 2;
         }
 
         currentProjectile.GetComponent<Projectile>().InitializeProjectile(Mathf.Min(gameplayManager.maxProjectileSpeed, speedIncrease), firingDirectionVector, adjacentLauncher);

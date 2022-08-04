@@ -18,6 +18,7 @@ public class CharacterAnimator : MonoBehaviour
         WallSlide,
         Tongue,
         Lost,
+        Burp,
     }
 
     enum AttackDirection

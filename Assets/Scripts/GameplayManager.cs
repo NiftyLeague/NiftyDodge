@@ -49,6 +49,7 @@ public class GameplayManager : MonoBehaviour
 	public GameObject slowPowerup;
 	public GameObject lifeUpPowerup;
 	public GameObject pointsPowerup;
+	public GameObject cupcakePowerup;
 	public SpriteRenderer invincibilityPowerupOnCharacter;
 	public SpriteRenderer slowPowerupOnCharacter;
 	public List<ProjectileLauncher> projectileLaunchers;
@@ -60,12 +61,13 @@ public class GameplayManager : MonoBehaviour
 	public ObscuredFloat textTweenDuration;
 	public Vector2 textDisplayTimeRange;
 	public ObscuredBool hasGameEnded = true;
+	public ObscuredBool bonusWave;
 	public Vector2 newProjectileTimeRange;
 	public ObscuredFloat powerupSpawnChance = 0.05f;
 	public ObscuredFloat slowPowerupProjectileSpeed = 2f;
 	public ObscuredFloat waveTimeLength = 60;
 	[Space]
-	public bool godMode;
+	public ObscuredBool godMode;
 
 	Coroutine currentScoreTextCoroutine;
 
@@ -200,7 +202,18 @@ public class GameplayManager : MonoBehaviour
 		waveTimer = 0;
 		StopAllLaunchers();
 		hasGameEnded = true;
-		waveText.text = "WAVE " + wave.ToString("0");
+
+		if (wave % 5 == 0)
+		{
+			bonusWave = true;
+			waveText.text = "BONUS WAVE!";
+		}
+		else
+		{
+			bonusWave = false;
+			waveText.text = "WAVE " + wave.ToString("0");
+		}
+
 		dialogueManager.StartADialogue();
 	}
 
@@ -312,7 +325,6 @@ public class GameplayManager : MonoBehaviour
 		StartCoroutine(PlayGameOverScreen());
 
 		//Analytics.SendPlayerEvent("EndMatch", new Dictionary<string, string>() { { "Score", score.ToString() } });
-
 	}
 
 	void StopAllLaunchers()
@@ -435,23 +447,30 @@ public class GameplayManager : MonoBehaviour
 
 	public void EnablePowerup(PowerupType powerupType)
 	{
-		audioManager.PlaySound("PowerupGet");
 		powerupsCollected++;
 		switch (powerupType)
 		{
 			case PowerupType.Invinicibility:
+				audioManager.PlaySound("PowerupGet");
 				invincibilityPowerupTimer = 10;
 				invincibilityPowerupOnCharacter.gameObject.SetActive(true);
 				break;
 			case PowerupType.Lifeup:
+				audioManager.PlaySound("PowerupGet");
 				GainLife();
 				break;
 			case PowerupType.Points:
+				audioManager.PlaySound("PowerupGet");
 				ScorePoint(20);
 				break;
 			case PowerupType.Slow:
+				audioManager.PlaySound("PowerupGet");
 				slowPowerupTimer = 10;
 				slowPowerupOnCharacter.gameObject.SetActive(true);
+				break;
+			case PowerupType.Cupcake:
+				audioManager.PlaySound("Burp");
+				ScorePoint(1);
 				break;
 		}
 	}

@@ -35,6 +35,8 @@ public class DialogueManager : MonoBehaviour
 	private bool dialogueHasEnded = true;
 	private bool getRandomDialogue;
 	public List<DialogueTextEntry> dialogueSetList;
+	public DialogueTextEntry bonusDialogue;
+	private DialogueTextEntry currentDialogueTextEntry;
 
 	private InputState input = new InputState();
 
@@ -47,7 +49,7 @@ public class DialogueManager : MonoBehaviour
 		if (input.PressedA && !dialogueHasEnded && !waitingForNextText)
 		{
 			audioManager.PlaySound("MenuOptionSelect");
-			currentLetter = dialogueSetList[currentDialogueSet].speechString[currentDialogue].Length;
+			currentLetter = currentDialogueTextEntry.speechString[currentDialogue].Length;
 		}
 	}
 
@@ -81,9 +83,9 @@ public class DialogueManager : MonoBehaviour
 				audioManager.PlaySound("WeevilLetterType");
 			}
 			
-			if (currentLetter >= dialogueSetList[currentDialogueSet].speechString[currentDialogue].Length)
+			if (currentLetter >= currentDialogueTextEntry.speechString[currentDialogue].Length)
 			{
-				currentLetter = dialogueSetList[currentDialogueSet].speechString[currentDialogue].Length;
+				currentLetter = currentDialogueTextEntry.speechString[currentDialogue].Length;
 				waitingForNextText = true;
 				skipDialogueButtonPrompt.SetActive(false);
 				pengweevilController.SetSpriteState(PengweevilSpriteState.Walk);
@@ -96,7 +98,7 @@ public class DialogueManager : MonoBehaviour
 			ProgressDialogue();
 		}
 
-		dialogueText.text = dialogueSetList[currentDialogueSet].speechString[currentDialogue];
+		dialogueText.text = currentDialogueTextEntry.speechString[currentDialogue];
 		dialogueText.maxVisibleCharacters = currentLetter;
 	}
 
@@ -112,10 +114,13 @@ public class DialogueManager : MonoBehaviour
 		nextDialogueTextTimer = 0;
 		waitingForNextText = false;
 
-		if (currentDialogue >= dialogueSetList[currentDialogueSet].speechString.Count)
+		if (currentDialogue >= currentDialogueTextEntry.speechString.Count)
 		{
 			currentDialogue = 0;
-			currentDialogueSet++;
+			if (!gameplayManager.bonusWave)
+			{
+				currentDialogueSet++;
+			}
 			if (currentDialogueSet >= dialogueSetList.Count)
 			{
 				getRandomDialogue = true;
@@ -144,12 +149,20 @@ public class DialogueManager : MonoBehaviour
 			dialogueBox.anchoredPosition = new Vector3(dialogueBox.anchoredPosition.x, yPositionTween.Update(Time.deltaTime), 0);
 		}
 
-		dialogueHasEnded = false;
-
-		if (getRandomDialogue)
+		if (gameplayManager.bonusWave)
 		{
-			currentDialogueSet = UnityEngine.Random.Range(1, dialogueSetList.Count);
+			currentDialogueTextEntry = bonusDialogue;
 		}
+		else
+		{
+			if (getRandomDialogue)
+			{
+				currentDialogueSet = UnityEngine.Random.Range(1, dialogueSetList.Count);
+			}
+			currentDialogueTextEntry = dialogueSetList[currentDialogueSet];
+		}
+
+		dialogueHasEnded = false;
 
 		FaceBoxPlay();
 		SetTalkingPenguinHead();

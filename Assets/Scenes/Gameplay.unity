@@ -923,6 +923,7 @@ MonoBehaviour:
   dialogueManager: {fileID: 243541046}
   playerCharacter: {fileID: 1489606863}
   playerController: {fileID: 192207255}
+  pengweevilController: {fileID: 1453282007}
   lives:
     currentCryptoKey: 2100860030
     hiddenValue: 2100860029
@@ -1625,6 +1626,10 @@ MonoBehaviour:
     - You must be tired from all that dodging around, how about we reward you with
       some delicious treats?
     - Wait why are we helping them?
+  bossFightDialogue:
+    speechString:
+    - Throwdown?
+    - Throwdown!
 --- !u!1 &244679908
 GameObject:
   m_ObjectHideFlags: 0
@@ -5041,9 +5046,11 @@ GameObject:
   - component: {fileID: 847076316}
   - component: {fileID: 847076318}
   - component: {fileID: 847076317}
+  - component: {fileID: 847076319}
+  - component: {fileID: 847076320}
   m_Layer: 0
   m_Name: Pengweevil
-  m_TagString: Untagged
+  m_TagString: Boss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5138,6 +5145,44 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!61 &847076319
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847076315}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -2.5}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 16, y: 16}
+    newSize: {x: 13, y: 13}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 5, y: 10}
+  m_EdgeRadius: 0
+--- !u!114 &847076320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847076315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb9718d92a9f0bc46925f8f0f0e6cbd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &872777787
 GameObject:
   m_ObjectHideFlags: 0
@@ -7849,10 +7894,13 @@ MonoBehaviour:
   dialogueManager: {fileID: 243541046}
   pengweevilTransform: {fileID: 847076316}
   pengweevilSpriteRenderer: {fileID: 847076318}
+  defaultSpriteMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  hitSpriteMaterial: {fileID: 2100000, guid: 4305cb556469efe4487ec4471161ca34, type: 2}
   pengweevilSpriteAnim: {fileID: 847076317}
   landingDustClouds:
   - {fileID: 405417977}
   - {fileID: 426356020}
+  shaker: {fileID: 847076320}
   pengweevilMoveSpeed: 6
   pengweevilOnStageYPosition: 0.7
   pengweevilOffStageYPosition: -14

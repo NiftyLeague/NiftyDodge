@@ -14,6 +14,7 @@ public class GameplayManager : MonoBehaviour
 	public DialogueManager dialogueManager;
 	public Character playerCharacter;
 	public PlayerController playerController;
+	public PengweevilController pengweevilController;
 	[Space]
 	public ObscuredInt lives = 3;
 	public ObscuredInt wave;

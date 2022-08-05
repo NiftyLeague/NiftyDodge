@@ -10,9 +10,12 @@ public class PengweevilController : MonoBehaviour
     public DialogueManager dialogueManager;
     public Transform pengweevilTransform;
     public SpriteRenderer pengweevilSpriteRenderer;
+    public Material defaultSpriteMaterial;
+    public Material hitSpriteMaterial;
     public SimpleAnim pengweevilSpriteAnim;
     public List<SimpleAnim> landingDustClouds;
-
+    public CameraShake shaker;
+    [Space]
     public float pengweevilMoveSpeed = 5;
     public float pengweevilOnStageYPosition = -0.82f;
     public float pengweevilOffStageYPosition = -14;
@@ -158,6 +161,26 @@ public class PengweevilController : MonoBehaviour
         }
     }
 
+    //public IEnumerator StartBossFight()
+    //{
+
+    //}
+
+    public void PengweevilTakeDamage()
+    {
+        StartCoroutine(TakeDamageAnimation());
+    }
+
+    IEnumerator TakeDamageAnimation()
+    {
+        shaker.Shake(0.2f, 10);
+        pengweevilSpriteRenderer.material = hitSpriteMaterial;
+
+        yield return new WaitForSeconds(0.1f);
+
+        pengweevilSpriteRenderer.material = defaultSpriteMaterial;
+    }
+
     void SetDirection(FacingDirection direction)
     {
         switch (direction)
@@ -199,4 +222,9 @@ public enum FacingDirection
 {
     Left,
     Right,
+}
+
+public enum Attacks
+{
+    
 }

@@ -36,6 +36,8 @@ public class DialogueManager : MonoBehaviour
 	private bool getRandomDialogue;
 	public List<DialogueTextEntry> dialogueSetList;
 	public DialogueTextEntry bonusDialogue;
+	public DialogueTextEntry bossFightDialogue;
+
 	private DialogueTextEntry currentDialogueTextEntry;
 
 	private InputState input = new InputState();

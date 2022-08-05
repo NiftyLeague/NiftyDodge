@@ -106,21 +106,41 @@ public class ProjectileHitter : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Projectile projectile = collision.gameObject.GetComponent<Projectile>();
+		bool hasHitSomething = false;
 
-        if (projectile != null)
+        if (collision.CompareTag("Projectile"))
         {
+			Projectile projectile = collision.gameObject.GetComponent<Projectile>();
+
 			if (projectile.icicle)
 			{
 				return;
 			}
+
+			if (projectile.powerupType != PowerupType.None)
+			{
+				return;
+			}
+
 			projectile.DestroyProjectile();
-			gameplayManager.ScorePoint((int)(1 + playerCharacter.attackChargeM));
 			gameplayManager.projectilesHit++;
-			audioManager.PlaySound("ProjectileHit");
-			EffectsController.CreateHitEffect(collision.transform.position, currentChargeAmount / 10, false);
             gameplayManager.cameraShake.Shake(0.2f * currentChargeAmount, 1);
+			hasHitSomething = true;
         }
+
+		if (collision.CompareTag("Boss"))
+		{
+			Debug.Log("hit boss!");
+			gameplayManager.pengweevilController.PengweevilTakeDamage();
+			hasHitSomething = true;
+		}
+
+		if (hasHitSomething)
+		{
+			EffectsController.CreateHitEffect(collision.transform.position, currentChargeAmount / 10, false);
+			gameplayManager.ScorePoint((int)(1 + playerCharacter.attackChargeM));
+			audioManager.PlaySound("ProjectileHit");
+		}
     }
 }
 

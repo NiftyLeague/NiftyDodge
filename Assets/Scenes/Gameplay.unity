@@ -831,7 +831,7 @@ MonoBehaviour:
   playerTransform: {fileID: 1489606864}
   playerSpriteRenderer: {fileID: 1791346930}
   chargeEffectSpriteRenderer: {fileID: 1586474204}
-  almostDeadEffectSpriteRenderer: {fileID: 1830150920}
+  specialEffectSpriteRenderer: {fileID: 1830150920}
   chargeEffectClouds: {fileID: 1111204133}
 --- !u!61 &192207256
 BoxCollider2D:
@@ -1122,14 +1122,14 @@ MonoBehaviour:
   waveTimeLength:
     migratedVersion: 
     currentCryptoKey: 1706587974
-    hiddenValue: 662161478
+    hiddenValue: 611797062
     hiddenValueOldByte4:
       b1: 0
       b2: 0
       b3: 0
       b4: 0
     inited: 1
-    fakeValue: 60
+    fakeValue: 30
     fakeValueActive: 1
   godMode:
     currentCryptoKey: 105
@@ -11699,7 +11699,7 @@ GameObject:
   - component: {fileID: 1830150921}
   - component: {fileID: 1830150920}
   m_Layer: 0
-  m_Name: Almost Dead Effect
+  m_Name: Special Player Effect Overlay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11747,7 +11747,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 5
   m_Sprite: {fileID: 1510363225149057644, guid: 59de5dc442ea1a74597113d210ddd079, type: 3}
-  m_Color: {r: 0.75, g: 0, b: 0, a: 0}
+  m_Color: {r: 1, g: 0.9445122, b: 0, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 2

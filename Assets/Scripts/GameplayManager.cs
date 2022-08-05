@@ -400,6 +400,8 @@ public class GameplayManager : MonoBehaviour
 			audioManager.PlaySound("AlmostDead");
 		}
 
+		playerController.UpdateSpecialEffectOverlay();
+
 		if (lives <= 0)
 		{
 			audioManager.PlaySound("Lose");
@@ -454,6 +456,7 @@ public class GameplayManager : MonoBehaviour
 				audioManager.PlaySound("PowerupGet");
 				invincibilityPowerupTimer = 10;
 				invincibilityPowerupOnCharacter.gameObject.SetActive(true);
+				playerController.UpdateSpecialEffectOverlay();
 				break;
 			case PowerupType.Lifeup:
 				audioManager.PlaySound("PowerupGet");
@@ -484,6 +487,7 @@ public class GameplayManager : MonoBehaviour
 			case PowerupType.Invinicibility:
 				invincibilityPowerupTimer = 0;
 				invincibilityPowerupOnCharacter.gameObject.SetActive(false);
+				playerController.UpdateSpecialEffectOverlay();
 				break;
 			case PowerupType.Slow:
 				slowPowerupTimer = 0;

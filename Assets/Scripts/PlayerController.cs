@@ -9,14 +9,16 @@ public class PlayerController : MonoBehaviour
 	public Transform playerTransform;
 	public SpriteRenderer playerSpriteRenderer;
 	public SpriteRenderer chargeEffectSpriteRenderer;
-	public SpriteRenderer almostDeadEffectSpriteRenderer;
+	public SpriteRenderer specialEffectSpriteRenderer;
 	public GameObject chargeEffectClouds;
 
 	private bool canGetHit = true;
 	private InputState input = new InputState();
 
 	bool canPlayChargeEffect = true;
-	float almostDeadAlpha;
+	bool canPlaySpecialEffect;
+	Color currentSpecialEffectColor;
+	float specialEffectAlpha;
 
 	private void Start()
 	{
@@ -49,16 +51,16 @@ public class PlayerController : MonoBehaviour
 		chargeEffectSpriteRenderer.sprite = playerSpriteRenderer.sprite;
 		chargeEffectSpriteRenderer.transform.localScale = playerSpriteRenderer.transform.localScale;
 
-		almostDeadAlpha = Mathf.PingPong(Time.time*2, 1);
-		if (gameplayManager.lives == 1)
+		specialEffectAlpha = Mathf.PingPong(Time.time*2, 1);
+		if (canPlaySpecialEffect)
 		{
-			almostDeadEffectSpriteRenderer.sprite = playerSpriteRenderer.sprite;
-			almostDeadEffectSpriteRenderer.transform.localScale = playerSpriteRenderer.transform.localScale;
-			almostDeadEffectSpriteRenderer.color = new Color(0.75f, 0, 0, almostDeadAlpha);
+			specialEffectSpriteRenderer.sprite = playerSpriteRenderer.sprite;
+			specialEffectSpriteRenderer.transform.localScale = playerSpriteRenderer.transform.localScale;
+			specialEffectSpriteRenderer.color = new Color(currentSpecialEffectColor.r, currentSpecialEffectColor.g, currentSpecialEffectColor.b, specialEffectAlpha);
 		}
 		else
 		{
-			almostDeadEffectSpriteRenderer.color = new Color(0.75f, 0, 0, 0);
+			specialEffectSpriteRenderer.color = new Color(currentSpecialEffectColor.r, currentSpecialEffectColor.g, currentSpecialEffectColor.b, 0);
 		}
 	}
 
@@ -123,6 +125,12 @@ public class PlayerController : MonoBehaviour
 			yield return new WaitForEndOfFrame();
 			chargeEffectSpriteRenderer.color = new Color(1, 1, 1, alphaTween.Update(Time.deltaTime));
 		}
+	}
+
+	public void UpdateSpecialEffectOverlay()
+	{
+		canPlaySpecialEffect = gameplayManager.lives == 1 || gameplayManager.invincibilityPowerupOnCharacter.gameObject.activeInHierarchy;
+		currentSpecialEffectColor = gameplayManager.invincibilityPowerupOnCharacter.gameObject.activeInHierarchy ? Color.yellow : Color.red;
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision)

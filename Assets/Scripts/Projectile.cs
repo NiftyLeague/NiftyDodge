@@ -36,7 +36,7 @@ public class Projectile : MonoBehaviour
 
 		if (transform.position.x >= GameplayManager.I.worldRightLimit.position.x || transform.position.x <= GameplayManager.I.worldLeftLimit.position.x || transform.position.y >= GameplayManager.I.worldTopLimit.position.y || transform.position.y <= GameplayManager.I.worldBottomLimit.position.y)
 		{
-			if (powerupType == PowerupType.None)
+			if (powerupType == PowerupType.None && !GameplayManager.I.bossWave)
 			{
 				GameplayManager.I.ScorePoint(1);
 			}
@@ -44,9 +44,12 @@ public class Projectile : MonoBehaviour
 		}
 	}
 
-	public void InitializeProjectile(float speedAmount, Vector2 moveDirection, ProjectileLauncher launcherTarget)
+	public void InitializeProjectile(float speedAmount, Vector2 moveDirection, ProjectileLauncher launcherTarget = null)
 	{
-		this.launcherTarget = launcherTarget;
+		if (launcherTarget != null)
+		{
+			this.launcherTarget = launcherTarget;
+		}
 		this.moveDirection = moveDirection;
 
 		moveSpeed += speedAmount;
@@ -63,7 +66,10 @@ public class Projectile : MonoBehaviour
 
 	public void DestroyProjectile(bool withExplosion = true)
 	{
-		launcherTarget.ReceiveProjectile();
+		if (launcherTarget != null)
+		{
+			launcherTarget.ReceiveProjectile();
+		}
 
 		if (withExplosion)
 		{
@@ -80,7 +86,9 @@ public enum PowerupType
 	None,
 	Invinicibility,
 	Lifeup,
-	Points,
+	Points10,
 	Slow,
 	Cupcake,
+	Points20,
+	Points50,
 }

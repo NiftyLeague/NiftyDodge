@@ -11,9 +11,20 @@ public class AudioManager : MonoBehaviour
     private bool hasInitializedSoundDictionary;
     private int lastAudioSourceUsed;
 
+    private string lastSoundIDPlayed;
+    private float lastSoundTimer;
+
     private void Start()
     {
         Initialize();
+    }
+
+    void Update()
+    {
+        if (lastSoundTimer < 1)
+        {
+            lastSoundTimer += Time.unscaledDeltaTime;
+        }
     }
 
     public void Initialize()
@@ -33,14 +44,25 @@ public class AudioManager : MonoBehaviour
         hasInitializedSoundDictionary = true;
     }
 
-    public void PlaySound(string soundID, float volume = 1f)
+    public void PlaySound(string soundID, float volume = 1f, float addedPitch = 0)
     {
+        if (soundID == lastSoundIDPlayed)
+        {
+            if (lastSoundTimer < 0.05f)
+            {
+                return;
+            }
+        }
+
+        lastSoundTimer = 0;
+        lastSoundIDPlayed = soundID;
+
         List<AudioSource> audioSourcesInSound = new List<AudioSource>();
         audioSourcesInSound = soundDictionary[soundID].audioSources;
         AudioSource soundEffectSource = audioSourcesInSound[UnityEngine.Random.Range(0, audioSourcesInSound.Count)];
         AudioSource currentEffectSource = soundEffectAudioSources[lastAudioSourceUsed];
         currentEffectSource.clip = soundEffectSource.clip;
-        currentEffectSource.pitch = soundEffectSource.pitch + GetPitch(soundDictionary[soundID].pitchVariance);
+        currentEffectSource.pitch = soundEffectSource.pitch + addedPitch + GetPitch(soundDictionary[soundID].pitchVariance);
         currentEffectSource.volume = volume;
         currentEffectSource.Play();
 

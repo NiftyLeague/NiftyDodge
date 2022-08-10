@@ -130,14 +130,17 @@ public class ProjectileHitter : MonoBehaviour
 
 		if (collision.CompareTag("Boss"))
 		{
-			Debug.Log("hit boss!");
+			if (!gameplayManager.pengweevilController.isBossModeOn || gameplayManager.pengweevilController.pengweevilHealth <= 0)
+			{
+				return;
+			}
 			gameplayManager.pengweevilController.PengweevilTakeDamage();
 			hasHitSomething = true;
 		}
 
 		if (hasHitSomething)
 		{
-			EffectsController.CreateHitEffect(collision.transform.position, currentChargeAmount / 10, false);
+			EffectsController.CreateHitEffect((transform.position + collision.transform.position) / 2, currentChargeAmount / 10, false);
 			gameplayManager.ScorePoint((int)(1 + playerCharacter.attackChargeM));
 			audioManager.PlaySound("ProjectileHit");
 		}

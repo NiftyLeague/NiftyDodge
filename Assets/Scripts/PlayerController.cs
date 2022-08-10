@@ -168,20 +168,14 @@ public class PlayerController : MonoBehaviour
 
 		}
 
-		//if (collision.CompareTag("Explosion"))
-		//{
-		//	if (gameplayManager.hasGameEnded)
-		//	{
-		//		return;
-		//	}
+        if (collision.CompareTag("Boss"))
+        {
+            if (!gameplayManager.pengweevilController.canHurtPlayer)
+            {
+                return;
+            }
 
-		//	if (gameplayManager.shieldPowerupOnCharacter.activeInHierarchy)
-		//	{
-		//		gameplayManager.SetShieldPowerup(false);
-		//		return;
-		//	}
-
-		//	gameplayManager.Lose();
-		//}
-	}
+			gameplayManager.LoseLife();
+		}
+    }
 }

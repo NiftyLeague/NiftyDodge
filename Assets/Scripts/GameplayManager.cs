@@ -46,15 +46,16 @@ public class GameplayManager : MonoBehaviour
 	public GameObject snowballProjectile;
 	public GameObject icicleProjectile;
 	[Space]
-	public GameObject invincibilityPowerup;
-	public GameObject slowPowerup;
-	public GameObject lifeUpPowerup;
-	public GameObject pointsPowerup;
+	public List<GameObject> powerupPrefabs;
 	public GameObject cupcakePowerup;
 	public SpriteRenderer invincibilityPowerupOnCharacter;
 	public SpriteRenderer slowPowerupOnCharacter;
-	public List<ProjectileLauncher> projectileLaunchers;
-
+	public SpriteRenderer lifePowerupOnCharacter;
+	public List<ProjectileLauncher> projectileLaunchersLeft;
+	public List<ProjectileLauncher> projectileLaunchersRight;
+	public List<ProjectileLauncher> projectileLaunchersTop;
+	public List<ProjectileLauncher> projectileLaunchersBottom;
+	[Space]
 	public ObscuredFloat maxProjectileSpeed;
 	public Vector2 startTimeoutRange;
 	public Vector2 shootRandomTimeoutRange;
@@ -63,10 +64,15 @@ public class GameplayManager : MonoBehaviour
 	public Vector2 textDisplayTimeRange;
 	public ObscuredBool hasGameEnded = true;
 	public ObscuredBool bonusWave;
+	public ObscuredBool bossWave;
 	public Vector2 newProjectileTimeRange;
+	public ObscuredFloat signsInY = 0;
+	public ObscuredFloat signsOutY = 18;
 	public ObscuredFloat powerupSpawnChance = 0.05f;
 	public ObscuredFloat slowPowerupProjectileSpeed = 2f;
 	public ObscuredFloat waveTimeLength = 60;
+	public ObscuredInt bonusWaveEvery = 5;
+	public ObscuredInt bossWaveNumber = 50;
 	[Space]
 	public ObscuredBool godMode;
 
@@ -141,7 +147,7 @@ public class GameplayManager : MonoBehaviour
 		}
 
 		timePlayed += Time.deltaTime;
-		if (!firingAProjectile)
+		if (!firingAProjectile && !bossWave)
 		{
 			StartCoroutine(FireNextProjectile());
 		}
@@ -160,6 +166,7 @@ public class GameplayManager : MonoBehaviour
 			if (invincibilityPowerupTimer <= 0)
 			{
 				invincibilityIconFlasher = 0;
+				invincibilityPowerupOnCharacter.color = new Color(1, 1, 1, 1);
 				DisablePowerup(PowerupType.Invinicibility);
 			}
 		}
@@ -178,6 +185,7 @@ public class GameplayManager : MonoBehaviour
 			if (slowPowerupTimer <= 0)
 			{
 				slowIconFlasher = 0;
+				slowPowerupOnCharacter.color = new Color(1, 1, 1, 1);
 				DisablePowerup(PowerupType.Slow);
 			}
 		}
@@ -190,7 +198,7 @@ public class GameplayManager : MonoBehaviour
 
 		waveTimer += Time.deltaTime;
 
-		if (waveTimer >= waveTimeLength)
+		if (waveTimer >= waveTimeLength && !bossWave)
 		{
 			BringOutPlayerInfo(0);
 			SetUpNextWave();
@@ -204,14 +212,20 @@ public class GameplayManager : MonoBehaviour
 		StopAllLaunchers();
 		hasGameEnded = true;
 
-		if (wave % 5 == 0)
+		if (wave % bonusWaveEvery == 0)
 		{
 			bonusWave = true;
 			waveText.text = "BONUS WAVE!";
 		}
+		if (wave == bossWaveNumber)
+		{
+			bossWave = true;
+			waveText.text = "BOSS WAVE!";
+		}
 		else
 		{
 			bonusWave = false;
+			bossWave = false;
 			waveText.text = "WAVE " + wave.ToString("0");
 		}
 
@@ -236,10 +250,10 @@ public class GameplayManager : MonoBehaviour
 
 	IEnumerator BringInInfoPanelAnimation(int panelID)
 	{
-		float a = 15;
-		float b = 0;
+		float a = signsOutY;
+		float b = signsInY;
 
-		Tween<float> moveTween = new Tween<float>(a, b, 1f, TweenEaseType.CubicIn);
+		Tween<float> moveTween = new Tween<float>(a, b, 0.6f, TweenEaseType.CubicIn);
 
 		while (!moveTween.IsEnded())
 		{
@@ -250,10 +264,10 @@ public class GameplayManager : MonoBehaviour
 
 	IEnumerator BringOutInfoPanelAnimation(int panelID)
 	{
-		float a = 0;
-		float b = 15;
+		float a = signsInY;
+		float b = signsOutY;
 
-		Tween<float> moveTween = new Tween<float>(a, b, 1f, TweenEaseType.CubicOut);
+		Tween<float> moveTween = new Tween<float>(a, b, 0.6f, TweenEaseType.CubicOut);
 
 		while (!moveTween.IsEnded())
 		{
@@ -318,8 +332,10 @@ public class GameplayManager : MonoBehaviour
 
 		playerCharacter.Lose();
 		menuManager.UpdateLeaderboards();
-		playerLifePipsMax.SetActive(false);
-		waveText.gameObject.SetActive(false);
+		if (bossWave)
+		{
+			pengweevilController.LoseBossFight();
+		}
 		StartCoroutine(BringOutInfoPanelAnimation(0));
 		//EventController.AddMatchEnd(PlayerSpriteManager.lastDegenIdUsed);
 
@@ -328,9 +344,21 @@ public class GameplayManager : MonoBehaviour
 		//Analytics.SendPlayerEvent("EndMatch", new Dictionary<string, string>() { { "Score", score.ToString() } });
 	}
 
-	void StopAllLaunchers()
+	public void StopAllLaunchers()
 	{
-		foreach (ProjectileLauncher launcher in projectileLaunchers)
+		foreach (ProjectileLauncher launcher in projectileLaunchersLeft)
+		{
+			launcher.Reset();
+		}
+		foreach (ProjectileLauncher launcher in projectileLaunchersRight)
+		{
+			launcher.Reset();
+		}
+		foreach (ProjectileLauncher launcher in projectileLaunchersTop)
+		{
+			launcher.Reset();
+		}
+		foreach (ProjectileLauncher launcher in projectileLaunchersBottom)
 		{
 			launcher.Reset();
 		}
@@ -461,11 +489,20 @@ public class GameplayManager : MonoBehaviour
 				break;
 			case PowerupType.Lifeup:
 				audioManager.PlaySound("PowerupGet");
+				StartCoroutine(LifeUpAnimation());
 				GainLife();
 				break;
-			case PowerupType.Points:
+			case PowerupType.Points10:
+				audioManager.PlaySound("PowerupGet");
+				ScorePoint(10);
+				break;
+			case PowerupType.Points20:
 				audioManager.PlaySound("PowerupGet");
 				ScorePoint(20);
+				break;
+			case PowerupType.Points50:
+				audioManager.PlaySound("PowerupGet");
+				ScorePoint(50);
 				break;
 			case PowerupType.Slow:
 				audioManager.PlaySound("PowerupGet");
@@ -494,6 +531,46 @@ public class GameplayManager : MonoBehaviour
 				slowPowerupTimer = 0;
 				slowPowerupOnCharacter.gameObject.SetActive(false);
 				break;
+		}
+	}
+
+	IEnumerator LifeUpAnimation()
+	{
+		lifePowerupOnCharacter.color = new Color(lifePowerupOnCharacter.color.r, lifePowerupOnCharacter.color.g, lifePowerupOnCharacter.color.b, 1);
+
+		float a = 1f;
+		float b = 1.3f;
+
+		Tween<float> scaleTween = new Tween<float>(a, b, 0.5f, TweenEaseType.CubicIn);
+
+		while (!scaleTween.IsEnded())
+		{
+			yield return new WaitForEndOfFrame();
+			lifePowerupOnCharacter.transform.localScale = new Vector3(scaleTween.Update(Time.deltaTime), scaleTween.Update(Time.deltaTime), scaleTween.Update(Time.deltaTime));
+		}
+
+		a = 1f;
+		b = 1.1f;
+
+		Tween<float> scaleTweenb = new Tween<float>(a, b, 0.8f, TweenEaseType.CubicIn);
+
+		while (!scaleTweenb.IsEnded())
+		{
+			yield return new WaitForEndOfFrame();
+			lifePowerupOnCharacter.transform.localScale = new Vector3(scaleTweenb.Update(Time.deltaTime), scaleTweenb.Update(Time.deltaTime), scaleTweenb.Update(Time.deltaTime));
+		}
+
+		lifePowerupOnCharacter.transform.localScale = new Vector3(1, 1, 1);
+
+		a = 1f;
+		b = 0f;
+
+		Tween<float> alphaTween = new Tween<float>(a, b, 1, TweenEaseType.CubicIn);
+
+		while (!alphaTween.IsEnded())
+		{
+			yield return new WaitForEndOfFrame();
+			lifePowerupOnCharacter.color = new Color(lifePowerupOnCharacter.color.r, lifePowerupOnCharacter.color.g, lifePowerupOnCharacter.color.b, alphaTween.Update(Time.deltaTime));
 		}
 	}
 
@@ -594,7 +671,28 @@ public class GameplayManager : MonoBehaviour
 
 		List<ProjectileLauncher> launchersToChooseFrom = new List<ProjectileLauncher>();
 
-		foreach (ProjectileLauncher launcher in projectileLaunchers)
+		foreach (ProjectileLauncher launcher in projectileLaunchersLeft)
+		{
+			if (!launcher.cantLaunch)
+			{
+				launchersToChooseFrom.Add(launcher);
+			}
+		}
+		foreach (ProjectileLauncher launcher in projectileLaunchersRight)
+		{
+			if (!launcher.cantLaunch)
+			{
+				launchersToChooseFrom.Add(launcher);
+			}
+		}
+		foreach (ProjectileLauncher launcher in projectileLaunchersTop)
+		{
+			if (!launcher.cantLaunch)
+			{
+				launchersToChooseFrom.Add(launcher);
+			}
+		}
+		foreach (ProjectileLauncher launcher in projectileLaunchersBottom)
 		{
 			if (!launcher.cantLaunch)
 			{
@@ -620,21 +718,14 @@ public class GameplayManager : MonoBehaviour
 
 	public GameObject GetRandomPowerup()
 	{
-		int powerupChosen = Random.Range(1, 4);
+		int powerupChosen = Random.Range(0, 5);
 
-		switch (powerupChosen)
+		if (Random.value < 0.05f)
 		{
-			case 1:
-				return invincibilityPowerup;
-			case 2:
-				return lifeUpPowerup;
-			case 3:
-				return pointsPowerup;
-			case 4:
-				return slowPowerup;
+			powerupChosen = 5;
 		}
 
-		return invincibilityPowerup;
+		return powerupPrefabs[powerupChosen];
 	}
 
 	public void SpawnedNewProjectile()

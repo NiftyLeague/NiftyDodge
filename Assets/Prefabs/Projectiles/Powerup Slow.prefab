@@ -10,10 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2101283796660733823}
   - component: {fileID: 2101283796660733795}
-  - component: {fileID: 2101283796660733794}
   - component: {fileID: 2101283796660733793}
   - component: {fileID: 2101283796660733792}
-  - component: {fileID: 8825958817702963430}
+  - component: {fileID: 3143951649597772121}
   m_Layer: 7
   m_Name: Powerup Slow
   m_TagString: Projectile
@@ -76,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 0c03d2f7ea8fae34cbaf2ad4e19ee1a6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b1023ef2f33970b4392dd7ca182e863a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -87,26 +86,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &2101283796660733794
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2101283796660733822}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1caaa3ec81241d46a98f985efbb358d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animSpeed: 0.1
-  frames:
-  - {fileID: 21300000, guid: 0c03d2f7ea8fae34cbaf2ad4e19ee1a6, type: 3}
-  - {fileID: 21300000, guid: 75c6a6987068d2c45b9804d3e142d618, type: 3}
-  playOnce: 0
-  disableAfterPlayOnce: 0
-  stayAfterPlayOnce: 1
-  pingPong: 0
 --- !u!114 &2101283796660733793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119,9 +98,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3da4830d4ab6394a97fea8cd0318e42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  snowballBreakage: {fileID: 0}
   rigidBody: {fileID: 2101283796660733792}
   moveSpeed: 10
   powerupType: 4
+  icicle: 0
 --- !u!50 &2101283796660733792
 Rigidbody2D:
   serializedVersion: 4
@@ -143,8 +124,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!61 &8825958817702963430
-BoxCollider2D:
+--- !u!68 &3143951649597772121
+EdgeCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -157,15 +138,16 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2, y: 2}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+  m_Points:
+  - {x: -0.75, y: 0.5}
+  - {x: 0, y: 0.8}
+  - {x: 0.75, y: 0.5}
+  - {x: 0.75, y: -0.5}
+  - {x: 0, y: -0.85}
+  - {x: -0.75, y: -0.5}
+  - {x: -0.75, y: 0.5}
+  m_AdjacentStartPoint: {x: 0, y: 0}
+  m_AdjacentEndPoint: {x: 0, y: 0}
+  m_UseAdjacentStartPoint: 0
+  m_UseAdjacentEndPoint: 0

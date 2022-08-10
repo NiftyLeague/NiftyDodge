@@ -36,7 +36,8 @@ public class DialogueManager : MonoBehaviour
 	private bool getRandomDialogue;
 	public List<DialogueTextEntry> dialogueSetList;
 	public DialogueTextEntry bonusDialogue;
-	public DialogueTextEntry bossFightDialogue;
+	public DialogueTextEntry bossFightBeginDialogue;
+	public DialogueTextEntry bossFightEndDialogue;
 
 	private DialogueTextEntry currentDialogueTextEntry;
 
@@ -119,7 +120,7 @@ public class DialogueManager : MonoBehaviour
 		if (currentDialogue >= currentDialogueTextEntry.speechString.Count)
 		{
 			currentDialogue = 0;
-			if (!gameplayManager.bonusWave)
+			if (!gameplayManager.bonusWave || !gameplayManager.bossWave)
 			{
 				currentDialogueSet++;
 			}
@@ -155,6 +156,10 @@ public class DialogueManager : MonoBehaviour
 		{
 			currentDialogueTextEntry = bonusDialogue;
 		}
+		else if (gameplayManager.bossWave)
+		{
+			currentDialogueTextEntry = bossFightBeginDialogue;
+		}
 		else
 		{
 			if (getRandomDialogue)
@@ -187,7 +192,14 @@ public class DialogueManager : MonoBehaviour
 
 		dialogueBox.gameObject.SetActive(false);
 
-		StartCoroutine(pengweevilController.JumpOffOfStage());
+		if (gameplayManager.bossWave)
+		{
+			pengweevilController.StartBossFight();
+		}
+		else
+		{
+			StartCoroutine(pengweevilController.JumpOffOfStage());
+		}
 
 		yield return new WaitForSeconds(0.5f);
 

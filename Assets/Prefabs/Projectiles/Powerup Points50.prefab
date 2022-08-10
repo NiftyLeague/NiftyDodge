@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 2101283796660733795}
   - component: {fileID: 2101283796660733793}
   - component: {fileID: 2101283796660733792}
-  - component: {fileID: 6049194244409191073}
+  - component: {fileID: 8776308441713757125}
   m_Layer: 7
-  m_Name: Powerup Lifeup
+  m_Name: Powerup Points50
   m_TagString: Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: eeae849a81eca994eb9a09d6a5818887, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c4d1ffc8bab7b5d45a280b15eb8a3540, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -101,7 +101,7 @@ MonoBehaviour:
   snowballBreakage: {fileID: 0}
   rigidBody: {fileID: 2101283796660733792}
   moveSpeed: 10
-  powerupType: 2
+  powerupType: 7
   icicle: 0
 --- !u!50 &2101283796660733792
 Rigidbody2D:
@@ -124,7 +124,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!68 &6049194244409191073
+--- !u!68 &8776308441713757125
 EdgeCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EffectsController : MonoBehaviour
 {
-	public HitEffect hitEffectPrefab, hitStarPrefab, hitStarPowerHitPrefab;
+	public HitEffect hitEffectPrefab, hitStarPrefab, hitStarPowerHitPrefab, hurtEffectPrefab;
 
 	//public GameObject directionalHitEffect;
 
@@ -351,6 +351,13 @@ public class EffectsController : MonoBehaviour
 			he.scale = 1.5f + life * 0.4f;
 		}
 		//Instantiate(instance.directionalHitEffect, (Vector3)pos + Vector3.forward * 1f, Quaternion.identity);
+	}
+
+	public static void CreateHurtEffect(Vector2 pos, float life)
+	{
+		var he = Instantiate(instance.hurtEffectPrefab, (Vector3)pos + Vector3.forward * 2f, Quaternion.identity) as HitEffect;
+		he.life = life;
+		he.scale = 1f + life * 0.4f;
 	}
 
 	//public static void CreateLocalizedShake(Vector2 pos, Vector2 direction, float velocity, float life)

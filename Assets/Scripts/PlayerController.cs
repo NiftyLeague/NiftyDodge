@@ -135,6 +135,8 @@ public class PlayerController : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
+		bool gotHit = false;
+
 		if (collision.CompareTag("Projectile"))
 		{
 			if (gameplayManager.hasGameEnded)
@@ -162,8 +164,7 @@ public class PlayerController : MonoBehaviour
 					return;
 				}
 
-				gameplayManager.LoseLife();
-				return;
+				gotHit = true;
 			}
 
 		}
@@ -175,6 +176,12 @@ public class PlayerController : MonoBehaviour
                 return;
             }
 
+			gotHit = true;
+		}
+
+		if (gotHit)
+		{
+			EffectsController.CreateHurtEffect(transform.position, 0.25f);
 			gameplayManager.LoseLife();
 		}
     }

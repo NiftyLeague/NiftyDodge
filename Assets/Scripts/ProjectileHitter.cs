@@ -12,7 +12,6 @@ public class ProjectileHitter : MonoBehaviour
 	float currentChargeAmount;
 
 	TurnDirection currentTurnDirection = TurnDirection.Right;
-	//Vector2 hitDirection;
 
     private void Start()
     {

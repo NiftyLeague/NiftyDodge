@@ -122,7 +122,7 @@ public class MenuManager : Singleton<MenuManager>
 		ResetMenuOptions();
 	}
 
-	void ChangeMenu(string menuIDToChangeTo, int menuOption = 0)
+	public void ChangeMenu(string menuIDToChangeTo, int menuOption = 0)
 	{
 		for (int i = 0; i < menus.Count; i++)
 		{
@@ -296,114 +296,124 @@ public class MenuManager : Singleton<MenuManager>
 
 		switch (menuOption.subMenuID)
 		{
-		case "MainMenuPlay":
-			if (ArcadeTokens <= 0)
-			{
-				GoToTokenPurchasingScreen();
-				ChangeMenu("MainMenuTokensMenu");
+			case "MainMenuPlay":
+				if (ArcadeTokens <= 0)
+				{
+					GoToTokenPurchasingScreen();
+					ChangeMenu("MainMenuTokensMenu");
+					ShowTokenBalance(true);
+				}
+				else
+				{
+					yield return StartGame();
+				}
+				break;
+			case "MainMenuHowToPlay":
+				mainMenuManager.GoToHowToPlayScreen();
+				ShowTokenBalance(false);
+				ChangeMenu("MainMenuHowToPlayMenu");
+				break;
+			case "MainMenuLeaderboards":
+				mainMenuManager.GoToLeaderboardsScreen();
+				ShowTokenBalance(false);
+				ChangeMenu("MainMenuLeaderboardsMenu");
+				break;
+			case "MainMenuControls":
+				mainMenuManager.GoToControlsScreen();
+				ShowTokenBalance(false);
+				ChangeMenu("MainMenuControlsMenu");
+				break;
+			case "MainMenuQuit":
+				mainMenuManager.GoToSignOutScreen();
+				ShowTokenBalance(false);
+				ChangeMenu("MainMenuSignOutMenu");
+				break;
+
+			case "MainMenuTokenMenuPurchase":
+				PurchaseToken();
 				ShowTokenBalance(true);
-			}
-			else
-			{
-				yield return StartGame();
-			}
-			break;
-		case "MainMenuHowToPlay":
-			mainMenuManager.GoToHowToPlayScreen();
-			ShowTokenBalance(false);
-			ChangeMenu("MainMenuHowToPlayMenu");
-			break;
-		case "MainMenuLeaderboards":
-			mainMenuManager.GoToLeaderboardsScreen();
-			ShowTokenBalance(false);
-			ChangeMenu("MainMenuLeaderboardsMenu");
-			break;
-		case "MainMenuControls":
-			mainMenuManager.GoToControlsScreen();
-			ShowTokenBalance(false);
-			ChangeMenu("MainMenuControlsMenu");
-			break;
-		case "MainMenuQuit":
-			mainMenuManager.GoToSignOutScreen();
-			ShowTokenBalance(false);
-			ChangeMenu("MainMenuSignOutMenu");
-			break;
-
-		case "MainMenuTokenMenuPurchase":
-			PurchaseToken();
-			ShowTokenBalance(true);
-			break;
-		case "MainMenuTokenMenuBack":
-			mainMenuManager.GoBack();
-			ShowTokenBalance(true);
-			purchaseTokensPanel.SetActive(false);
-			ChangeMenu("MainMenu");
-			break;
-
-		case "MainMenuLeaderboardMenuChange":
-			ChangeCurrentLeaderboard();
-			break;
-		case "MainMenuLeaderboardMenuBack":
-			mainMenuManager.GoBack();
-			ShowTokenBalance(true);
-			ChangeMenu("MainMenu", 1);
-			break;
-
-		case "MainMenuHowToPlayMenuBack":
-			mainMenuManager.GoBack();
-			ShowTokenBalance(true);
-			ChangeMenu("MainMenu", 2);
-            break;
-
-        case "MainMenuControlsMenuBack":
-			mainMenuManager.GoBack();
-			ShowTokenBalance(true);
-			ChangeMenu("MainMenu", 3);
-			break;
-
-		case "MainMenuSignOutMenuYes":
-			Launcher.Logout();
-			break;
-		case "MainMenuSignOutMenuNo":
-			mainMenuManager.GoBack();
-			ShowTokenBalance(true);
-			ChangeMenu("MainMenu", 4);
-			break;
-
-
-
-
-		case "GameplayTryAgain":
-			if (ArcadeTokens <= 0)
-			{
-				GoToTokenPurchasingScreen();
-				ChangeMenu("GameplayTokenMenu");
+				break;
+			case "MainMenuTokenMenuBack":
+				mainMenuManager.GoBack();
 				ShowTokenBalance(true);
-			}
-			else
-			{
+				purchaseTokensPanel.SetActive(false);
+				ChangeMenu("MainMenu");
+				break;
+
+			case "MainMenuLeaderboardMenuChange":
+				ChangeCurrentLeaderboard();
+				break;
+			case "MainMenuLeaderboardMenuBack":
+				mainMenuManager.GoBack();
+				ShowTokenBalance(true);
+				ChangeMenu("MainMenu", 1);
+				break;
+
+			case "MainMenuHowToPlayMenuBack":
+				mainMenuManager.GoBack();
+				ShowTokenBalance(true);
+				ChangeMenu("MainMenu", 2);
+				break;
+
+			case "MainMenuControlsMenuBack":
+				mainMenuManager.GoBack();
+				ShowTokenBalance(true);
+				ChangeMenu("MainMenu", 3);
+				break;
+
+			case "MainMenuSignOutMenuYes":
+				Launcher.Logout();
+				break;
+			case "MainMenuSignOutMenuNo":
+				mainMenuManager.GoBack();
+				ShowTokenBalance(true);
+				ChangeMenu("MainMenu", 4);
+				break;
+
+
+
+
+			case "GameplayTryAgain":
+				if (ArcadeTokens <= 0)
+				{
+					GoToTokenPurchasingScreen();
+					ChangeMenu("GameplayTokenMenu");
+					ShowTokenBalance(true);
+				}
+				else
+				{
+					ResetMenuOptions();
+					tokensPanel.SetActive(false);
+					menuPanel.SetActive(false);
+					yield return StartGame();
+				}
+				break;
+			case "GameplayLeaderboard":
+				ChangeCurrentLeaderboard();
+				SetMenuEnabled(true);
+				break;
+			case "GameplayQuit":
+				SceneManager.LoadScene(0);
+				break;
+
+			case "GameplayTokenPurchase":
+				PurchaseToken();
+				break;
+			case "GameplayTokenBack":
+				purchaseTokensPanel.SetActive(false);
+				UpdateLeaderboardDisplay();
+				ChangeMenu("GameplayMenu");
+				break;
+
+
+			case "GameplayWonBossFightContinue":
 				ResetMenuOptions();
-				tokensPanel.SetActive(false);
-				menuPanel.SetActive(false);
-				yield return StartGame();
-			}
-			break;
-		case "GameplayLeaderboard":
-			ChangeCurrentLeaderboard();
-			SetMenuEnabled(true);
-			break;
-		case "GameplayQuit":
-			SceneManager.LoadScene(0);
-			break;
-
-		case "GameplayTokenPurchase":
-			PurchaseToken();
-			break;
-		case "GameplayTokenBack":
-			purchaseTokensPanel.SetActive(false);
-			UpdateLeaderboardDisplay();
-			ChangeMenu("GameplayMenu");
-			break;
+				SetMenuEnabled(false);
+				gameplayManager.StartGameBackUpFromEnding();
+				break;
+			case "GameplayWonBossFightEndRun":
+				gameplayManager.EndGame();
+				break;
 		}
 	}
 

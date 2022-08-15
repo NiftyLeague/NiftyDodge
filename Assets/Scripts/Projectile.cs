@@ -60,7 +60,7 @@ public class Projectile : MonoBehaviour
 
 		if (Random.value < 0.1f)
 		{
-			moveSpeed = 0.1f + (Random.value * 10);
+			moveSpeed = Random.Range(5.0f, 10.0f);
 		}
 	}
 

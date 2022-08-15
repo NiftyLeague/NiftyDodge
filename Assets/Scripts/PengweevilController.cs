@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using CodeStage.AntiCheat.ObscuredTypes;
 
 public class PengweevilController : MonoBehaviour
@@ -19,8 +20,13 @@ public class PengweevilController : MonoBehaviour
     public List<SimpleAnim> landingDustClouds;
     public CameraShake shaker;
     public Transform pengweevilShadowTransform;
+    public SpriteRenderer pengweevilDefeatedScreenFlash;
+    public GameObject healthBarParent;
+    public Image healthBarCurrent;
+    public Image healthBarBefore;
     [Space]
     public ObscuredInt pengweevilHealth = 20;
+    public ObscuredInt pengweevilAlmostDeadHealth = 10;
     public ObscuredFloat pengweevilMoveSpeed = 5;
     public ObscuredFloat pengweevilOnStageYPosition = -0.82f;
     public ObscuredFloat pengweevilOffStageYPosition = -14;
@@ -42,15 +48,25 @@ public class PengweevilController : MonoBehaviour
     private bool canThrowASnowball;
     private float almostDeadAlpha;
     private Coroutine currentActionCoroutine;
+    private float healthBarBeforeAmount;
 
     void Update()
     {
-        if (pengweevilTransform.position.x < -10)
+        if (IsBossDead())
+        {
+            return;
+        }
+
+        healthBarParent.transform.position = new Vector3(pengweevilTransform.position.x, pengweevilTransform.position.y - 0.5f);
+        healthBarBeforeAmount = Mathf.Lerp(healthBarBeforeAmount, (float)pengweevilHealth, 0.005f);
+        healthBarBefore.fillAmount = healthBarBeforeAmount / (float)20;
+
+        if (pengweevilTransform.position.x <= -10.5f)
         {
             pengweevilTransform.position = new Vector2(-10, pengweevilOnStageYPosition);
             SetDirection(FacingDirection.Right);
         }
-        else if (pengweevilTransform.position.x > 10)
+        else if (pengweevilTransform.position.x >= 10.5f)
         {
             pengweevilTransform.position = new Vector2(10, pengweevilOnStageYPosition);
             SetDirection(FacingDirection.Left);
@@ -105,7 +121,7 @@ public class PengweevilController : MonoBehaviour
 
         pengweevilHurtOverlaySpriteRenderer.gameObject.SetActive(canHurtPlayer);
 
-        if (pengweevilHealth <= 10)
+        if (pengweevilHealth <= pengweevilAlmostDeadHealth)
         {
             almostDeadAlpha = Mathf.PingPong(Time.time * (10 - pengweevilHealth), 0.7f);
             pengweevilAlmostDeadOverlaySpriteRenderer.color = new Color(pengweevilAlmostDeadOverlaySpriteRenderer.color.r, pengweevilAlmostDeadOverlaySpriteRenderer.color.g, pengweevilAlmostDeadOverlaySpriteRenderer.color.b, almostDeadAlpha);
@@ -121,9 +137,9 @@ public class PengweevilController : MonoBehaviour
             {
                 var currentProjectile = Instantiate(gameplayManager.snowballProjectile, transform);
                 gameplayManager.SpawnedNewProjectile();
-                currentProjectile.transform.localPosition = new Vector3(-currentMoveDirection.x * 4, 0, 0);
+                currentProjectile.transform.localPosition = new Vector3(-currentMoveDirection.x * 5, -1, 0);
                 currentProjectile.transform.eulerAngles = new Vector3(0, 0, 0);
-                Vector2 firingDirectionVector = new Vector2(UnityEngine.Random.Range(-1.0f, 1.0f), UnityEngine.Random.Range(-1.0f, 1.0f));
+                Vector2 firingDirectionVector = new Vector2((gameplayManager.playerController.transform.position.x / 8) + UnityEngine.Random.Range(-0.1f, 0.1f), (gameplayManager.playerController.transform.position.y / 10) + UnityEngine.Random.Range(-0.1f, 0.1f));
                 currentProjectile.GetComponent<Projectile>().InitializeProjectile(UnityEngine.Random.Range(10.0f, 20.0f), firingDirectionVector);
                 canThrowASnowball = false;
                 amountOfSnowballsToFire--;
@@ -133,6 +149,11 @@ public class PengweevilController : MonoBehaviour
 
     public void SetSpriteState(PengweevilSpriteState spriteState, float animationSpeed = 0.1f)
     {
+        if (spriteState == PengweevilSpriteState.Walk && pengweevilHealth <= pengweevilAlmostDeadHealth)
+        {
+            spriteState = PengweevilSpriteState.AngryWalk;
+        }
+
         foreach (PengweevilSpriteAction spriteAction in pengweevilSpriteActions)
         {
             if (spriteAction.pengweevilSpriteState == spriteState)
@@ -218,7 +239,7 @@ public class PengweevilController : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        StartCoroutine(dialogueManager.StartDialogue());
+        StartCoroutine(dialogueManager.StartDialogue(true));
     }
 
     public IEnumerator JumpOffOfStage()
@@ -254,6 +275,16 @@ public class PengweevilController : MonoBehaviour
         }
     }
 
+    void UpdateHealthBar()
+    {
+        if (!healthBarParent.activeInHierarchy)
+        {
+            healthBarParent.SetActive(true);
+        }
+
+        healthBarCurrent.fillAmount = (float)((float)pengweevilHealth / (float)20);
+    }
+
     public void StartBossFight()
     {
         isBossModeOn = true;
@@ -265,21 +296,24 @@ public class PengweevilController : MonoBehaviour
         isBossModeOn = false;
         pengweevilHurtOverlaySpriteRenderer.gameObject.SetActive(false);
         pengweevilAlmostDeadOverlaySpriteRenderer.color = new Color(pengweevilAlmostDeadOverlaySpriteRenderer.color.r, pengweevilAlmostDeadOverlaySpriteRenderer.color.g, pengweevilAlmostDeadOverlaySpriteRenderer.color.b, 0);
+        if (currentActionCoroutine != null)
+        {
+            StopCoroutine(currentActionCoroutine);
+        }
+        StopAllCoroutines();
     }
 
     public void LoseBossFight()
     {
         EndBossFight();
-        StopCoroutine(currentActionCoroutine);
-        StopAllCoroutines();
         StartCoroutine(JumpOffOfStage());
     }
 
     public void WonBossFight()
     {
         EndBossFight();
-        StopCoroutine(currentActionCoroutine);
-        StopAllCoroutines();
+        gameplayManager.ScorePoint(500);
+        gameplayManager.bossHasBeenDefeated = true;
         StartCoroutine(Dead());
     }
 
@@ -287,10 +321,12 @@ public class PengweevilController : MonoBehaviour
     {
         StartCoroutine(TakeDamageAnimation());
         pengweevilHealth -= amount;
+        UpdateHealthBar();
         if (pengweevilHealth <= 0)
         {
             pengweevilHealth = 0;
-            EndBossFight();
+            healthBarParent.SetActive(false);
+            WonBossFight();
         }
     }
 
@@ -388,9 +424,10 @@ public class PengweevilController : MonoBehaviour
 
         canHurtPlayer = false;
 
-        SetSpriteState(PengweevilSpriteState.Idle);
+        SetSpriteState(PengweevilSpriteState.Walk);
 
         yield return new WaitForSeconds(0.5f);
+
     }
 
     IEnumerator AttackJumpAndSlam()
@@ -584,16 +621,36 @@ public class PengweevilController : MonoBehaviour
         isThrowingSnowballs = false;
 
         isPerformingAnAttack = false;
+
+        yield return new WaitForSeconds(0.2f);
+
+        SetSpriteState(PengweevilSpriteState.Walk);
     }
 
     IEnumerator Dead()
     {
-        shaker.Shake(1, 10);
+        shaker.Shake(0.4f, 50);
+        gameplayManager.cameraShake.Shake(1, 10);
+        StartCoroutine(PlayPengweevilLastHitSounds());
+        Time.timeScale = 0.1f;
 
+        Tween<float> pengweevilDefeatedScreenFlashAlpha = new Tween<float>(1, 0, 0.2f, TweenEaseType.CubicOut);
+
+        while (!pengweevilDefeatedScreenFlashAlpha.IsEnded())
+        {
+            yield return new WaitForEndOfFrame();
+            pengweevilDefeatedScreenFlash.color = new Color(1, 1, 1, pengweevilDefeatedScreenFlashAlpha.Update(Time.deltaTime));
+        }
+
+        Time.timeScale = 1;
+
+        gameplayManager.BringOutPlayerInfo(0);
+
+        SetSpriteState(PengweevilSpriteState.Defeated);
         pengweevilAlmostDeadOverlaySpriteRenderer.color = new Color(pengweevilAlmostDeadOverlaySpriteRenderer.color.r, pengweevilAlmostDeadOverlaySpriteRenderer.color.g, pengweevilAlmostDeadOverlaySpriteRenderer.color.b, 0.5f);
-
-        SetSpriteState(PengweevilSpriteState.Jump);
-
+        pengweevilAlmostDeadOverlaySpriteRenderer.sprite = pengweevilSpriteRenderer.sprite;
+        pengweevilAlmostDeadOverlaySpriteRenderer.sortingOrder = 21;
+        pengweevilSpriteRenderer.material = defaultSpriteMaterial;
         pengweevilSpriteRenderer.sortingOrder = 20;
 
         Tween<float> yPositionTweenJump = new Tween<float>(pengweevilOnStageYPosition, 30, 1, TweenEaseType.CubicOut);
@@ -608,9 +665,42 @@ public class PengweevilController : MonoBehaviour
 
         yield return new WaitForSeconds(1);
 
-        pengweevilSpriteRenderer.transform.localScale = new Vector2(1.2f, 1.2f);
+        pengweevilAlmostDeadOverlaySpriteRenderer.transform.localScale = new Vector2(1.4f, 1.4f);
+        pengweevilSpriteRenderer.transform.localScale = new Vector2(1.4f, 1.4f);
 
+        Tween<float> yPositionFalling = new Tween<float>(30, -30, 3, TweenEaseType.CubicOut);
+        Tween<float> spinFloat = new Tween<float>(0, 1000, 6, TweenEaseType.Linear);
 
+        audioManager.PlaySound("FallingInFrontOfScreen");
+
+        while (!yPositionFalling.IsEnded())
+        {
+            yield return new WaitForEndOfFrame();
+            pengweevilTransform.position = new Vector3(pengweevilTransform.position.x, yPositionFalling.Update(Time.deltaTime), 0);
+            pengweevilTransform.eulerAngles = new Vector3(0, 0, spinFloat.Update(Time.deltaTime));
+        }
+
+        gameplayManager.cameraShake.Shake(1, 10);
+
+        audioManager.PlaySound("PengweevilDefeatLand");
+
+        pengweevilTransform.gameObject.SetActive(false);
+
+        StartCoroutine(dialogueManager.EndGameSlides());
+    }
+
+    IEnumerator PlayPengweevilLastHitSounds()
+    {
+        yield return new WaitForSeconds(0.04f);
+        audioManager.PlaySound("ProjectileHit", 0.8f);
+        yield return new WaitForSeconds(0.04f);
+        audioManager.PlaySound("ProjectileHit", 0.6f);
+        yield return new WaitForSeconds(0.04f);
+        audioManager.PlaySound("ProjectileHit", 0.4f);
+        yield return new WaitForSeconds(0.04f);
+        audioManager.PlaySound("ProjectileHit", 0.2f);
+        yield return new WaitForSeconds(0.04f);
+        audioManager.PlaySound("ProjectileHit", 0.05f);
     }
 
     void SetDirection(FacingDirection direction)
@@ -626,6 +716,11 @@ public class PengweevilController : MonoBehaviour
                 pengweevilTransform.localScale = new Vector3(-1, 1, 1);
                 break;
         }
+    }
+
+    public bool IsBossDead()
+    {
+        return pengweevilHealth <= 0 ? true : false;
     }
 }
 
@@ -648,6 +743,8 @@ public enum PengweevilSpriteState
     WalkAndTalkPengweevil,
     Jump,
     Land,
+    Defeated,
+    AngryWalk,
 }
 
 public enum FacingDirection

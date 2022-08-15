@@ -24,6 +24,7 @@ public class DialogueManager : MonoBehaviour
 	public GameObject skipDialogueButtonPrompt;
 	[Space]
 	public TextMeshProUGUI dialogueText;
+	public TextMeshProUGUI endOfGameDialogueText;
 	public float textTypeSpeed;
 	public float timeBetweenNextText;
 	private float textTypeTimer;
@@ -37,7 +38,12 @@ public class DialogueManager : MonoBehaviour
 	public List<DialogueTextEntry> dialogueSetList;
 	public DialogueTextEntry bonusDialogue;
 	public DialogueTextEntry bossFightBeginDialogue;
-	public DialogueTextEntry bossFightEndDialogue;
+	public DialogueTextEntry bossDefeatedDialogue;
+	public List<Sprite> bossDefeatedSlides;
+	[Space]
+	public SpriteRenderer EndOfGameBackgroundSpriteRenderer;
+	public SpriteRenderer EndOfGameBackgroundSlideSpriteRenderer;
+	public GameObject endGameCanvasMenu;
 
 	private DialogueTextEntry currentDialogueTextEntry;
 
@@ -101,11 +107,19 @@ public class DialogueManager : MonoBehaviour
 			ProgressDialogue();
 		}
 
-		dialogueText.text = currentDialogueTextEntry.speechString[currentDialogue];
-		dialogueText.maxVisibleCharacters = currentLetter;
+		if (gameplayManager.bossHasBeenDefeated)
+		{
+			endOfGameDialogueText.text = currentDialogueTextEntry.speechString[currentDialogue].ToUpper();
+			endOfGameDialogueText.maxVisibleCharacters = currentLetter;
+		}
+		else
+		{
+			dialogueText.text = currentDialogueTextEntry.speechString[currentDialogue];
+			dialogueText.maxVisibleCharacters = currentLetter;
+		}
 	}
 
-	public void StartADialogue()
+	public void StartADialogueWithPengweevil()
 	{
 		StartCoroutine(pengweevilController.JumpOntoStage());
 	}
@@ -128,45 +142,65 @@ public class DialogueManager : MonoBehaviour
 			{
 				getRandomDialogue = true;
 			}
-			StartCoroutine(EndDialogue());
+
+			if (gameplayManager.bossHasBeenDefeated)
+			{
+				EndEndGameDialogue();
+			}
+			else
+			{
+				StartCoroutine(EndDialogue());
+			}
 		}
 		else
 		{
 			SetTalkingPenguinHead();
 		}
+
+		if (pengweevilController.IsBossDead())
+		{
+			EndOfGameBackgroundSlideSpriteRenderer.sprite = bossDefeatedSlides[currentDialogue];
+		}
 	}
 
-	public IEnumerator StartDialogue()
+	public IEnumerator StartDialogue(bool withDialogueBox)
 	{
 		dialogueText.text = "";
+		endOfGameDialogueText.text = "";
 
-		FaceBoxStop();
-		dialogueBox.anchoredPosition = new Vector3(dialogueBox.anchoredPosition.x, offScreenAnchorY, 0);
-		dialogueBox.gameObject.SetActive(true);
-
-		Tween<float> yPositionTween = new Tween<float>(offScreenAnchorY, onScreenAnchorY, 1, TweenEaseType.CubicOut);
-
-		while (!yPositionTween.IsEnded())
+		if (withDialogueBox)
 		{
-			yield return new WaitForEndOfFrame();
-			dialogueBox.anchoredPosition = new Vector3(dialogueBox.anchoredPosition.x, yPositionTween.Update(Time.deltaTime), 0);
+			FaceBoxStop();
+			dialogueBox.anchoredPosition = new Vector3(dialogueBox.anchoredPosition.x, offScreenAnchorY, 0);
+			dialogueBox.gameObject.SetActive(true);
+
+			Tween<float> yPositionTween = new Tween<float>(offScreenAnchorY, onScreenAnchorY, 1, TweenEaseType.CubicOut);
+
+			while (!yPositionTween.IsEnded())
+			{
+				yield return new WaitForEndOfFrame();
+				dialogueBox.anchoredPosition = new Vector3(dialogueBox.anchoredPosition.x, yPositionTween.Update(Time.deltaTime), 0);
+			}
 		}
+
+		if (getRandomDialogue)
+		{
+			currentDialogueSet = UnityEngine.Random.Range(1, dialogueSetList.Count);
+		}
+		currentDialogueTextEntry = dialogueSetList[currentDialogueSet];
 
 		if (gameplayManager.bonusWave)
 		{
 			currentDialogueTextEntry = bonusDialogue;
 		}
-		else if (gameplayManager.bossWave)
+		if (gameplayManager.bossWave)
 		{
 			currentDialogueTextEntry = bossFightBeginDialogue;
 		}
-		else
+		if (gameplayManager.bossHasBeenDefeated)
 		{
-			if (getRandomDialogue)
-			{
-				currentDialogueSet = UnityEngine.Random.Range(1, dialogueSetList.Count);
-			}
-			currentDialogueTextEntry = dialogueSetList[currentDialogueSet];
+			currentDialogueTextEntry = bossDefeatedDialogue;
+			EndOfGameBackgroundSlideSpriteRenderer.sprite = bossDefeatedSlides[0];
 		}
 
 		dialogueHasEnded = false;
@@ -208,6 +242,45 @@ public class DialogueManager : MonoBehaviour
 		yield return new WaitForSeconds(0.5f);
 
 		gameplayManager.StartNextWave();
+	}
+
+	public IEnumerator EndGameSlides()
+	{
+		yield return new WaitForSeconds(2);
+		gameplayManager.endingCanvas.SetActive(true);
+		gameplayManager.playerController.playerSpriteRenderer.sortingOrder = 1;
+		EndOfGameBackgroundSpriteRenderer.color = new Color(1, 1, 1, 0);
+
+		Tween<float> backgroundScreenAlpha = new Tween<float>(0, 1, 2f, TweenEaseType.CubicOut);
+
+		while (!backgroundScreenAlpha.IsEnded())
+		{
+			yield return new WaitForEndOfFrame();
+			EndOfGameBackgroundSpriteRenderer.color = new Color(1, 1, 1, backgroundScreenAlpha.Update(Time.deltaTime));
+		}
+
+		gameplayManager.playerCharacter.gameObject.SetActive(false);
+
+		Tween<float> backgroundScreenToBlack = new Tween<float>(1, 0, 2f, TweenEaseType.CubicOut);
+
+		while (!backgroundScreenToBlack.IsEnded())
+		{
+			yield return new WaitForEndOfFrame();
+			EndOfGameBackgroundSpriteRenderer.color = new Color(backgroundScreenToBlack.Update(Time.deltaTime), backgroundScreenToBlack.Update(Time.deltaTime), backgroundScreenToBlack.Update(Time.deltaTime), 1);
+		}
+
+		StartCoroutine(StartDialogue(false));
+	}
+
+	void EndEndGameDialogue()
+	{
+		Debug.Log("END THE END GAME DIALOGUE!");
+
+		dialogueHasEnded = true;
+		endGameCanvasMenu.SetActive(true);
+		gameplayManager.menuManager.menuTexts = gameplayManager.endingGameTexts;
+		gameplayManager.menuManager.ChangeMenu("GameplayWonBossFightMenu");
+		gameplayManager.menuManager.SetMenuEnabled(true);
 	}
 
 	void FaceBoxPlay()

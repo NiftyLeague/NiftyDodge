@@ -36,6 +36,7 @@ public class GameplayManager : MonoBehaviour
 	public TextMeshProUGUI gameOverStatNumbersText;
 	public GameObject scoreGainedUIPrefab;
 	public Transform playerCanvas;
+	public GameObject endingCanvas;
 	public Transform[] infoPanels;
 	[Space]
 	public Transform worldTopLimit;
@@ -55,6 +56,9 @@ public class GameplayManager : MonoBehaviour
 	public List<ProjectileLauncher> projectileLaunchersRight;
 	public List<ProjectileLauncher> projectileLaunchersTop;
 	public List<ProjectileLauncher> projectileLaunchersBottom;
+	[Space]
+	public List<TextMeshProUGUI> gameOverTexts;
+	public List<TextMeshProUGUI> endingGameTexts;
 	[Space]
 	public ObscuredFloat maxProjectileSpeed;
 	public Vector2 startTimeoutRange;
@@ -83,6 +87,7 @@ public class GameplayManager : MonoBehaviour
 	ObscuredFloat invincibilityPowerupTimer;
 	ObscuredFloat slowPowerupTimer;
 	ObscuredFloat waveTimer;
+	[HideInInspector] public ObscuredBool bossHasBeenDefeated;
 
 	float invincibilityIconFlasher;
 	float slowIconFlasher;
@@ -211,6 +216,7 @@ public class GameplayManager : MonoBehaviour
 		waveTimer = 0;
 		StopAllLaunchers();
 		hasGameEnded = true;
+		playerController.playerSpriteRenderer.sortingOrder = 10;
 
 		if (wave % bonusWaveEvery == 0)
 		{
@@ -229,7 +235,15 @@ public class GameplayManager : MonoBehaviour
 			waveText.text = "WAVE " + wave.ToString("0");
 		}
 
-		dialogueManager.StartADialogue();
+		if (pengweevilController.IsBossDead())
+		{
+			BringInPlayerInfo(0);
+			StartNextWave();
+		}
+		else
+		{
+			dialogueManager.StartADialogueWithPengweevil();
+		}
 	}
 
 	public void StartNextWave()
@@ -324,21 +338,29 @@ public class GameplayManager : MonoBehaviour
 		{
 			return;
 		}
-		hasGameEnded = true;
 		cameraShake.Shake(0.5f, 5);
-		IncreaseSpeed(true);
-
-		StopAllLaunchers();
-
+		//IncreaseSpeed(true);
+		audioManager.PlaySound("Lose");
 		playerCharacter.Lose();
-		menuManager.UpdateLeaderboards();
+		
 		if (bossWave)
 		{
 			pengweevilController.LoseBossFight();
 		}
+
+		EndGame();
+	}
+
+	public void EndGame()
+	{
+		StopAllLaunchers();
+
+		hasGameEnded = true;
+
+		menuManager.UpdateLeaderboards();
+
 		StartCoroutine(BringOutInfoPanelAnimation(0));
 		//EventController.AddMatchEnd(PlayerSpriteManager.lastDegenIdUsed);
-
 		StartCoroutine(PlayGameOverScreen());
 
 		//Analytics.SendPlayerEvent("EndMatch", new Dictionary<string, string>() { { "Score", score.ToString() } });
@@ -534,6 +556,15 @@ public class GameplayManager : MonoBehaviour
 		}
 	}
 
+	public void StartGameBackUpFromEnding()
+	{
+		endingCanvas.SetActive(false);
+		menuManager.menuTexts = gameOverTexts;
+		menuManager.ChangeMenu("GameplayMenu");
+		playerCharacter.gameObject.SetActive(true);
+		SetUpNextWave();
+	}
+
 	IEnumerator LifeUpAnimation()
 	{
 		lifePowerupOnCharacter.color = new Color(lifePowerupOnCharacter.color.r, lifePowerupOnCharacter.color.g, lifePowerupOnCharacter.color.b, 1);
@@ -574,10 +605,8 @@ public class GameplayManager : MonoBehaviour
 		}
 	}
 
-	IEnumerator PlayGameOverScreen()
+	public IEnumerator PlayGameOverScreen()
 	{
-		audioManager.PlaySound("Lose");
-
 		gameOverTimer1 = 3;
 
 		StartCoroutine(BringInInfoPanelAnimation(1));

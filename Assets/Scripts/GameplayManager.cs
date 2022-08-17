@@ -11,6 +11,7 @@ public class GameplayManager : MonoBehaviour
 
 	public MenuManager menuManager;
 	public AudioManager audioManager;
+	public WaveScreenTransitionManager waveScreenManager;
 	public DialogueManager dialogueManager;
 	public Character playerCharacter;
 	public PlayerController playerController;
@@ -338,8 +339,8 @@ public class GameplayManager : MonoBehaviour
 		{
 			return;
 		}
+		hasGameEnded = true;
 		cameraShake.Shake(0.5f, 5);
-		//IncreaseSpeed(true);
 		audioManager.PlaySound("Lose");
 		playerCharacter.Lose();
 		
@@ -348,13 +349,13 @@ public class GameplayManager : MonoBehaviour
 			pengweevilController.LoseBossFight();
 		}
 
-		EndGame();
+		StartCoroutine(waveScreenManager.GameOverTransition());
 	}
 
 	public void EndGame()
 	{
 		StopAllLaunchers();
-
+		playerCharacter.HasLost();
 		hasGameEnded = true;
 
 		menuManager.UpdateLeaderboards();
@@ -401,7 +402,7 @@ public class GameplayManager : MonoBehaviour
 
 	public void IncreaseSpeed(bool reset = false)
 	{
-		currentSpeedIncrease += 0.5f;
+		currentSpeedIncrease += 0.2f;
 		if (reset)
 		{
 			currentSpeedIncrease = 0;
@@ -607,16 +608,16 @@ public class GameplayManager : MonoBehaviour
 
 	public IEnumerator PlayGameOverScreen()
 	{
-		gameOverTimer1 = 3;
+		//gameOverTimer1 = 3;
 
-		StartCoroutine(BringInInfoPanelAnimation(1));
+		//StartCoroutine(BringInInfoPanelAnimation(1));
 
-		yield return new WaitUntil(() => gameOverTimer1 <= 0);
+		//yield return new WaitUntil(() => gameOverTimer1 <= 0);
 		//yield return GetMatchResults();
 
 		gameOverTimer2 = 3;
 
-		StartCoroutine(BringOutInfoPanelAnimation(1));
+		//StartCoroutine(BringOutInfoPanelAnimation(1));
 		StartCoroutine(BringInInfoPanelAnimation(2));
 
 		playerCharacter.StandBackUp();

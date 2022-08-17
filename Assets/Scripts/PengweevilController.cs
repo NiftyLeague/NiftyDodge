@@ -10,10 +10,12 @@ public class PengweevilController : MonoBehaviour
     public GameplayManager gameplayManager;
     public AudioManager audioManager;
     public DialogueManager dialogueManager;
+    [Space]
     public Transform pengweevilTransform;
     public SpriteRenderer pengweevilSpriteRenderer;
     public SpriteRenderer pengweevilHurtOverlaySpriteRenderer;
     public SpriteRenderer pengweevilAlmostDeadOverlaySpriteRenderer;
+    public Transform pengweevilSpriteRenderersParent;
     public Material defaultSpriteMaterial;
     public Material hitSpriteMaterial;
     public SimpleAnim pengweevilSpriteAnim;
@@ -652,35 +654,34 @@ public class PengweevilController : MonoBehaviour
         pengweevilAlmostDeadOverlaySpriteRenderer.sortingOrder = 21;
         pengweevilSpriteRenderer.material = defaultSpriteMaterial;
         pengweevilSpriteRenderer.sortingOrder = 20;
-
-        Tween<float> yPositionTweenJump = new Tween<float>(pengweevilOnStageYPosition, 30, 1, TweenEaseType.CubicOut);
-
-        while (!yPositionTweenJump.IsEnded())
-        {
-            yield return new WaitForEndOfFrame();
-            pengweevilTransform.position = new Vector3(pengweevilTransform.position.x, yPositionTweenJump.Update(Time.deltaTime), 0);
-        }
-
         pengweevilShadowTransform.gameObject.SetActive(false);
 
-        yield return new WaitForSeconds(1);
-
-        pengweevilAlmostDeadOverlaySpriteRenderer.transform.localScale = new Vector2(1.4f, 1.4f);
-        pengweevilSpriteRenderer.transform.localScale = new Vector2(1.4f, 1.4f);
-
-        Tween<float> yPositionFalling = new Tween<float>(30, -30, 3, TweenEaseType.CubicOut);
-        Tween<float> spinFloat = new Tween<float>(0, 1000, 6, TweenEaseType.Linear);
+        float tweenTime = 4;
+        TweenEaseType easeType = TweenEaseType.CubicIn;
+        Tween<float> yPositionTweenGoFlying = new Tween<float>(0, 6.7f, tweenTime, easeType);
+        Tween<float> xPositionTweenGoFlying = new Tween<float>(pengweevilTransform.position.x, 12.2f, tweenTime, easeType);
+        Tween<float> scaleTween = new Tween<float>(1, 0.05f, tweenTime * 3, TweenEaseType.Linear);
+        Tween<float> spinFloat = new Tween<float>(0, 2000, tweenTime, TweenEaseType.Linear);
 
         audioManager.PlaySound("FallingInFrontOfScreen");
 
-        while (!yPositionFalling.IsEnded())
+        while (!yPositionTweenGoFlying.IsEnded())
         {
             yield return new WaitForEndOfFrame();
-            pengweevilTransform.position = new Vector3(pengweevilTransform.position.x, yPositionFalling.Update(Time.deltaTime), 0);
-            pengweevilTransform.eulerAngles = new Vector3(0, 0, spinFloat.Update(Time.deltaTime));
+            pengweevilTransform.position = new Vector3(xPositionTweenGoFlying.Update(Time.deltaTime), yPositionTweenGoFlying.Update(Time.deltaTime), 0);
+            pengweevilSpriteRenderersParent.localScale = new Vector3(scaleTween.Update(Time.deltaTime), scaleTween.Update(Time.deltaTime), scaleTween.Update(Time.deltaTime));
+            pengweevilSpriteRenderersParent.eulerAngles = new Vector3(0, 0, spinFloat.Update(Time.deltaTime));
+
+            if (pengweevilTransform.position.y > 1)
+            {
+                pengweevilAlmostDeadOverlaySpriteRenderer.sortingOrder = -20;
+                pengweevilSpriteRenderer.sortingOrder = -21;
+            }
         }
 
         gameplayManager.cameraShake.Shake(1, 10);
+
+        gameplayManager.playerCharacter.Win();
 
         audioManager.PlaySound("PengweevilDefeatLand");
 

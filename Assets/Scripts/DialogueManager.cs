@@ -10,6 +10,7 @@ public class DialogueManager : MonoBehaviour
 	public GameplayManager gameplayManager;
 	public AudioManager audioManager;
 	public PengweevilController pengweevilController;
+	public WaveScreenTransitionManager waveScreenManager;
 	[Space]
 	public RectTransform dialogueBox;
 	public int offScreenAnchorY;
@@ -228,14 +229,18 @@ public class DialogueManager : MonoBehaviour
 
 		if (gameplayManager.bossWave)
 		{
+			yield return StartCoroutine(waveScreenManager.BossFightTransition());
+
 			pengweevilController.StartBossFight();
 		}
 		else
 		{
 			StartCoroutine(pengweevilController.JumpOffOfStage());
-		}
 
-		yield return new WaitForSeconds(0.5f);
+			yield return new WaitForSeconds(0.6f);
+
+			yield return StartCoroutine(gameplayManager.waveScreenManager.WaveStartTransition());
+		}
 
 		gameplayManager.BringInPlayerInfo(0);
 
@@ -259,6 +264,7 @@ public class DialogueManager : MonoBehaviour
 			EndOfGameBackgroundSpriteRenderer.color = new Color(1, 1, 1, backgroundScreenAlpha.Update(Time.deltaTime));
 		}
 
+		gameplayManager.playerCharacter.UnLose();
 		gameplayManager.playerCharacter.gameObject.SetActive(false);
 
 		Tween<float> backgroundScreenToBlack = new Tween<float>(1, 0, 2f, TweenEaseType.CubicOut);
@@ -274,8 +280,6 @@ public class DialogueManager : MonoBehaviour
 
 	void EndEndGameDialogue()
 	{
-		Debug.Log("END THE END GAME DIALOGUE!");
-
 		dialogueHasEnded = true;
 		endGameCanvasMenu.SetActive(true);
 		gameplayManager.menuManager.menuTexts = gameplayManager.endingGameTexts;

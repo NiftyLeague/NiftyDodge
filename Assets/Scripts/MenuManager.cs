@@ -412,6 +412,9 @@ public class MenuManager : Singleton<MenuManager>
 				gameplayManager.StartGameBackUpFromEnding();
 				break;
 			case "GameplayWonBossFightEndRun":
+				ResetMenuOptions();
+				SetMenuEnabled(false);
+				gameplayManager.StartGameBackUpFromEnding();
 				gameplayManager.EndGame();
 				break;
 		}

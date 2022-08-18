@@ -176,6 +176,11 @@ public class PlayerController : MonoBehaviour
                 return;
             }
 
+			if (!canGetHit)
+			{
+				return;
+			}
+
 			gotHit = true;
 		}
 

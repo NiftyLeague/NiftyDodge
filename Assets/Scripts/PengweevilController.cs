@@ -23,6 +23,7 @@ public class PengweevilController : MonoBehaviour
     public CameraShake shaker;
     public Transform pengweevilShadowTransform;
     public SpriteRenderer pengweevilDefeatedScreenFlash;
+    public GameObject snowFallParticleEffect;
     public GameObject healthBarParent;
     public Image healthBarCurrent;
     public Image healthBarBefore;
@@ -122,6 +123,7 @@ public class PengweevilController : MonoBehaviour
         pengweevilAlmostDeadOverlaySpriteRenderer.sprite = pengweevilSpriteRenderer.sprite;
 
         pengweevilHurtOverlaySpriteRenderer.gameObject.SetActive(canHurtPlayer);
+        snowFallParticleEffect.SetActive(canHurtPlayer);
 
         if (pengweevilHealth <= pengweevilAlmostDeadHealth)
         {
@@ -141,8 +143,10 @@ public class PengweevilController : MonoBehaviour
                 gameplayManager.SpawnedNewProjectile();
                 currentProjectile.transform.localPosition = new Vector3(-currentMoveDirection.x * 5, -1, 0);
                 currentProjectile.transform.eulerAngles = new Vector3(0, 0, 0);
-                Vector2 firingDirectionVector = new Vector2((gameplayManager.playerController.transform.position.x / 8) + UnityEngine.Random.Range(-0.1f, 0.1f), (gameplayManager.playerController.transform.position.y / 10) + UnityEngine.Random.Range(-0.1f, 0.1f));
-                currentProjectile.GetComponent<Projectile>().InitializeProjectile(UnityEngine.Random.Range(10.0f, 20.0f), firingDirectionVector);
+                //Vector2 firingDirectionVector = new Vector2((gameplayManager.playerController.transform.position.x / 8) + UnityEngine.Random.Range(-0.1f, 0.1f), (gameplayManager.playerController.transform.position.y / 10) + UnityEngine.Random.Range(-0.1f, 0.1f));
+                Vector2 diff = gameplayManager.playerCharacter.transform.position - currentProjectile.transform.position;
+                Vector2 normal = diff.normalized;
+                currentProjectile.GetComponent<Projectile>().InitializeProjectile(UnityEngine.Random.Range(4.0f, 12.0f), normal);
                 canThrowASnowball = false;
                 amountOfSnowballsToFire--;
             }
@@ -297,6 +301,7 @@ public class PengweevilController : MonoBehaviour
         canHurtPlayer = false;
         isBossModeOn = false;
         pengweevilHurtOverlaySpriteRenderer.gameObject.SetActive(false);
+        snowFallParticleEffect.SetActive(false);
         pengweevilAlmostDeadOverlaySpriteRenderer.color = new Color(pengweevilAlmostDeadOverlaySpriteRenderer.color.r, pengweevilAlmostDeadOverlaySpriteRenderer.color.g, pengweevilAlmostDeadOverlaySpriteRenderer.color.b, 0);
         if (currentActionCoroutine != null)
         {
@@ -398,6 +403,8 @@ public class PengweevilController : MonoBehaviour
             slamLocationX = gameplayManager.playerController.transform.position.x;
         }
 
+        pengweevilTransform.position = new Vector3(slamLocationX, 30, 0);
+
         Tween<float> yPositionTweenLand = new Tween<float>(30, pengweevilOnStageYPosition, 0.5f, TweenEaseType.CubicIn);
 
         while (!yPositionTweenLand.IsEnded())
@@ -422,14 +429,11 @@ public class PengweevilController : MonoBehaviour
 
         SetSpriteState(PengweevilSpriteState.Land);
 
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.6f);
 
         canHurtPlayer = false;
 
         SetSpriteState(PengweevilSpriteState.Walk);
-
-        yield return new WaitForSeconds(0.5f);
-
     }
 
     IEnumerator AttackJumpAndSlam()
@@ -561,6 +565,8 @@ public class PengweevilController : MonoBehaviour
 
         float slamLocationX = gameplayManager.playerController.transform.position.x;
 
+        pengweevilTransform.position = new Vector3(slamLocationX, 30, 0);
+
         Tween<float> yPositionTweenLand = new Tween<float>(30, pengweevilOnStageYPosition, 0.5f, TweenEaseType.CubicIn);
 
         while (!yPositionTweenLand.IsEnded())
@@ -585,7 +591,7 @@ public class PengweevilController : MonoBehaviour
 
         SetSpriteState(PengweevilSpriteState.Land);
 
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.6f);
 
         canHurtPlayer = false;
 
@@ -607,7 +613,7 @@ public class PengweevilController : MonoBehaviour
             yield return StartCoroutine(AttackJump(-10, FacingDirection.Right));
         }
 
-        SetSpriteState(PengweevilSpriteState.TalkPengweevil, UnityEngine.Random.Range(0.05f, 0.15f));
+        SetSpriteState(PengweevilSpriteState.TalkPengweevil, UnityEngine.Random.Range(0.12f, 0.18f));
 
         amountOfSnowballsToFire = UnityEngine.Random.Range(20, 30);
 

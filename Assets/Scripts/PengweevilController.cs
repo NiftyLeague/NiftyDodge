@@ -23,7 +23,7 @@ public class PengweevilController : MonoBehaviour
     public CameraShake shaker;
     public Transform pengweevilShadowTransform;
     public SpriteRenderer pengweevilDefeatedScreenFlash;
-    public GameObject snowFallParticleEffect;
+    public ParticleSystem snowFallParticleEffect;
     public GameObject healthBarParent;
     public Image healthBarCurrent;
     public Image healthBarBefore;
@@ -53,6 +53,11 @@ public class PengweevilController : MonoBehaviour
     private Coroutine currentActionCoroutine;
     private float healthBarBeforeAmount;
 
+    private void Start()
+    {
+        CanHurtThePlayer(false);
+    }
+
     void Update()
     {
         if (IsBossDead())
@@ -63,6 +68,15 @@ public class PengweevilController : MonoBehaviour
         healthBarParent.transform.position = new Vector3(pengweevilTransform.position.x, pengweevilTransform.position.y - 0.5f);
         healthBarBeforeAmount = Mathf.Lerp(healthBarBeforeAmount, (float)pengweevilHealth, 0.005f);
         healthBarBefore.fillAmount = healthBarBeforeAmount / (float)20;
+
+        pengweevilShadowTransform.position = new Vector2(pengweevilTransform.position.x, pengweevilShadowTransform.position.y);
+
+        PengweevilBossAI();
+
+        if (!isWalking)
+        {
+            return;
+        }
 
         if (pengweevilTransform.position.x <= -10.5f)
         {
@@ -75,20 +89,11 @@ public class PengweevilController : MonoBehaviour
             SetDirection(FacingDirection.Left);
         }
 
-        pengweevilShadowTransform.position = new Vector2(pengweevilTransform.position.x, pengweevilShadowTransform.position.y);
-
-        PengweevilBossAI();
-
-        if (!isWalking)
-        {
-            return;
-        }
-
         if (pengweevilSpriteAnim.GetCurrentFrame() == 1 || pengweevilSpriteAnim.GetCurrentFrame() == 3)
         {
             if (canPlayWalkSound)
             {
-                audioManager.PlaySound("PengweevilStep");
+                audioManager.PlaySound("PengweevilStep", pengweevilTransform.position);
                 canPlayWalkSound = false;
             }
         }
@@ -122,9 +127,6 @@ public class PengweevilController : MonoBehaviour
         pengweevilHurtOverlaySpriteRenderer.sprite = pengweevilSpriteRenderer.sprite;
         pengweevilAlmostDeadOverlaySpriteRenderer.sprite = pengweevilSpriteRenderer.sprite;
 
-        pengweevilHurtOverlaySpriteRenderer.gameObject.SetActive(canHurtPlayer);
-        snowFallParticleEffect.SetActive(canHurtPlayer);
-
         if (pengweevilHealth <= pengweevilAlmostDeadHealth)
         {
             almostDeadAlpha = Mathf.PingPong(Time.time * (10 - pengweevilHealth), 0.7f);
@@ -147,6 +149,7 @@ public class PengweevilController : MonoBehaviour
                 Vector2 diff = gameplayManager.playerCharacter.transform.position - currentProjectile.transform.position;
                 Vector2 normal = diff.normalized;
                 currentProjectile.GetComponent<Projectile>().InitializeProjectile(UnityEngine.Random.Range(4.0f, 12.0f), normal);
+                gameplayManager.audioManager.PlaySound("BombShoot", currentProjectile.transform.position);
                 canThrowASnowball = false;
                 amountOfSnowballsToFire--;
             }
@@ -205,7 +208,7 @@ public class PengweevilController : MonoBehaviour
 
         pengweevilShadowTransform.gameObject.SetActive(false);
 
-        audioManager.PlaySound("PengweevilJump");
+        audioManager.PlaySound("PengweevilJump", pengweevilTransform.position);
 
         Tween<float> yPositionTween = new Tween<float>(pengweevilOffStageYPosition, pengweevilJumpHeightYPosition, 1, TweenEaseType.CubicOut);
 
@@ -225,7 +228,7 @@ public class PengweevilController : MonoBehaviour
             pengweevilTransform.position = new Vector3(pengweevilTransform.position.x, yPositionTween.Update(Time.deltaTime), 0);
         }
 
-        audioManager.PlaySound("PengweevilLand");
+        audioManager.PlaySound("PengweevilLand", pengweevilTransform.position);
 
         pengweevilSpriteRenderer.sortingOrder = pengweevilOnStageSortOrder;
 
@@ -260,7 +263,7 @@ public class PengweevilController : MonoBehaviour
 
         pengweevilSpriteRenderer.sortingOrder = pengweevilOffStageSortOrder;
 
-        audioManager.PlaySound("PengweevilJump");
+        audioManager.PlaySound("PengweevilJump", pengweevilTransform.position);
 
         Tween<float> yPositionTween = new Tween<float>(pengweevilOnStageYPosition, pengweevilJumpHeightYPosition, 1, TweenEaseType.CubicOut);
 
@@ -298,10 +301,8 @@ public class PengweevilController : MonoBehaviour
 
     public void EndBossFight()
     {
-        canHurtPlayer = false;
         isBossModeOn = false;
-        pengweevilHurtOverlaySpriteRenderer.gameObject.SetActive(false);
-        snowFallParticleEffect.SetActive(false);
+        CanHurtThePlayer(false);
         pengweevilAlmostDeadOverlaySpriteRenderer.color = new Color(pengweevilAlmostDeadOverlaySpriteRenderer.color.r, pengweevilAlmostDeadOverlaySpriteRenderer.color.g, pengweevilAlmostDeadOverlaySpriteRenderer.color.b, 0);
         if (currentActionCoroutine != null)
         {
@@ -335,6 +336,14 @@ public class PengweevilController : MonoBehaviour
             healthBarParent.SetActive(false);
             WonBossFight();
         }
+    }
+
+    void CanHurtThePlayer(bool canHurt)
+    {
+        canHurtPlayer = canHurt;
+        pengweevilHurtOverlaySpriteRenderer.gameObject.SetActive(canHurtPlayer);
+        var SnowParticleEmission = snowFallParticleEffect.emission;
+        SnowParticleEmission.rateOverTime = canHurtPlayer ? 100 : 0;
     }
 
     IEnumerator TakeDamageAnimation()
@@ -380,7 +389,7 @@ public class PengweevilController : MonoBehaviour
 
         pengweevilSpriteRenderer.sortingOrder = pengweevilOffStageSortOrder;
 
-        audioManager.PlaySound("PengweevilJump");
+        audioManager.PlaySound("PengweevilJump", pengweevilTransform.position);
 
         Tween<float> yPositionTweenJump = new Tween<float>(pengweevilOnStageYPosition, 30, 1, TweenEaseType.CubicOut);
 
@@ -394,7 +403,7 @@ public class PengweevilController : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
-        canHurtPlayer = true;
+        CanHurtThePlayer(true);
 
         pengweevilShadowTransform.gameObject.SetActive(true);
 
@@ -413,7 +422,7 @@ public class PengweevilController : MonoBehaviour
             pengweevilTransform.position = new Vector3(slamLocationX, yPositionTweenLand.Update(Time.deltaTime), 0);
         }
 
-        audioManager.PlaySound("PengweevilLand");
+        audioManager.PlaySound("PengweevilLand", pengweevilTransform.position);
 
         pengweevilSpriteRenderer.sortingOrder = pengweevilOnStageSortOrder;
 
@@ -431,7 +440,7 @@ public class PengweevilController : MonoBehaviour
 
         yield return new WaitForSeconds(0.6f);
 
-        canHurtPlayer = false;
+        CanHurtThePlayer(false);
 
         SetSpriteState(PengweevilSpriteState.Walk);
     }
@@ -460,7 +469,7 @@ public class PengweevilController : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        canHurtPlayer = true;
+        CanHurtThePlayer(true);
 
         SetSpriteState(PengweevilSpriteState.Walk, 0.05f);
 
@@ -474,7 +483,7 @@ public class PengweevilController : MonoBehaviour
 
         pengweevilMoveSpeed = 5;
 
-        canHurtPlayer = false;
+        CanHurtThePlayer(false);
 
         isPerformingAnAttack = false;
     }
@@ -491,7 +500,7 @@ public class PengweevilController : MonoBehaviour
 
         pengweevilSpriteRenderer.sortingOrder = pengweevilOffStageSortOrder;
 
-        audioManager.PlaySound("PengweevilJump");
+        audioManager.PlaySound("PengweevilJump", pengweevilTransform.position);
 
         Tween<float> yPositionTweenJump = new Tween<float>(pengweevilOnStageYPosition, 30, 1, TweenEaseType.CubicOut);
 
@@ -559,7 +568,7 @@ public class PengweevilController : MonoBehaviour
 
         gameplayManager.StopAllLaunchers();
 
-        canHurtPlayer = true;
+        CanHurtThePlayer(true);
 
         pengweevilShadowTransform.gameObject.SetActive(true);
 
@@ -575,7 +584,7 @@ public class PengweevilController : MonoBehaviour
             pengweevilTransform.position = new Vector3(slamLocationX, yPositionTweenLand.Update(Time.deltaTime), 0);
         }
 
-        audioManager.PlaySound("PengweevilLand");
+        audioManager.PlaySound("PengweevilLand", pengweevilTransform.position);
 
         pengweevilSpriteRenderer.sortingOrder = pengweevilOnStageSortOrder;
 
@@ -593,7 +602,7 @@ public class PengweevilController : MonoBehaviour
 
         yield return new WaitForSeconds(0.6f);
 
-        canHurtPlayer = false;
+        CanHurtThePlayer(false);
 
         SetSpriteState(PengweevilSpriteState.Walk);
 
@@ -669,7 +678,7 @@ public class PengweevilController : MonoBehaviour
         Tween<float> scaleTween = new Tween<float>(1, 0.05f, tweenTime * 3, TweenEaseType.Linear);
         Tween<float> spinFloat = new Tween<float>(0, 2000, tweenTime, TweenEaseType.Linear);
 
-        audioManager.PlaySound("FallingInFrontOfScreen");
+        audioManager.PlaySound("FallingInFrontOfScreen", pengweevilTransform.position);
 
         while (!yPositionTweenGoFlying.IsEnded())
         {
@@ -689,7 +698,7 @@ public class PengweevilController : MonoBehaviour
 
         gameplayManager.playerCharacter.Win();
 
-        audioManager.PlaySound("PengweevilDefeatLand");
+        audioManager.PlaySound("PengweevilDefeatLand", pengweevilTransform.position);
 
         pengweevilTransform.gameObject.SetActive(false);
 
@@ -699,15 +708,15 @@ public class PengweevilController : MonoBehaviour
     IEnumerator PlayPengweevilLastHitSounds()
     {
         yield return new WaitForSeconds(0.04f);
-        audioManager.PlaySound("ProjectileHit", 0.8f);
+        audioManager.PlaySound("ProjectileHit", pengweevilTransform.position, 0.8f);
         yield return new WaitForSeconds(0.04f);
-        audioManager.PlaySound("ProjectileHit", 0.6f);
+        audioManager.PlaySound("ProjectileHit", pengweevilTransform.position, 0.6f);
         yield return new WaitForSeconds(0.04f);
-        audioManager.PlaySound("ProjectileHit", 0.4f);
+        audioManager.PlaySound("ProjectileHit", pengweevilTransform.position, 0.4f);
         yield return new WaitForSeconds(0.04f);
-        audioManager.PlaySound("ProjectileHit", 0.2f);
+        audioManager.PlaySound("ProjectileHit", pengweevilTransform.position, 0.2f);
         yield return new WaitForSeconds(0.04f);
-        audioManager.PlaySound("ProjectileHit", 0.05f);
+        audioManager.PlaySound("ProjectileHit", pengweevilTransform.position, 0.05f);
     }
 
     void SetDirection(FacingDirection direction)

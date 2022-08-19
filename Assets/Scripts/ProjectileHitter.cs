@@ -141,7 +141,7 @@ public class ProjectileHitter : MonoBehaviour
 		{
 			EffectsController.CreateHitEffect((transform.position + collision.transform.position) / 2, currentChargeAmount / 10, false);
 			gameplayManager.ScorePoint((int)(1 + playerCharacter.attackChargeM));
-			audioManager.PlaySound("ProjectileHit");
+			audioManager.PlaySound("ProjectileHit", transform.position);
 		}
     }
 }

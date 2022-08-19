@@ -46,6 +46,11 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySound(string soundID, float volume = 1f, float addedPitch = 0)
     {
+        PlaySound(soundID, Vector2.zero, volume, addedPitch);
+    }
+
+    public void PlaySound(string soundID, Vector2 soundPosition, float volume = 1f, float addedPitch = 0)
+    {
         if (soundID == lastSoundIDPlayed)
         {
             if (lastSoundTimer < 0.05f)
@@ -64,6 +69,7 @@ public class AudioManager : MonoBehaviour
         currentEffectSource.clip = soundEffectSource.clip;
         currentEffectSource.pitch = soundEffectSource.pitch + addedPitch + GetPitch(soundDictionary[soundID].pitchVariance);
         currentEffectSource.volume = volume;
+        currentEffectSource.transform.position = soundPosition;
         currentEffectSource.Play();
 
         lastAudioSourceUsed++;

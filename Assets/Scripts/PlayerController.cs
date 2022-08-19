@@ -90,7 +90,7 @@ public class PlayerController : MonoBehaviour
 		{
 			return;
 		}
-		gameplayManager.audioManager.PlaySound("ChargedHitIndicator");
+		gameplayManager.audioManager.PlaySound("ChargedHitIndicator", transform.position);
 		canPlayChargeEffect = false;
 		chargeEffectClouds.SetActive(true);
 		StartCoroutine(ChargeEffect());

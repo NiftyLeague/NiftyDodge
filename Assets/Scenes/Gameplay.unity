@@ -9470,14 +9470,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6171bfb7f10a2ad4e9f12fac0f115f9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1376055419 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2709315656750478247, guid: 9a8448cd57187a048af073bf9e5f3b1f, type: 3}
-  m_PrefabInstance: {fileID: 2123246079}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1376055420 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2709315656750478242, guid: 9a8448cd57187a048af073bf9e5f3b1f, type: 3}
+  m_PrefabInstance: {fileID: 2123246079}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &1376055422 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 2709315656750478245, guid: 9a8448cd57187a048af073bf9e5f3b1f, type: 3}
   m_PrefabInstance: {fileID: 2123246079}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1389181008
@@ -9925,7 +9925,7 @@ MonoBehaviour:
   shaker: {fileID: 847076320}
   pengweevilShadowTransform: {fileID: 730941516}
   pengweevilDefeatedScreenFlash: {fileID: 1039309937}
-  snowFallParticleEffect: {fileID: 1376055419}
+  snowFallParticleEffect: {fileID: 1376055422}
   healthBarParent: {fileID: 369776011}
   healthBarCurrent: {fileID: 448594698}
   healthBarBefore: {fileID: 1317136804}
@@ -16708,7 +16708,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2709315656750478245, guid: 9a8448cd57187a048af073bf9e5f3b1f, type: 3}
       propertyPath: prewarm
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2709315656750478245, guid: 9a8448cd57187a048af073bf9e5f3b1f, type: 3}
       propertyPath: ShapeModule.type
@@ -16776,7 +16776,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2709315656750478247, guid: 9a8448cd57187a048af073bf9e5f3b1f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a8448cd57187a048af073bf9e5f3b1f, type: 3}

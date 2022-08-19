@@ -325,7 +325,7 @@ public class GameplayManager : MonoBehaviour
 			scoreText.transform.localScale = new Vector3(scaleTween.Update(Time.deltaTime), scaleTween.Update(Time.deltaTime), scaleTween.Update(Time.deltaTime));
 		}
 
-		audioManager.PlaySound("GainPoint");
+		audioManager.PlaySound("GainPoint", playerCharacter.transform.position);
 	}
 
 	void UpdateScoreText()
@@ -461,7 +461,7 @@ public class GameplayManager : MonoBehaviour
 		}
 		else
 		{
-			audioManager.PlaySound("LoseLife");
+			audioManager.PlaySound("LoseLife", playerCharacter.transform.position);
 			playerController.AnimateHurtFlash();
 			cameraShake.Shake(0.2f, 5);
 		}
@@ -505,35 +505,35 @@ public class GameplayManager : MonoBehaviour
 		switch (powerupType)
 		{
 			case PowerupType.Invinicibility:
-				audioManager.PlaySound("PowerupGet");
+				audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
 				invincibilityPowerupTimer = 10;
 				invincibilityPowerupOnCharacter.gameObject.SetActive(true);
 				playerController.UpdateSpecialEffectOverlay();
 				break;
 			case PowerupType.Lifeup:
-				audioManager.PlaySound("PowerupGet");
+				audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
 				StartCoroutine(LifeUpAnimation());
 				GainLife();
 				break;
 			case PowerupType.Points10:
-				audioManager.PlaySound("PowerupGet");
+				audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
 				ScorePoint(10);
 				break;
 			case PowerupType.Points20:
-				audioManager.PlaySound("PowerupGet");
+				audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
 				ScorePoint(20);
 				break;
 			case PowerupType.Points50:
-				audioManager.PlaySound("PowerupGet");
+				audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
 				ScorePoint(50);
 				break;
 			case PowerupType.Slow:
-				audioManager.PlaySound("PowerupGet");
+				audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
 				slowPowerupTimer = 10;
 				slowPowerupOnCharacter.gameObject.SetActive(true);
 				break;
 			case PowerupType.Cupcake:
-				audioManager.PlaySound("Burp");
+				audioManager.PlaySound("Burp", playerCharacter.transform.position);
 				ScorePoint(1);
 				break;
 		}
@@ -541,7 +541,7 @@ public class GameplayManager : MonoBehaviour
 
 	public void DisablePowerup(PowerupType powerupType)
 	{
-		audioManager.PlaySound("PowerupEnd");
+		audioManager.PlaySound("PowerupEnd", playerCharacter.transform.position);
 
 		switch (powerupType)
 		{
@@ -761,7 +761,6 @@ public class GameplayManager : MonoBehaviour
 	public void SpawnedNewProjectile()
 	{
 		totalProjectiles++;
-		audioManager.PlaySound("BombShoot");
 		IncreaseSpeed();
 	}
 }

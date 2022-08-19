@@ -83,28 +83,34 @@ public class ProjectileLauncher : MonoBehaviour
         cantLaunch = true;
 
         spriteRenderer.sprite = activeSprite;
+        //gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position);
         adjacentLauncher.CommenceReceiving(1);
 
         yield return new WaitForSeconds(0.4f);
         spriteRenderer.sprite = idleSprite;
         yield return new WaitForSeconds(0.35f);
         spriteRenderer.sprite = activeSprite;
+        gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position);
         yield return new WaitForSeconds(0.3f);
         spriteRenderer.sprite = idleSprite;
         yield return new WaitForSeconds(0.25f);
         spriteRenderer.sprite = activeSprite;
+        gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position);
         yield return new WaitForSeconds(0.2f);
         spriteRenderer.sprite = idleSprite;
         yield return new WaitForSeconds(0.15f);
         spriteRenderer.sprite = activeSprite;
+        gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position);
         yield return new WaitForSeconds(0.1f);
         spriteRenderer.sprite = idleSprite;
         yield return new WaitForSeconds(0.08f);
         spriteRenderer.sprite = activeSprite;
+        gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position);
         yield return new WaitForSeconds(0.06f);
         spriteRenderer.sprite = idleSprite;
         yield return new WaitForSeconds(0.04f);
         spriteRenderer.sprite = activeSprite;
+        gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position);
         yield return new WaitForSeconds(0.02f);
         spriteRenderer.sprite = fireSprite;
 
@@ -166,14 +172,14 @@ public class ProjectileLauncher : MonoBehaviour
         if (gameplayManager.bonusWave)
         {
             currentProjectile = Instantiate(gameplayManager.cupcakePowerup, transform);
-            gameplayManager.audioManager.PlaySound("BombShoot");
+            gameplayManager.audioManager.PlaySound("BombShoot", transform.position);
             speedIncrease = 15;
         }
         else
         {
             if (Random.value <= gameplayManager.powerupSpawnChance)
             {
-                gameplayManager.audioManager.PlaySound("PowerupSpawn");
+                gameplayManager.audioManager.PlaySound("PowerupSpawn", transform.position);
                 currentProjectile = Instantiate(gameplayManager.GetRandomPowerup(), transform);
             }
             else
@@ -188,6 +194,7 @@ public class ProjectileLauncher : MonoBehaviour
                 {
                     currentProjectile = Instantiate(gameplayManager.snowballProjectile, transform);
                 }
+                gameplayManager.audioManager.PlaySound("BombShoot", transform.position);
                 gameplayManager.SpawnedNewProjectile();
             }
         }

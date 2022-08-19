@@ -451,11 +451,11 @@ public class Character : MonoBehaviour
         {
             attackState = AttackState.Attacking;
             //SoundController.PlaySoundEffect("BatSwing", 0.4f + attackChargeM * 0.4f, transform.position);
-            audioManager.PlaySound("BatSwing", 0.4f + attackChargeM * 0.4f);
+            audioManager.PlaySound("BatSwing", transform.position, 0.4f + attackChargeM * 0.4f);
             if (attackChargeM > 0.25f || IngestedFly)
             {
                 //SoundController.PlaySoundEffect("BatSwingVoice", 0.4f, transform.position);
-                audioManager.PlaySound("BatSwingVoice", 0.4f);
+                audioManager.PlaySound("BatSwingVoice", transform.position, 0.4f);
             }
             attackTimeLeft = attackTime;
             if (attackChargeM > 0.5f)
@@ -748,14 +748,14 @@ public class Character : MonoBehaviour
         if (OnGround && !wasOnGround)
         {
             //SoundController.PlaySoundEffect("Land", 0.4f, transform.position);
-            audioManager.PlaySound("PlayerLand");
+            audioManager.PlaySound("PlayerLand", transform.position);
             jumpCooldownLeft = 0.1f;
 
         }
         if (WallSliding && !wasWallSlide)
         {
             //SoundController.PlaySoundEffect("Land", 0.4f, transform.position);
-            audioManager.PlaySound("PlayerLand");
+            audioManager.PlaySound("PlayerLand", transform.position);
             jumpCooldownLeft = 0.1f;
         }
 
@@ -1237,7 +1237,7 @@ public class Character : MonoBehaviour
                 {
                     attackState = AttackState.Charging;
                     //SoundController.PlaySoundEffect("BatChargeUp", 0.5f, transform.position);
-                    audioManager.PlaySound("BatCharge");
+                    audioManager.PlaySound("BatCharge", transform.position);
                     attackChargeCounter = 0f;
                 }
             }
@@ -1288,7 +1288,7 @@ public class Character : MonoBehaviour
 
                 //Debug.Break();
                 //SoundController.PlaySoundEffect("Jump", 0.4f, transform.position);
-                audioManager.PlaySound("PlayerJump");
+                audioManager.PlaySound("PlayerJump",transform.position);
                 if (WallSliding)
                     EffectsController.CreateJumpPuffStraight(transform.position, WallSlideSide);
                 else

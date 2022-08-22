@@ -124,6 +124,7 @@ public class ProjectileHitter : MonoBehaviour
 			projectile.DestroyProjectile();
 			gameplayManager.projectilesHit++;
             gameplayManager.cameraShake.Shake(0.2f * currentChargeAmount, 1);
+			gameplayManager.ScorePoint((int)(1 + playerCharacter.attackChargeM));
 			hasHitSomething = true;
         }
 
@@ -134,13 +135,16 @@ public class ProjectileHitter : MonoBehaviour
 				return;
 			}
 			gameplayManager.pengweevilController.PengweevilTakeDamage();
+			if (!gameplayManager.bossHasBeenDefeated)
+			{
+				gameplayManager.ScorePoint(5);
+			}
 			hasHitSomething = true;
 		}
 
 		if (hasHitSomething)
 		{
 			EffectsController.CreateHitEffect((transform.position + collision.transform.position) / 2, currentChargeAmount / 10, false);
-			gameplayManager.ScorePoint((int)(1 + playerCharacter.attackChargeM));
 			audioManager.PlaySound("ProjectileHit", transform.position);
 		}
     }

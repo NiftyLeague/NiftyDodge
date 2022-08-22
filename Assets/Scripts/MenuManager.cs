@@ -55,6 +55,7 @@ public class MenuManager : Singleton<MenuManager>
 
 	private MenuOption lastSelectedMenuOption;
 	private bool canSelectMenuOptions;
+	private float pressDelayTimer;
 	private InputState input = new InputState();
 
 	uint ArcadeTokens { get { return NiftyUsers.me != null ? NiftyUsers.me.arcadeTokenBalance : 0; } }
@@ -71,6 +72,8 @@ public class MenuManager : Singleton<MenuManager>
 
 	void Update()
 	{
+		pressDelayTimer += Time.deltaTime;
+
 		InputReader.GetInput(input);
 
 		if (currentMenu > 0 && input.PressedB)
@@ -109,7 +112,10 @@ public class MenuManager : Singleton<MenuManager>
 
 		if (input.PressedA || input.PressedStart)
 		{
-			StartCoroutine(SelectOption());
+			if (pressDelayTimer > 0.2f)
+			{
+				StartCoroutine(SelectOption());
+			}
 		}
 
 		//currentSelectedMenu
@@ -117,6 +123,7 @@ public class MenuManager : Singleton<MenuManager>
 
 	public void SetMenuEnabled(bool enabled)
 	{
+		pressDelayTimer = 0;
 		canSelectMenuOptions = enabled;
 		menuPanel.SetActive(enabled);
 		ResetMenuOptions();

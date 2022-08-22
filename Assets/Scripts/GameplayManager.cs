@@ -219,21 +219,20 @@ public class GameplayManager : MonoBehaviour
 		hasGameEnded = true;
 		playerController.playerSpriteRenderer.sortingOrder = 10;
 
+		bonusWave = false;
+		bossWave = false;
+		waveText.text = "WAVE " + wave.ToString("0");
+
 		if (wave % bonusWaveEvery == 0)
 		{
 			bonusWave = true;
 			waveText.text = "BONUS WAVE!";
 		}
+		
 		if (wave == bossWaveNumber)
 		{
 			bossWave = true;
 			waveText.text = "BOSS WAVE!";
-		}
-		else
-		{
-			bonusWave = false;
-			bossWave = false;
-			waveText.text = "WAVE " + wave.ToString("0");
 		}
 
 		if (pengweevilController.IsBossDead())

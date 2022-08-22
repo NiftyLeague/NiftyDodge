@@ -45,6 +45,7 @@ public class DialogueManager : MonoBehaviour
 	public SpriteRenderer EndOfGameBackgroundSpriteRenderer;
 	public SpriteRenderer EndOfGameBackgroundSlideSpriteRenderer;
 	public GameObject endGameCanvasMenu;
+	public GameObject endGameButtonPrompt;
 
 	private DialogueTextEntry currentDialogueTextEntry;
 
@@ -56,10 +57,21 @@ public class DialogueManager : MonoBehaviour
 
 		InputReader.GetInput(input);
 
-		if (input.PressedA && !dialogueHasEnded && !waitingForNextText)
+		if (input.PressedA)
 		{
-			audioManager.PlaySound("MenuOptionSelect");
-			currentLetter = currentDialogueTextEntry.speechString[currentDialogue].Length;
+			if (!dialogueHasEnded && !waitingForNextText)
+			{
+				audioManager.PlaySound("MenuOptionSelect");
+				currentLetter = currentDialogueTextEntry.speechString[currentDialogue].Length;
+				return;
+			}
+
+			if (gameplayManager.bossHasBeenDefeated && waitingForNextText)
+			{
+				audioManager.PlaySound("MenuOptionSelect");
+				ProgressDialogue();
+				return;
+			}
 		}
 	}
 
@@ -72,8 +84,11 @@ public class DialogueManager : MonoBehaviour
 
 		if (waitingForNextText)
 		{
-			nextDialogueTextTimer += Time.deltaTime;
-			FaceBoxStop();
+			if (!gameplayManager.bossHasBeenDefeated)
+			{
+				nextDialogueTextTimer += Time.deltaTime;
+				FaceBoxStop();
+			}
 		}
 		else
 		{
@@ -202,6 +217,7 @@ public class DialogueManager : MonoBehaviour
 		{
 			currentDialogueTextEntry = bossDefeatedDialogue;
 			EndOfGameBackgroundSlideSpriteRenderer.sprite = bossDefeatedSlides[0];
+			endGameButtonPrompt.SetActive(true);
 		}
 
 		dialogueHasEnded = false;

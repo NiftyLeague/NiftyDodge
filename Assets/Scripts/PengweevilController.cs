@@ -78,12 +78,12 @@ public class PengweevilController : MonoBehaviour
             return;
         }
 
-        if (pengweevilTransform.position.x <= -10.5f)
+        if (pengweevilTransform.position.x <= -11f)
         {
             pengweevilTransform.position = new Vector2(-10, pengweevilOnStageYPosition);
             SetDirection(FacingDirection.Right);
         }
-        else if (pengweevilTransform.position.x >= 10.5f)
+        else if (pengweevilTransform.position.x >= 11f)
         {
             pengweevilTransform.position = new Vector2(10, pengweevilOnStageYPosition);
             SetDirection(FacingDirection.Left);
@@ -458,11 +458,11 @@ public class PengweevilController : MonoBehaviour
     {
         if (UnityEngine.Random.value <= 0.5f)
         {
-            yield return StartCoroutine(AttackJump(10, FacingDirection.Left));
+            yield return StartCoroutine(AttackJump(11, FacingDirection.Left));
         }
         else
         {
-            yield return StartCoroutine(AttackJump(-10, FacingDirection.Right));
+            yield return StartCoroutine(AttackJump(-11, FacingDirection.Right));
         }
 
         SetSpriteState(PengweevilSpriteState.Walk);
@@ -615,11 +615,11 @@ public class PengweevilController : MonoBehaviour
     {
         if (UnityEngine.Random.value <= 0.5f)
         {
-            yield return StartCoroutine(AttackJump(10, FacingDirection.Left));
+            yield return StartCoroutine(AttackJump(11, FacingDirection.Left));
         }
         else
         {
-            yield return StartCoroutine(AttackJump(-10, FacingDirection.Right));
+            yield return StartCoroutine(AttackJump(-11, FacingDirection.Right));
         }
 
         SetSpriteState(PengweevilSpriteState.TalkPengweevil, UnityEngine.Random.Range(0.12f, 0.18f));
@@ -672,7 +672,7 @@ public class PengweevilController : MonoBehaviour
         pengweevilShadowTransform.gameObject.SetActive(false);
 
         float tweenTime = 4;
-        TweenEaseType easeType = TweenEaseType.CubicIn;
+        TweenEaseType easeType = TweenEaseType.QuadraticIn;
         Tween<float> yPositionTweenGoFlying = new Tween<float>(0, 6.7f, tweenTime, easeType);
         Tween<float> xPositionTweenGoFlying = new Tween<float>(pengweevilTransform.position.x, 12.2f, tweenTime, easeType);
         Tween<float> scaleTween = new Tween<float>(1, 0.05f, tweenTime * 3, TweenEaseType.Linear);

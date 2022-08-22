@@ -173,7 +173,7 @@ public class ProjectileLauncher : MonoBehaviour
         {
             currentProjectile = Instantiate(gameplayManager.cupcakePowerup, transform);
             gameplayManager.audioManager.PlaySound("BombShoot", transform.position);
-            speedIncrease = 15;
+            speedIncrease = 12;
         }
         else
         {

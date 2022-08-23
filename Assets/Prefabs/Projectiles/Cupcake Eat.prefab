@@ -10,11 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2101283796660733823}
   - component: {fileID: 2101283796660733795}
-  - component: {fileID: 2101283796660733793}
-  - component: {fileID: 2101283796660733792}
-  - component: {fileID: 8825958817702963430}
+  - component: {fileID: 2101283796660733794}
   m_Layer: 7
-  m_Name: Powerup Cupcake
+  m_Name: Cupcake Eat
   m_TagString: Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: 21300000, guid: 1e268188750fc624ba50c2b89d54c234, type: 3}
+  m_Sprite: {fileID: 5072695944415435955, guid: 33d3ec849ac3b0345824078510a69d2e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -83,10 +81,10 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &2101283796660733793
+--- !u!114 &2101283796660733794
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -95,58 +93,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 2101283796660733822}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3da4830d4ab6394a97fea8cd0318e42, type: 3}
+  m_Script: {fileID: 11500000, guid: f1caaa3ec81241d46a98f985efbb358d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  explosionPrefab: {fileID: 2101283796660733822, guid: e15315a427d4f444bb6ee4ef967ca4b5, type: 3}
-  rigidBody: {fileID: 2101283796660733792}
-  moveSpeed: 10
-  powerupType: 5
-  icicle: 0
---- !u!50 &2101283796660733792
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2101283796660733822}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 1
-  m_Constraints: 4
---- !u!61 &8825958817702963430
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2101283796660733822}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 4, y: 4}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1.2, y: 1.2}
-  m_EdgeRadius: 0
+  animSpeed: 0.08
+  frames:
+  - {fileID: 21300000, guid: 8980e7bc6c8eef342abee1f931e0c84d, type: 3}
+  - {fileID: 21300000, guid: a2b2f5c48902c6349ae90105f5fa4f48, type: 3}
+  - {fileID: 21300000, guid: a95c869d6bda81043b0be7f9db7802e9, type: 3}
+  - {fileID: 21300000, guid: f1ff75024a5e3594cad1320dc320b5ec, type: 3}
+  playOnce: 1
+  disableAfterPlayOnce: 0
+  stayAfterPlayOnce: 0
+  pingPong: 0

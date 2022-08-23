@@ -76,6 +76,7 @@ public class GameplayManager : MonoBehaviour
 	public ObscuredFloat powerupSpawnChance = 0.05f;
 	public ObscuredFloat slowPowerupProjectileSpeed = 2f;
 	public ObscuredFloat waveTimeLength = 60;
+	public ObscuredFloat bonusWaveTimeLength = 20;
 	public ObscuredInt bonusWaveEvery = 5;
 	public ObscuredInt bossWaveNumber = 50;
 	[Space]
@@ -204,10 +205,13 @@ public class GameplayManager : MonoBehaviour
 
 		waveTimer += Time.deltaTime;
 
-		if (waveTimer >= waveTimeLength && !bossWave)
+		if (!bossWave)
 		{
-			BringOutPlayerInfo(0);
-			SetUpNextWave();
+			if (waveTimer >= waveTimeLength && !bonusWave || waveTimer >= bonusWaveTimeLength && bonusWave)
+			{
+				BringOutPlayerInfo(0);
+				SetUpNextWave();
+			}
 		}
 	}
 
@@ -388,7 +392,7 @@ public class GameplayManager : MonoBehaviour
 		var projectilesInExistence = FindObjectsOfType<Projectile>();
 		foreach (Projectile projectileInExistence in projectilesInExistence)
 		{
-			projectileInExistence.DestroyProjectile(false);
+			projectileInExistence.DestroyProjectile();
 		}
 	}
 
@@ -533,7 +537,7 @@ public class GameplayManager : MonoBehaviour
 				break;
 			case PowerupType.Cupcake:
 				audioManager.PlaySound("Burp", playerCharacter.transform.position);
-				ScorePoint(1);
+				ScorePoint(2);
 				break;
 		}
 	}

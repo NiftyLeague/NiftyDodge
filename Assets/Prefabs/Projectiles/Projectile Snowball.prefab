@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3da4830d4ab6394a97fea8cd0318e42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  snowballBreakage: {fileID: 2101283796660733822, guid: ebb915493ea66654b830918fe479eb9e, type: 3}
+  explosionPrefab: {fileID: 2101283796660733822, guid: ebb915493ea66654b830918fe479eb9e, type: 3}
   rigidBody: {fileID: 2101283796660733792}
   moveSpeed: 10
   powerupType: 0

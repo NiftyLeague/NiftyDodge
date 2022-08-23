@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-	public GameObject snowballBreakage;
+	public GameObject explosionPrefab;
 	public Rigidbody2D rigidBody;
 	public float moveSpeed;
 	public PowerupType powerupType;
@@ -40,7 +40,7 @@ public class Projectile : MonoBehaviour
 			{
 				GameplayManager.I.ScorePoint(1);
 			}
-			DestroyProjectile(false);
+			DestroyProjectile();
 		}
 	}
 
@@ -64,17 +64,17 @@ public class Projectile : MonoBehaviour
 		}
 	}
 
-	public void DestroyProjectile(bool withExplosion = true)
+	public void DestroyProjectile()
 	{
 		if (launcherTarget != null)
 		{
 			launcherTarget.ReceiveProjectile();
 		}
 
-		if (withExplosion)
+		if (explosionPrefab != null)
 		{
-			var newSnowballBreakage = Instantiate(snowballBreakage, GameplayManager.I.transform);
-			newSnowballBreakage.transform.position = transform.position;
+			var newExplosion = Instantiate(explosionPrefab, GameplayManager.I.transform);
+			newExplosion.transform.position = transform.position;
 		}
 
 		Destroy(gameObject);

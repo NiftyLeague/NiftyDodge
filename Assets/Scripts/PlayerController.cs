@@ -149,7 +149,7 @@ public class PlayerController : MonoBehaviour
 			if (hitProjectile.powerupType != PowerupType.None)
 			{
 				gameplayManager.EnablePowerup(hitProjectile.powerupType);
-				hitProjectile.DestroyProjectile(false);
+				hitProjectile.DestroyProjectile();
 				return;
 			}
 			else

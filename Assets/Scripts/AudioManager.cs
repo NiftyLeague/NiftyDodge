@@ -14,7 +14,7 @@ public class AudioManager : MonoBehaviour
     private string lastSoundIDPlayed;
     private float lastSoundTimer;
 
-    private void Start()
+    private void Awake()
     {
         Initialize();
     }
@@ -46,6 +46,8 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySound(string soundID, float volume = 1f, float addedPitch = 0)
     {
+        Debug.Log(soundID);
+
         PlaySound(soundID, Vector2.zero, volume, addedPitch);
     }
 

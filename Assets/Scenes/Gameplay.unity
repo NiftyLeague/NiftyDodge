@@ -9948,9 +9948,9 @@ MonoBehaviour:
   healthBarBefore: {fileID: 1317136804}
   pengweevilHealth:
     currentCryptoKey: 1137439268
-    hiddenValue: 1137439269
+    hiddenValue: 1137439280
     inited: 1
-    fakeValue: 1
+    fakeValue: 20
     fakeValueActive: 1
   pengweevilAlmostDeadHealth:
     currentCryptoKey: 1621869510

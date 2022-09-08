@@ -1309,7 +1309,7 @@ MonoBehaviour:
     inited: 1
     fakeValue: 50
     fakeValueActive: 1
-  startTimeoutRange: {x: 0.25, y: 1}
+  startTimeoutRange: {x: 0.2, y: 2}
   shootRandomTimeoutRange: {x: -0.1, y: 0.5}
   textTweenType: 7
   textTweenDuration:

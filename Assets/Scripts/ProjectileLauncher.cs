@@ -35,12 +35,12 @@ public class ProjectileLauncher : MonoBehaviour
         {
             if (Random.value <= gameplayManager.GetDoubleProjectileChance())
             {
-                currentLaunchingCoroutine = StartCoroutine(LaunchTwoProjectiles());
+                currentLaunchingCoroutine = StartCoroutine(LaunchProjectile(true));
                 return;
             }
         }
 
-        currentLaunchingCoroutine = StartCoroutine(LaunchOneProjectile());
+        currentLaunchingCoroutine = StartCoroutine(LaunchProjectile(false));
     }
 
     public void CommenceReceiving(int amountToReceive)
@@ -78,89 +78,61 @@ public class ProjectileLauncher : MonoBehaviour
         amountReceiving = 0;
     }
 
-    IEnumerator LaunchOneProjectile()
+    IEnumerator LaunchProjectile(bool launchTwoProjectiles)
     {
         cantLaunch = true;
 
         spriteRenderer.sprite = activeSprite;
-        //gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position);
+        gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position);
         adjacentLauncher.CommenceReceiving(1);
 
         yield return new WaitForSeconds(0.4f);
         spriteRenderer.sprite = idleSprite;
         yield return new WaitForSeconds(0.35f);
         spriteRenderer.sprite = activeSprite;
-        gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position);
+        gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position, 1, 0.1f);
         yield return new WaitForSeconds(0.3f);
         spriteRenderer.sprite = idleSprite;
         yield return new WaitForSeconds(0.25f);
         spriteRenderer.sprite = activeSprite;
-        gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position);
+        gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position, 1, 0.2f);
         yield return new WaitForSeconds(0.2f);
         spriteRenderer.sprite = idleSprite;
         yield return new WaitForSeconds(0.15f);
         spriteRenderer.sprite = activeSprite;
-        gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position);
+        gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position, 1, 0.3f);
         yield return new WaitForSeconds(0.1f);
         spriteRenderer.sprite = idleSprite;
         yield return new WaitForSeconds(0.08f);
         spriteRenderer.sprite = activeSprite;
-        gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position);
+        gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position, 1, 0.4f);
         yield return new WaitForSeconds(0.06f);
         spriteRenderer.sprite = idleSprite;
         yield return new WaitForSeconds(0.04f);
         spriteRenderer.sprite = activeSprite;
-        gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position);
-        yield return new WaitForSeconds(0.02f);
-        spriteRenderer.sprite = fireSprite;
-
-        FireProjectile();
-        
-        yield return new WaitForSeconds(0.2f);
-        spriteRenderer.sprite = idleSprite;
-    }
-
-    IEnumerator LaunchTwoProjectiles()
-    {
-        cantLaunch = true;
-
-        spriteRenderer.sprite = activeSprite;
-        adjacentLauncher.CommenceReceiving(2);
-
-        yield return new WaitForSeconds(0.4f);
-        spriteRenderer.sprite = idleSprite;
-        yield return new WaitForSeconds(0.35f);
-        spriteRenderer.sprite = activeSprite;
-        yield return new WaitForSeconds(0.3f);
-        spriteRenderer.sprite = idleSprite;
-        yield return new WaitForSeconds(0.25f);
-        spriteRenderer.sprite = activeSprite;
-        yield return new WaitForSeconds(0.2f);
-        spriteRenderer.sprite = idleSprite;
-        yield return new WaitForSeconds(0.15f);
-        spriteRenderer.sprite = activeSprite;
-        yield return new WaitForSeconds(0.1f);
-        spriteRenderer.sprite = idleSprite;
-        yield return new WaitForSeconds(0.08f);
-        spriteRenderer.sprite = activeSprite;
-        yield return new WaitForSeconds(0.06f);
-        spriteRenderer.sprite = idleSprite;
-        yield return new WaitForSeconds(0.04f);
-        spriteRenderer.sprite = activeSprite;
+        gameplayManager.audioManager.PlaySound("ProjectileLauncherBeep", transform.position, 1, 0.5f);
         yield return new WaitForSeconds(0.02f);
         spriteRenderer.sprite = fireSprite;
 
         FireProjectile();
 
-        yield return new WaitForSeconds(0.4f);
-        spriteRenderer.sprite = activeSprite;
-        yield return new WaitForSeconds(0.02f);
-        spriteRenderer.sprite = fireSprite;
+        if (launchTwoProjectiles)
+        {
+            yield return new WaitForSeconds(0.2f);
+            spriteRenderer.sprite = activeSprite;
+            yield return new WaitForSeconds(0.02f);
+            spriteRenderer.sprite = fireSprite;
 
-        FireProjectile();
+            FireProjectile();
 
-        yield return new WaitForSeconds(0.2f);
-        spriteRenderer.sprite = idleSprite;
+            yield return new WaitForSeconds(0.2f);
+            spriteRenderer.sprite = idleSprite;
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.2f);
+            spriteRenderer.sprite = idleSprite;
+        }
     }
 
     private void FireProjectile()

@@ -46,8 +46,6 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySound(string soundID, float volume = 1f, float addedPitch = 0)
     {
-        Debug.Log(soundID);
-
         PlaySound(soundID, Vector2.zero, volume, addedPitch);
     }
 

@@ -62,6 +62,11 @@ public class Projectile : MonoBehaviour
 		{
 			moveSpeed = Random.Range(5.0f, 10.0f);
 		}
+
+		if (Random.value < 0.1f)
+		{
+			moveSpeed = Random.Range(30.0f, 40.0f);
+		}
 	}
 
 	public void DestroyProjectile()

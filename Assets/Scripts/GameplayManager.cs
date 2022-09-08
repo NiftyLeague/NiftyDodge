@@ -694,11 +694,14 @@ public class GameplayManager : MonoBehaviour
 		}
 		firingAProjectile = true;
 
-		float timeout = Mathf.Lerp(startTimeoutRange.y, startTimeoutRange.x, totalProjectiles / 50f);
+		float timeout = Mathf.Lerp(startTimeoutRange.y, startTimeoutRange.x, wave / 50f);
 
-        //yield return new WaitForSeconds(timeout);
+		if (bonusWave)
+		{
+			timeout = 0.2f;
+		}
 
-        //yield return new WaitForSeconds(Mathf.Lerp(newBombTimeRange.y, newBombTimeRange.x, totalBombs / 50f));
+		Debug.Log(timeout);
 
         yield return new WaitForSeconds(timeout + XRandom.NextFloat(shootRandomTimeoutRange));
 

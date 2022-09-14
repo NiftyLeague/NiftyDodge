@@ -291,6 +291,8 @@ public class DialogueManager : MonoBehaviour
 			EndOfGameBackgroundSpriteRenderer.color = new Color(backgroundScreenToBlack.Update(Time.deltaTime), backgroundScreenToBlack.Update(Time.deltaTime), backgroundScreenToBlack.Update(Time.deltaTime), 1);
 		}
 
+		audioManager.PlayMusic(4);
+
 		StartCoroutine(StartDialogue(false));
 	}
 

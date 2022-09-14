@@ -7,9 +7,11 @@ public class AudioManager : MonoBehaviour
 {
     public List<AudioSource> soundEffectAudioSources;
     public List<Sound> soundList;
+    public List<AudioSource> musicList;
     private Dictionary<string, Sound> soundDictionary;
     private bool hasInitializedSoundDictionary;
     private int lastAudioSourceUsed;
+    private int currentSong;
 
     private string lastSoundIDPlayed;
     private float lastSoundTimer;
@@ -77,6 +79,18 @@ public class AudioManager : MonoBehaviour
         {
             lastAudioSourceUsed = 0;
         }
+    }
+
+    public void PlayMusic(int id)
+    {
+        musicList[currentSong].Stop();
+
+        if (PlayerPrefs.GetInt("MuteMusic") == 0)
+        {
+            musicList[id].Play();
+        }
+        
+        currentSong = id;
     }
 
     private float GetPitch(float variance)

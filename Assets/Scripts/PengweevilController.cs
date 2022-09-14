@@ -149,7 +149,7 @@ public class PengweevilController : MonoBehaviour
                 Vector2 diff = gameplayManager.playerCharacter.transform.position - currentProjectile.transform.position;
                 Vector2 normal = diff.normalized;
                 currentProjectile.GetComponent<Projectile>().InitializeProjectile(UnityEngine.Random.Range(4.0f, 12.0f), normal);
-                gameplayManager.audioManager.PlaySound("BombShoot", currentProjectile.transform.position);
+                gameplayManager.audioManager.PlaySound("PengweevilShootSnowball", currentProjectile.transform.position);
                 canThrowASnowball = false;
                 amountOfSnowballsToFire--;
             }

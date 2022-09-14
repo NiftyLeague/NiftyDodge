@@ -34,6 +34,11 @@ public class MainMenuManager : MonoBehaviour
 		StartCoroutine(BeginningTitleScreenAnimation());
     }
 
+ //   private void Start()
+ //   {
+	//	audioManager.PlayMusic(0);
+	//}
+
     public void GoToHowToPlayScreen()
 	{
 		titleLogo.SetActive(false);
@@ -87,6 +92,7 @@ public class MainMenuManager : MonoBehaviour
 		titleLogoWinter.position = new Vector2(25, 1);
 
 		audioManager.PlaySound("ScreenTransitionGo", 1, 1.5f);
+		//audioManager.PlaySound("MainMenuWhooshes");
 
 		Tween<float> wordMove1 = new Tween<float>(3, 1, 0.3f, TweenEaseType.CubicOut);
 
@@ -98,7 +104,8 @@ public class MainMenuManager : MonoBehaviour
 
 		Tween<float> wordMove2 = new Tween<float>(-25, 0, 0.5f, TweenEaseType.CubicOut);
 
-		audioManager.PlaySound("ScreenTransitionGo", 1, 0.6f);
+		//audioManager.PlaySound("ScreenTransitionGo", 1, 0.6f);
+		audioManager.PlaySound("MainMenuWhooshes");
 
 		while (!wordMove2.IsEnded())
 		{
@@ -108,7 +115,7 @@ public class MainMenuManager : MonoBehaviour
 
 		Tween<float> wordMove3 = new Tween<float>(25, 0, 0.5f, TweenEaseType.CubicOut);
 
-		audioManager.PlaySound("ScreenTransitionGo", 1, 0.8f);
+		//audioManager.PlaySound("ScreenTransitionGo", 1, 0.8f);
 
 		while (!wordMove3.IsEnded())
 		{
@@ -122,7 +129,7 @@ public class MainMenuManager : MonoBehaviour
 
 		Tween<float> screenAlpha = new Tween<float>(1, 0, 0.3f, TweenEaseType.QuadraticIn);
 
-		audioManager.PlaySound("ScreenTransitionGameOver", 1, 0.8f);
+		audioManager.PlaySound("MainMenuWhooshesEnd");
 
 		while (!screenAlpha.IsEnded())
 		{

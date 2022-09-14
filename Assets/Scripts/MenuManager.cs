@@ -63,10 +63,10 @@ public class MenuManager : Singleton<MenuManager>
 	void Start()
 	{
 		UpdateTokenAmount();
+		UpdateMusicOption();
 		ResetMenuOptions();
 		SetSelectedMenuOption();
 		UpdateLeaderboards();
-
 		tokenPanelStartPosition = tokensPanelRect.anchoredPosition;
 	}
 
@@ -329,6 +329,10 @@ public class MenuManager : Singleton<MenuManager>
 			mainMenuManager.GoToControlsScreen();
 			ShowTokenBalance(false);
 			ChangeMenu("MainMenuControlsMenu");
+			break;
+		case "MainMenuMusicOption":
+			ToggleMusicMuting();
+			ChangeMenu("MainMenu");
 			break;
 		case "MainMenuQuit":
 			mainMenuManager.GoToSignOutScreen();
@@ -767,6 +771,39 @@ public class MenuManager : Singleton<MenuManager>
 		}
 
 		tokensPanelRect.anchoredPosition = tokenPanelStartPosition;
+	}
+
+	void ToggleMusicMuting()
+	{
+		if (PlayerPrefs.GetInt("MuteMusic") == 0)
+		{
+			PlayerPrefs.SetInt("MuteMusic", 1);
+		}
+		else
+		{
+			PlayerPrefs.SetInt("MuteMusic", 0);
+		}
+		PlayerPrefs.Save();
+		UpdateMusicOption();
+	}
+
+	void UpdateMusicOption()
+	{
+		if (mainMenuManager == null)
+		{
+			return;
+		}
+
+		if (PlayerPrefs.GetInt("MuteMusic") == 0)
+		{
+			menus[0].menuOptions[4].menuNameString = "MUSIC: ON";
+		}
+		else
+		{
+			menus[0].menuOptions[4].menuNameString = "MUSIC: OFF";
+		}
+
+		audioManager.PlayMusic(0);
 	}
 }
 

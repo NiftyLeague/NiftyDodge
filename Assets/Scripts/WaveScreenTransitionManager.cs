@@ -40,6 +40,8 @@ public class WaveScreenTransitionManager : MonoBehaviour
             yield break;
         }
 
+        gameplayManager.audioManager.PlayMusic(1);
+
         hasPlayedWaveStartBefore = true;
 
         ResetEverything();
@@ -122,6 +124,8 @@ public class WaveScreenTransitionManager : MonoBehaviour
         ResetEverything();
         transitionerCanvas.SetActive(true);
 
+        gameplayManager.audioManager.PlayMusic(2);
+
         Tween<float> backgroundScreenAlpha = new Tween<float>(0, 0.75f, 0.5f, TweenEaseType.CubicOut);
 
         while (!backgroundScreenAlpha.IsEnded())
@@ -189,7 +193,8 @@ public class WaveScreenTransitionManager : MonoBehaviour
             background.color = new Color(1, 0, 0, backgroundScreenAlpha.Update(Time.deltaTime));
         }
 
-        gameplayManager.audioManager.PlaySound("ScreenTransitionStart", 1, -0.4f);
+        //gameplayManager.audioManager.PlaySound("ScreenTransitionStart", 1, -0.4f);
+        gameplayManager.audioManager.PlaySound("GameoverWhooshes");
 
         Tween<float> wordMove1 = new Tween<float>(transitionOffScreenX, transitionOnScreenX, 0.5f, TweenEaseType.CubicOut);
 
@@ -199,7 +204,7 @@ public class WaveScreenTransitionManager : MonoBehaviour
             youSuccumbedToText.position = new Vector2(wordMove1.Update(Time.deltaTime), 0);
         }
 
-        gameplayManager.audioManager.PlaySound("ScreenTransitionStart", 1, -0.6f);
+        //gameplayManager.audioManager.PlaySound("ScreenTransitionStart", 1, -0.6f);
 
         Tween<float> wordMove2 = new Tween<float>(-transitionOffScreenX, transitionOnScreenX, 0.5f, TweenEaseType.CubicOut);
 
@@ -209,7 +214,7 @@ public class WaveScreenTransitionManager : MonoBehaviour
             theCryptoWinterText.position = new Vector2(wordMove2.Update(Time.deltaTime), 0);
         }
 
-        gameplayManager.audioManager.PlaySound("ScreenTransitionStart", 1, -0.8f);
+        //gameplayManager.audioManager.PlaySound("ScreenTransitionStart", 1, -0.8f);
 
         Tween<float> wordMove3 = new Tween<float>(transitionOffScreenX, transitionOnScreenX, 0.5f, TweenEaseType.CubicOut);
 
@@ -219,7 +224,7 @@ public class WaveScreenTransitionManager : MonoBehaviour
             skullIcon.position = new Vector2(wordMove3.Update(Time.deltaTime), 0);
         }
 
-        gameplayManager.audioManager.PlaySound("ScreenTransitionGameOver", 1, -0.6f);
+        //gameplayManager.audioManager.PlaySound("ScreenTransitionGameOver", 1, -0.6f);
 
         yield return new WaitForSeconds(1);
 

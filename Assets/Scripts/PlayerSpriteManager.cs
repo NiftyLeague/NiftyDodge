@@ -32,7 +32,6 @@ public class PlayerSpriteManager : MonoBehaviour
 	private static List<int> degenIDsToLoad = new List<int>();
 	public static int lastDegenIdUsed = -1;
 
-
 	void Awake()
 	{
 		try

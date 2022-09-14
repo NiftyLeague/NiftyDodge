@@ -144,7 +144,7 @@ public class ProjectileLauncher : MonoBehaviour
         if (gameplayManager.bonusWave)
         {
             currentProjectile = Instantiate(gameplayManager.cupcakePowerup, transform);
-            gameplayManager.audioManager.PlaySound("BombShoot", transform.position);
+            gameplayManager.audioManager.PlaySound("PowerupSpawn", transform.position);
             speedIncrease = 12;
         }
         else
@@ -161,12 +161,14 @@ public class ProjectileLauncher : MonoBehaviour
                     currentProjectile = Instantiate(gameplayManager.icicleProjectile, transform);
                     speedIncrease = speedIncrease * 2;
                     spawnedIcicle = true;
+                    gameplayManager.audioManager.PlaySound("IcicleShoot", transform.position);
                 }
                 else
                 {
                     currentProjectile = Instantiate(gameplayManager.snowballProjectile, transform);
+                    gameplayManager.audioManager.PlaySound("SnowballShoot", transform.position);
                 }
-                gameplayManager.audioManager.PlaySound("BombShoot", transform.position);
+                
                 gameplayManager.SpawnedNewProjectile();
             }
         }

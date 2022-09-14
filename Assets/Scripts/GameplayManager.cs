@@ -273,6 +273,8 @@ public class GameplayManager : MonoBehaviour
 
 		Tween<float> moveTween = new Tween<float>(a, b, 0.6f, TweenEaseType.CubicIn);
 
+		audioManager.PlaySound("ScoreboardAppear");
+
 		while (!moveTween.IsEnded())
 		{
 			yield return new WaitForEndOfFrame();
@@ -286,6 +288,8 @@ public class GameplayManager : MonoBehaviour
 		float b = signsOutY;
 
 		Tween<float> moveTween = new Tween<float>(a, b, 0.6f, TweenEaseType.CubicOut);
+
+		audioManager.PlaySound("ScoreboardDisappear");
 
 		while (!moveTween.IsEnded())
 		{
@@ -345,6 +349,7 @@ public class GameplayManager : MonoBehaviour
 		hasGameEnded = true;
 		cameraShake.Shake(0.5f, 5);
 		audioManager.PlaySound("Lose");
+		audioManager.PlayMusic(3);
 		playerCharacter.Lose();
 
 		if (bossWave)
@@ -514,7 +519,7 @@ public class GameplayManager : MonoBehaviour
 			playerController.UpdateSpecialEffectOverlay();
 			break;
 		case PowerupType.Lifeup:
-			audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
+			audioManager.PlaySound("PowerupGetHeal", playerCharacter.transform.position);
 			StartCoroutine(LifeUpAnimation());
 			GainLife();
 			break;
@@ -698,8 +703,6 @@ public class GameplayManager : MonoBehaviour
 		{
 			timeout = 0.2f;
 		}
-
-		Debug.Log(timeout);
 
 		yield return new WaitForSeconds(timeout + XRandom.NextFloat(shootRandomTimeoutRange));
 

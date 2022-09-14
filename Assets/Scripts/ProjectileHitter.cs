@@ -126,7 +126,8 @@ public class ProjectileHitter : MonoBehaviour
             gameplayManager.cameraShake.Shake(0.2f * currentChargeAmount, 1);
 			gameplayManager.ScorePoint((int)(1 + playerCharacter.attackChargeM));
 			hasHitSomething = true;
-        }
+			audioManager.PlaySound("ProjectileHit", transform.position);
+		}
 
 		if (collision.CompareTag("Boss"))
 		{
@@ -139,13 +140,14 @@ public class ProjectileHitter : MonoBehaviour
 			{
 				gameplayManager.ScorePoint(5);
 			}
+			//audioManager.PlaySound("PengweevilHurt", transform.position);
+			audioManager.PlaySound("PengweevilHurtVoice", transform.position);
 			hasHitSomething = true;
 		}
 
 		if (hasHitSomething)
 		{
 			EffectsController.CreateHitEffect((transform.position + collision.transform.position) / 2, currentChargeAmount / 10, false);
-			audioManager.PlaySound("ProjectileHit", transform.position);
 		}
     }
 }

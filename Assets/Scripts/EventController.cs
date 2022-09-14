@@ -10,7 +10,7 @@ using UnityEngine.Networking;
 public class EventController : MonoBehaviour
 {
 	private static EventController I;
-	private static string url = "https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/matches/wen-game/update";
+	private static string url = "https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/matches/crypto-winter/update";
 
 	public float updateInterval;
 

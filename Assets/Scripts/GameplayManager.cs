@@ -112,8 +112,8 @@ public class GameplayManager : MonoBehaviour
 		menuManager.menuPanel.SetActive(false);
 	}
 
-    private void Update()
-    {
+	private void Update()
+	{
 		InputReader.GetInput(input);
 
 		if (input.PressedA)
@@ -136,7 +136,7 @@ public class GameplayManager : MonoBehaviour
 		}
 	}
 
-    private void FixedUpdate()
+	private void FixedUpdate()
 	{
 		if (gameOverTimer1 > 0)
 		{
@@ -232,7 +232,7 @@ public class GameplayManager : MonoBehaviour
 			bonusWave = true;
 			waveText.text = "BONUS WAVE!";
 		}
-		
+
 		if (wave == bossWaveNumber)
 		{
 			bossWave = true;
@@ -346,7 +346,7 @@ public class GameplayManager : MonoBehaviour
 		cameraShake.Shake(0.5f, 5);
 		audioManager.PlaySound("Lose");
 		playerCharacter.Lose();
-		
+
 		if (bossWave)
 		{
 			pengweevilController.LoseBossFight();
@@ -507,38 +507,38 @@ public class GameplayManager : MonoBehaviour
 		powerupsCollected++;
 		switch (powerupType)
 		{
-			case PowerupType.Invinicibility:
-				audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
-				invincibilityPowerupTimer = 10;
-				invincibilityPowerupOnCharacter.gameObject.SetActive(true);
-				playerController.UpdateSpecialEffectOverlay();
-				break;
-			case PowerupType.Lifeup:
-				audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
-				StartCoroutine(LifeUpAnimation());
-				GainLife();
-				break;
-			case PowerupType.Points10:
-				audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
-				ScorePoint(10);
-				break;
-			case PowerupType.Points20:
-				audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
-				ScorePoint(20);
-				break;
-			case PowerupType.Points50:
-				audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
-				ScorePoint(50);
-				break;
-			case PowerupType.Slow:
-				audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
-				slowPowerupTimer = 10;
-				slowPowerupOnCharacter.gameObject.SetActive(true);
-				break;
-			case PowerupType.Cupcake:
-				audioManager.PlaySound("Burp", playerCharacter.transform.position);
-				ScorePoint(2);
-				break;
+		case PowerupType.Invinicibility:
+			audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
+			invincibilityPowerupTimer = 10;
+			invincibilityPowerupOnCharacter.gameObject.SetActive(true);
+			playerController.UpdateSpecialEffectOverlay();
+			break;
+		case PowerupType.Lifeup:
+			audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
+			StartCoroutine(LifeUpAnimation());
+			GainLife();
+			break;
+		case PowerupType.Points10:
+			audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
+			ScorePoint(10);
+			break;
+		case PowerupType.Points20:
+			audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
+			ScorePoint(20);
+			break;
+		case PowerupType.Points50:
+			audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
+			ScorePoint(50);
+			break;
+		case PowerupType.Slow:
+			audioManager.PlaySound("PowerupGet", playerCharacter.transform.position);
+			slowPowerupTimer = 10;
+			slowPowerupOnCharacter.gameObject.SetActive(true);
+			break;
+		case PowerupType.Cupcake:
+			audioManager.PlaySound("Burp", playerCharacter.transform.position);
+			ScorePoint(2);
+			break;
 		}
 	}
 
@@ -548,15 +548,15 @@ public class GameplayManager : MonoBehaviour
 
 		switch (powerupType)
 		{
-			case PowerupType.Invinicibility:
-				invincibilityPowerupTimer = 0;
-				invincibilityPowerupOnCharacter.gameObject.SetActive(false);
-				playerController.UpdateSpecialEffectOverlay();
-				break;
-			case PowerupType.Slow:
-				slowPowerupTimer = 0;
-				slowPowerupOnCharacter.gameObject.SetActive(false);
-				break;
+		case PowerupType.Invinicibility:
+			invincibilityPowerupTimer = 0;
+			invincibilityPowerupOnCharacter.gameObject.SetActive(false);
+			playerController.UpdateSpecialEffectOverlay();
+			break;
+		case PowerupType.Slow:
+			slowPowerupTimer = 0;
+			slowPowerupOnCharacter.gameObject.SetActive(false);
+			break;
 		}
 	}
 
@@ -616,7 +616,7 @@ public class GameplayManager : MonoBehaviour
 		//StartCoroutine(BringInInfoPanelAnimation(1));
 
 		//yield return new WaitUntil(() => gameOverTimer1 <= 0);
-		//yield return GetMatchResults();
+		yield return GetMatchResults();
 
 		gameOverTimer2 = 3;
 
@@ -655,31 +655,29 @@ public class GameplayManager : MonoBehaviour
 		menuManager.SetMenuEnabled(true);
 	}
 
-	//private IEnumerator GetMatchResults()
-	//{
-	//	print(EventController.GetLastestMatchId());
-	//	string result = null;
-	//	yield return WebRequestHelper.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/matches/wen-game/results",
-	//		$"id={EventController.GetLastestMatchId()}", true, false, resp => result = resp);
-	//	try
-	//	{
-	//		JObject stats = JObject.Parse(result);
+	private IEnumerator GetMatchResults()
+	{
+		print(EventController.GetLastestMatchId());
+		string result = null;
+		yield return WebRequestHelper.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/matches/crypto-winter/results",
+			$"id={EventController.GetLastestMatchId()}", true, false, resp => result = resp);
+		try
+		{
+			JObject stats = JObject.Parse(result);
 
-	//		int score = stats["score"] != null ? (int)stats["score"] : 0;
-	//		int xp = stats["xp"] != null ? (int)stats["xp"] : 0;
-	//		int timePlayed = stats["time_played"] != null ? (int)stats["time_played"] : 0;
-	//		int totalBombs = stats["total_bombs"] != null ? (int)stats["total_bombs"] : 0;
+			int score = stats["score"] != null ? (int)stats["score"] : 0;
+			int xp = stats["xp"] != null ? (int)stats["xp"] : 0;
+			int timePlayed = stats["time_played"] != null ? (int)stats["time_played"] : 0;
 
-	//		this.score = score;
-	//		this.xp = xp;
-	//		this.timePlayed = timePlayed;
-	//		this.totalBombs = totalBombs;
-	//	}
-	//	catch (System.Exception e)
-	//	{
-	//		print(e);
-	//	}
-	//}
+			this.score = score;
+			this.xp = xp;
+			this.timePlayed = timePlayed;
+		}
+		catch (System.Exception e)
+		{
+			print(e);
+		}
+	}
 
 	IEnumerator FireNextProjectile()
 	{
@@ -703,7 +701,7 @@ public class GameplayManager : MonoBehaviour
 
 		Debug.Log(timeout);
 
-        yield return new WaitForSeconds(timeout + XRandom.NextFloat(shootRandomTimeoutRange));
+		yield return new WaitForSeconds(timeout + XRandom.NextFloat(shootRandomTimeoutRange));
 
 		List<ProjectileLauncher> launchersToChooseFrom = new List<ProjectileLauncher>();
 

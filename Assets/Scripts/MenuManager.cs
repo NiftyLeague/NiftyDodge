@@ -91,7 +91,7 @@ public class MenuManager : Singleton<MenuManager>
 			purchaseTokensPanel.SetActive(false);
 			UpdateLeaderboardDisplay();
 			SetMenuEnabled(true);
-			
+
 			return;
 		}
 
@@ -303,127 +303,127 @@ public class MenuManager : Singleton<MenuManager>
 
 		switch (menuOption.subMenuID)
 		{
-			case "MainMenuPlay":
-				if (ArcadeTokens <= 0)
-				{
-					GoToTokenPurchasingScreen();
-					ChangeMenu("MainMenuTokensMenu");
-					ShowTokenBalance(true);
-				}
-				else
-				{
-					yield return StartGame();
-				}
-				break;
-			case "MainMenuHowToPlay":
-				mainMenuManager.GoToHowToPlayScreen();
-				ShowTokenBalance(false);
-				ChangeMenu("MainMenuHowToPlayMenu");
-				break;
-			case "MainMenuLeaderboards":
-				mainMenuManager.GoToLeaderboardsScreen();
-				ShowTokenBalance(false);
-				ChangeMenu("MainMenuLeaderboardsMenu");
-				break;
-			case "MainMenuControls":
-				mainMenuManager.GoToControlsScreen();
-				ShowTokenBalance(false);
-				ChangeMenu("MainMenuControlsMenu");
-				break;
-			case "MainMenuQuit":
-				mainMenuManager.GoToSignOutScreen();
-				ShowTokenBalance(false);
-				ChangeMenu("MainMenuSignOutMenu");
-				break;
-
-			case "MainMenuTokenMenuPurchase":
-				PurchaseToken();
+		case "MainMenuPlay":
+			if (ArcadeTokens <= 0)
+			{
+				GoToTokenPurchasingScreen();
+				ChangeMenu("MainMenuTokensMenu");
 				ShowTokenBalance(true);
-				break;
-			case "MainMenuTokenMenuBack":
-				mainMenuManager.GoBack();
+			}
+			else
+			{
+				yield return StartGame();
+			}
+			break;
+		case "MainMenuHowToPlay":
+			mainMenuManager.GoToHowToPlayScreen();
+			ShowTokenBalance(false);
+			ChangeMenu("MainMenuHowToPlayMenu");
+			break;
+		case "MainMenuLeaderboards":
+			mainMenuManager.GoToLeaderboardsScreen();
+			ShowTokenBalance(false);
+			ChangeMenu("MainMenuLeaderboardsMenu");
+			break;
+		case "MainMenuControls":
+			mainMenuManager.GoToControlsScreen();
+			ShowTokenBalance(false);
+			ChangeMenu("MainMenuControlsMenu");
+			break;
+		case "MainMenuQuit":
+			mainMenuManager.GoToSignOutScreen();
+			ShowTokenBalance(false);
+			ChangeMenu("MainMenuSignOutMenu");
+			break;
+
+		case "MainMenuTokenMenuPurchase":
+			PurchaseToken();
+			ShowTokenBalance(true);
+			break;
+		case "MainMenuTokenMenuBack":
+			mainMenuManager.GoBack();
+			ShowTokenBalance(true);
+			purchaseTokensPanel.SetActive(false);
+			ChangeMenu("MainMenu");
+			break;
+
+		case "MainMenuLeaderboardMenuChange":
+			ChangeCurrentLeaderboard();
+			break;
+		case "MainMenuLeaderboardMenuBack":
+			mainMenuManager.GoBack();
+			ShowTokenBalance(true);
+			ChangeMenu("MainMenu", 1);
+			break;
+
+		case "MainMenuHowToPlayMenuBack":
+			mainMenuManager.GoBack();
+			ShowTokenBalance(true);
+			ChangeMenu("MainMenu", 2);
+			break;
+
+		case "MainMenuControlsMenuBack":
+			mainMenuManager.GoBack();
+			ShowTokenBalance(true);
+			ChangeMenu("MainMenu", 3);
+			break;
+
+		case "MainMenuSignOutMenuYes":
+			Launcher.Logout();
+			break;
+		case "MainMenuSignOutMenuNo":
+			mainMenuManager.GoBack();
+			ShowTokenBalance(true);
+			ChangeMenu("MainMenu", 4);
+			break;
+
+
+
+
+		case "GameplayTryAgain":
+			if (ArcadeTokens <= 0)
+			{
+				GoToTokenPurchasingScreen();
+				ChangeMenu("GameplayTokenMenu");
 				ShowTokenBalance(true);
-				purchaseTokensPanel.SetActive(false);
-				ChangeMenu("MainMenu");
-				break;
-
-			case "MainMenuLeaderboardMenuChange":
-				ChangeCurrentLeaderboard();
-				break;
-			case "MainMenuLeaderboardMenuBack":
-				mainMenuManager.GoBack();
-				ShowTokenBalance(true);
-				ChangeMenu("MainMenu", 1);
-				break;
-
-			case "MainMenuHowToPlayMenuBack":
-				mainMenuManager.GoBack();
-				ShowTokenBalance(true);
-				ChangeMenu("MainMenu", 2);
-				break;
-
-			case "MainMenuControlsMenuBack":
-				mainMenuManager.GoBack();
-				ShowTokenBalance(true);
-				ChangeMenu("MainMenu", 3);
-				break;
-
-			case "MainMenuSignOutMenuYes":
-				Launcher.Logout();
-				break;
-			case "MainMenuSignOutMenuNo":
-				mainMenuManager.GoBack();
-				ShowTokenBalance(true);
-				ChangeMenu("MainMenu", 4);
-				break;
-
-
-
-
-			case "GameplayTryAgain":
-				if (ArcadeTokens <= 0)
-				{
-					GoToTokenPurchasingScreen();
-					ChangeMenu("GameplayTokenMenu");
-					ShowTokenBalance(true);
-				}
-				else
-				{
-					ResetMenuOptions();
-					tokensPanel.SetActive(false);
-					menuPanel.SetActive(false);
-					yield return StartGame();
-				}
-				break;
-			case "GameplayLeaderboard":
-				ChangeCurrentLeaderboard();
-				SetMenuEnabled(true);
-				break;
-			case "GameplayQuit":
-				SceneManager.LoadScene(0);
-				break;
-
-			case "GameplayTokenPurchase":
-				PurchaseToken();
-				break;
-			case "GameplayTokenBack":
-				purchaseTokensPanel.SetActive(false);
-				UpdateLeaderboardDisplay();
-				ChangeMenu("GameplayMenu");
-				break;
-
-
-			case "GameplayWonBossFightContinue":
+			}
+			else
+			{
 				ResetMenuOptions();
-				SetMenuEnabled(false);
-				gameplayManager.StartGameBackUpFromEnding();
-				break;
-			case "GameplayWonBossFightEndRun":
-				ResetMenuOptions();
-				SetMenuEnabled(false);
-				gameplayManager.StartGameBackUpFromEnding();
-				gameplayManager.EndGame();
-				break;
+				tokensPanel.SetActive(false);
+				menuPanel.SetActive(false);
+				yield return StartGame();
+			}
+			break;
+		case "GameplayLeaderboard":
+			ChangeCurrentLeaderboard();
+			SetMenuEnabled(true);
+			break;
+		case "GameplayQuit":
+			SceneManager.LoadScene(0);
+			break;
+
+		case "GameplayTokenPurchase":
+			PurchaseToken();
+			break;
+		case "GameplayTokenBack":
+			purchaseTokensPanel.SetActive(false);
+			UpdateLeaderboardDisplay();
+			ChangeMenu("GameplayMenu");
+			break;
+
+
+		case "GameplayWonBossFightContinue":
+			ResetMenuOptions();
+			SetMenuEnabled(false);
+			gameplayManager.StartGameBackUpFromEnding();
+			break;
+		case "GameplayWonBossFightEndRun":
+			ResetMenuOptions();
+			SetMenuEnabled(false);
+			gameplayManager.StartGameBackUpFromEnding();
+			gameplayManager.EndGame();
+			break;
 		}
 	}
 
@@ -435,7 +435,7 @@ public class MenuManager : Singleton<MenuManager>
 		{
 			{ "authorizationToken", NiftyUsers.GetMyAuthorization() },
 		};
-		yield return Utils.PostRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/matches/wen-game/start", null, (w) => www = w, headers);
+		yield return Utils.PostRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/matches/crypto-winter/start", null, (w) => www = w, headers);
 
 		string matchId = null;
 		int updateTicket = 0;
@@ -546,7 +546,7 @@ public class MenuManager : Singleton<MenuManager>
 			lbType = "all_time";
 			break;
 		}
-		yield return Utils.GetRequest($"https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/scores?count=10&game=wen_game&score_type=score&time_window={lbType}", (w) => www = w);
+		yield return Utils.GetRequest($"https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/scores?count=10&game=crypto_winter&score_type=score&time_window={lbType}", (w) => www = w);
 		if (www.result != UnityWebRequest.Result.Success)
 		{
 			print("Failed to fetch leaderboard data");

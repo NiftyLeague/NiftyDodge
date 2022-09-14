@@ -535,7 +535,7 @@ public class Launcher : MonoBehaviour
 
 	private IEnumerator DownloadConfigInfo()
 	{
-		UnityWebRequest request = UnityWebRequest.Get("https://nifty-league.s3.amazonaws.com/assets/config-wg");
+		UnityWebRequest request = UnityWebRequest.Get("https://nifty-league.s3.amazonaws.com/assets/config-cw");
 		yield return request.SendWebRequest();
 		Dictionary<string, string[]> config = null;
 		try
@@ -713,7 +713,7 @@ MinAllowedVersion,0.1.1,Please Upgrade To the Latest Version
 		{
 			{ "authorizationToken", NiftyUsers.GetMyAuthorization() },
 		};
-		yield return Utils.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/matches/wen-game/start", (w) => www = w, headers);
+		yield return Utils.GetRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/matches/crypto-winter/start", (w) => www = w, headers);
 
 		uint arcadeBalance = 0;
 		if (www.result != UnityWebRequest.Result.Success)

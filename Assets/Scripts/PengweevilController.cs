@@ -56,6 +56,8 @@ public class PengweevilController : MonoBehaviour
     private void Start()
     {
         CanHurtThePlayer(false);
+        pengweevilTransform.position = new Vector2(0, pengweevilOffStageYPosition);
+        pengweevilShadowTransform.gameObject.SetActive(false);
     }
 
     void Update()

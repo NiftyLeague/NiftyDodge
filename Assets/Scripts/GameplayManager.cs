@@ -13,6 +13,7 @@ public class GameplayManager : MonoBehaviour
 	public AudioManager audioManager;
 	public WaveScreenTransitionManager waveScreenManager;
 	public DialogueManager dialogueManager;
+	public BeginningDialogueManager beginningDialogueManager;
 	public Character playerCharacter;
 	public PlayerController playerController;
 	public PengweevilController pengweevilController;
@@ -108,8 +109,16 @@ public class GameplayManager : MonoBehaviour
 
 	void Start()
 	{
-		ResetEverythingForANewGame();
-		menuManager.menuPanel.SetActive(false);
+		if (PlayerPrefs.GetInt("SawBeginningTextCrawlAlready") == 0)
+		{
+			playerCharacter.HasLost();
+			beginningDialogueManager.StartDialogue();
+			PlayerPrefs.SetInt("SawBeginningTextCrawlAlready", 1);
+		}
+		else
+		{
+			beginningDialogueManager.StartGame();
+		}
 	}
 
 	private void Update()
@@ -438,7 +447,7 @@ public class GameplayManager : MonoBehaviour
 		playerLifePipsMax.SetActive(true);
 		waveText.gameObject.SetActive(true);
 
-		playerCharacter.UnLose();
+		//playerCharacter.UnLose();
 
 		UpdateScoreText();
 		SetUpNextWave();

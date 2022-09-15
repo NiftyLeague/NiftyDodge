@@ -57,7 +57,7 @@ public class DialogueManager : MonoBehaviour
 
 		InputReader.GetInput(input);
 
-		if (input.PressedA)
+		if (input.PressedB)
 		{
 			if (!dialogueHasEnded && !waitingForNextText)
 			{

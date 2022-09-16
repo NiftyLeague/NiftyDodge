@@ -226,6 +226,7 @@ public class GameplayManager : MonoBehaviour
 
 	public void SetUpNextWave()
 	{
+		EventController.AddWaveCleared();
 		wave++;
 		waveTimer = 0;
 		StopAllLaunchers();
@@ -314,7 +315,7 @@ public class GameplayManager : MonoBehaviour
 			return;
 		}
 		score += amount;
-
+		print(score);
 		if (currentScoreTextCoroutine != null)
 		{
 			StopCoroutine(currentScoreTextCoroutine);
@@ -325,7 +326,7 @@ public class GameplayManager : MonoBehaviour
 		currentScoreTextCoroutine = StartCoroutine(AnimateScoreText());
 
 		UpdateScoreText();
-		//EventController.AddScore(amount);
+		EventController.AddScore(amount);
 	}
 
 	IEnumerator AnimateScoreText()
@@ -375,13 +376,13 @@ public class GameplayManager : MonoBehaviour
 		playerCharacter.HasLost();
 		hasGameEnded = true;
 
-		menuManager.UpdateLeaderboards();
-
+		EventController.AddMatchEnd(PlayerSpriteManager.lastDegenIdUsed);
 		StartCoroutine(BringOutInfoPanelAnimation(0));
-		//EventController.AddMatchEnd(PlayerSpriteManager.lastDegenIdUsed);
+
 		StartCoroutine(PlayGameOverScreen());
 
-		//Analytics.SendPlayerEvent("EndMatch", new Dictionary<string, string>() { { "Score", score.ToString() } });
+		Analytics.SendPlayerEvent("EndMatch", new Dictionary<string, string>() { { "Score", score.ToString() } });
+		menuManager.UpdateLeaderboards();
 	}
 
 	public void StopAllLaunchers()
@@ -451,7 +452,7 @@ public class GameplayManager : MonoBehaviour
 
 		UpdateScoreText();
 		SetUpNextWave();
-		//Analytics.SendPlayerEvent("StartMatch");
+		Analytics.SendPlayerEvent("StartMatch");
 	}
 
 	public void LoseLife()
@@ -518,6 +519,7 @@ public class GameplayManager : MonoBehaviour
 
 	public void EnablePowerup(PowerupType powerupType)
 	{
+		EventController.AddPowerupCollected();
 		powerupsCollected++;
 		switch (powerupType)
 		{
@@ -630,6 +632,7 @@ public class GameplayManager : MonoBehaviour
 		//StartCoroutine(BringInInfoPanelAnimation(1));
 
 		//yield return new WaitUntil(() => gameOverTimer1 <= 0);
+		yield return new WaitForSeconds(2f);
 		yield return GetMatchResults();
 
 		gameOverTimer2 = 3;
@@ -777,6 +780,7 @@ public class GameplayManager : MonoBehaviour
 	public void SpawnedNewProjectile()
 	{
 		totalProjectiles++;
+		EventController.AddProjectile();
 		IncreaseSpeed();
 	}
 }

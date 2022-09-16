@@ -43,7 +43,6 @@ public class EventController : MonoBehaviour
 		}
 	}
 
-
 	private static IEnumerator UploadEvents()
 	{
 		if (match == null || string.IsNullOrEmpty(match.id))
@@ -117,27 +116,51 @@ public class EventController : MonoBehaviour
 		}
 	}
 
-	public static void AddDodgeBall()
+	public static void AddWaveCleared()
 	{
 		try
 		{
-			AddEvent(new Event(EventTypes.DodgeBall, null));
+			AddEvent(new Event(EventTypes.WaveCleared, null));
 		}
 		catch (Exception e)
 		{
-			Debug.LogWarning($"Failed to add ({EventTypes.DodgeBall}) event {e}");
+			Debug.LogWarning($"Failed to add ({EventTypes.WaveCleared}) event {e}");
 		}
 	}
 
-	public static void AddDodgeBomb()
+	public static void AddProjectile()
 	{
 		try
 		{
-			AddEvent(new Event(EventTypes.DodgeBomb, null));
+			AddEvent(new Event(EventTypes.Projectile, null));
 		}
 		catch (Exception e)
 		{
-			Debug.LogWarning($"Failed to add ({EventTypes.DodgeBomb}) event {e}");
+			Debug.LogWarning($"Failed to add ({EventTypes.Projectile}) event {e}");
+		}
+	}
+
+	public static void AddProjectileHit()
+	{
+		try
+		{
+			AddEvent(new Event(EventTypes.ProjectileHit, null));
+		}
+		catch (Exception e)
+		{
+			Debug.LogWarning($"Failed to add ({EventTypes.ProjectileHit}) event {e}");
+		}
+	}
+
+	public static void AddPowerupCollected()
+	{
+		try
+		{
+			AddEvent(new Event(EventTypes.PowerupCollected, null));
+		}
+		catch (Exception e)
+		{
+			Debug.LogWarning($"Failed to add ({EventTypes.PowerupCollected}) event {e}");
 		}
 	}
 
@@ -185,6 +208,7 @@ public class EventController : MonoBehaviour
 	{
 		return latestMatchId;
 	}
+
 
 	[Serializable]
 	private class Match
@@ -246,8 +270,10 @@ public class EventController : MonoBehaviour
 	{
 		public static ObscuredString MatchStart = "start";
 		public static ObscuredString MatchEnd = "end";
-		public static ObscuredString Score = "hit";
-		public static ObscuredString DodgeBall = "miss";
-		public static ObscuredString DodgeBomb = "dodge";
+		public static ObscuredString Score = "score";
+		public static ObscuredString Projectile = "projectile";
+		public static ObscuredString WaveCleared = "wave";
+		public static ObscuredString ProjectileHit = "projectile-hit";
+		public static ObscuredString PowerupCollected = "powerup";
 	}
 }

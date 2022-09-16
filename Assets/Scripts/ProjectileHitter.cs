@@ -123,6 +123,7 @@ public class ProjectileHitter : MonoBehaviour
 
 			projectile.DestroyProjectile();
 			gameplayManager.projectilesHit++;
+			EventController.AddProjectileHit();
             gameplayManager.cameraShake.Shake(0.2f * currentChargeAmount, 1);
 			gameplayManager.ScorePoint((int)(1 + playerCharacter.attackChargeM));
 			hasHitSomething = true;

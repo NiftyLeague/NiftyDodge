@@ -490,6 +490,7 @@ public class GameplayManager : MonoBehaviour
 		lives++;
 		lives = Mathf.Clamp(lives, 0, 3);
 		UpdateLives();
+		playerController.UpdateSpecialEffectOverlay();
 	}
 
 	public void UpdateLives()
@@ -635,7 +636,7 @@ public class GameplayManager : MonoBehaviour
 		yield return new WaitForSeconds(2f);
 		yield return GetMatchResults();
 
-		gameOverTimer2 = 3;
+		gameOverTimer2 = 5;
 
 		//StartCoroutine(BringOutInfoPanelAnimation(1));
 		StartCoroutine(BringInInfoPanelAnimation(2));

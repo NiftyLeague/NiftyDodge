@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		if (gameplayManager.hasGameEnded)
+		if (gameplayManager.hasGameEnded && gameplayManager.playerCharacter.hasLost)
 		{
 			return;
 		}
@@ -164,6 +164,7 @@ public class PlayerController : MonoBehaviour
 					return;
 				}
 
+				hitProjectile.DestroyProjectile();
 				gotHit = true;
 			}
 

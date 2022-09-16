@@ -296,7 +296,7 @@ public class MenuManager : Singleton<MenuManager>
 			menuTexts[currentMenuOption].color = optionColorPressed;
 			yield return new WaitForSeconds(0.05f);
 
-			menuTexts[currentMenuOption].color = optionColorDefault;
+			menuTexts[currentMenuOption].color = optionColorSelected;
 			yield return new WaitForSeconds(1f);
 
 		}

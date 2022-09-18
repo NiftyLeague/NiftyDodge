@@ -52,7 +52,7 @@ public class Analytics : MonoBehaviour
 
 	private static string GetLevelEvent(string page)
 	{
-		return $"{{'n':'pageview','u':'https://crypto-winter.com/{page}','d':'nifty-wen.com','r':null,'w':{Screen.width}}}".Replace('\'', '"');
+		return $"{{'n':'pageview','u':'https://crypto-winter.com/{page}','d':'crypto-winter.com','r':null,'w':{Screen.width}}}".Replace('\'', '"');
 	}
 
 	private static string GetCustomEvent(string name, Dictionary<string, string> details)
@@ -63,7 +63,7 @@ public class Analytics : MonoBehaviour
 			detailStr += $"'{kv.Key}':'{kv.Value.Replace("'", "").Replace(",", "").Replace("\"", "")}',".Replace("'", "\\\"");
 		}
 		detailStr = detailStr.Remove(detailStr.Length - 1) + "}";
-		string e = $"{{'n':'{name}','u':'https://crypto-winter.com','d':'nifty-wen.com','r':null,'w':{Screen.width},'p':'{detailStr}'}}".Replace('\'', '"');
+		string e = $"{{'n':'{name}','u':'https://crypto-winter.com','d':'crypto-winter.com','r':null,'w':{Screen.width},'p':'{detailStr}'}}".Replace('\'', '"');
 		return e;
 	}
 

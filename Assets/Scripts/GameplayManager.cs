@@ -315,7 +315,6 @@ public class GameplayManager : MonoBehaviour
 			return;
 		}
 		score += amount;
-		print(score);
 		if (currentScoreTextCoroutine != null)
 		{
 			StopCoroutine(currentScoreTextCoroutine);

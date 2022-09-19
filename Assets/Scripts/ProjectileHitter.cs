@@ -136,12 +136,20 @@ public class ProjectileHitter : MonoBehaviour
 			{
 				return;
 			}
-			gameplayManager.pengweevilController.PengweevilTakeDamage();
+
+			int damage = 1;
+			if (playerCharacter.attackChargeM >= 1)
+			{
+				damage = 2;
+			}
+
+			gameplayManager.pengweevilController.PengweevilTakeDamage(damage);
+
 			if (!gameplayManager.bossHasBeenDefeated)
 			{
-				gameplayManager.ScorePoint(5);
+				gameplayManager.ScorePoint(5 * damage);
 			}
-			//audioManager.PlaySound("PengweevilHurt", transform.position);
+
 			audioManager.PlaySound("PengweevilHurtVoice", transform.position);
 			hasHitSomething = true;
 		}

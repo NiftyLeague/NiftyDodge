@@ -10954,10 +10954,10 @@ MonoBehaviour:
   hasBounceDodged: 0
   wasHitDownwards: 0
   bounceGravityRestoreCounter: 0
-  attackChargeTime: 1.25
+  attackChargeTime: 0.6
   gravityGraceTimeLeft: 0
   attackTime: 0.01
-  attackRecoverTime: 0.35
+  attackRecoverTime: 0.3
   attackRange: 3
   tongueRange: 0
   tongueSpeed: 0

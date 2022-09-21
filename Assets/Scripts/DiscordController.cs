@@ -12,7 +12,7 @@ public class DiscordController : MonoBehaviour
 		I = this;
 		try
 		{
-			discord = new Discord.Discord(982801162648563723, (UInt64)Discord.CreateFlags.NoRequireDiscord);
+			discord = new Discord.Discord(1021563969250537542, (UInt64)Discord.CreateFlags.NoRequireDiscord);
 		}
 		catch { }
 	}

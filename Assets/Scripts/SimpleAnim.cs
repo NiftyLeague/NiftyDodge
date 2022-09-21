@@ -112,4 +112,18 @@ public class SimpleAnim : MonoBehaviour
 	{
 		return currentFrame;
 	}
+
+	public float GetProgress()
+	{
+		return frames != null && frames.Length > 0 ? frame / frames.Length : 0f;
+	}
+
+	public int GetFrame()
+	{
+		if (frames.Length > 0)
+		{
+			return frame % frames.Length;
+		}
+		return 0;
+	}
 }

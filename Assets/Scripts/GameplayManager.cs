@@ -583,8 +583,6 @@ public class GameplayManager : MonoBehaviour
 	public void StartGameBackUpFromEnding()
 	{
 		endingCanvas.SetActive(false);
-		menuManager.menuTexts = gameOverTexts;
-		menuManager.ChangeMenu("GameplayMenu");
 		playerCharacter.gameObject.SetActive(true);
 		audioManager.PlayMusic(1);
 		SetUpNextWave();

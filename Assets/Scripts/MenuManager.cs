@@ -76,6 +76,11 @@ public class MenuManager : Singleton<MenuManager>
 
 		InputReader.GetInput(input);
 
+		if (!canSelectMenuOptions || !menuPanel.gameObject.activeSelf)
+		{
+			return;
+		}
+
 		if (currentMenu > 0 && input.PressedB)
 		{
 			audioManager.PlaySound("MenuOptionBack");
@@ -92,11 +97,6 @@ public class MenuManager : Singleton<MenuManager>
 			UpdateLeaderboardDisplay();
 			SetMenuEnabled(true);
 
-			return;
-		}
-
-		if (!canSelectMenuOptions || !menuPanel.gameObject.activeSelf)
-		{
 			return;
 		}
 
@@ -417,17 +417,17 @@ public class MenuManager : Singleton<MenuManager>
 			break;
 
 
-		case "GameplayWonBossFightContinue":
-			ResetMenuOptions();
-			SetMenuEnabled(false);
-			gameplayManager.StartGameBackUpFromEnding();
-			break;
-		case "GameplayWonBossFightEndRun":
-			ResetMenuOptions();
-			SetMenuEnabled(false);
-			gameplayManager.StartGameBackUpFromEnding();
-			gameplayManager.EndGame();
-			break;
+		//case "GameplayWonBossFightContinue":
+		//	ResetMenuOptions();
+		//	SetMenuEnabled(false);
+		//	gameplayManager.StartGameBackUpFromEnding();
+		//	break;
+		//case "GameplayWonBossFightEndRun":
+		//	ResetMenuOptions();
+		//	SetMenuEnabled(false);
+		//	gameplayManager.StartGameBackUpFromEnding();
+		//	gameplayManager.EndGame();
+		//	break;
 		}
 	}
 

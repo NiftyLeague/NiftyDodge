@@ -586,6 +586,7 @@ public class GameplayManager : MonoBehaviour
 		menuManager.menuTexts = gameOverTexts;
 		menuManager.ChangeMenu("GameplayMenu");
 		playerCharacter.gameObject.SetActive(true);
+		audioManager.PlayMusic(1);
 		SetUpNextWave();
 	}
 

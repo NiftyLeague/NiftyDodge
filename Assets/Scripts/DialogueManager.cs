@@ -299,10 +299,11 @@ public class DialogueManager : MonoBehaviour
 	void EndEndGameDialogue()
 	{
 		dialogueHasEnded = true;
-		endGameCanvasMenu.SetActive(true);
-		gameplayManager.menuManager.menuTexts = gameplayManager.endingGameTexts;
-		gameplayManager.menuManager.ChangeMenu("GameplayWonBossFightMenu");
-		gameplayManager.menuManager.SetMenuEnabled(true);
+		gameplayManager.StartGameBackUpFromEnding();
+		//endGameCanvasMenu.SetActive(true);
+		//gameplayManager.menuManager.menuTexts = gameplayManager.endingGameTexts;
+		//gameplayManager.menuManager.ChangeMenu("GameplayWonBossFightMenu");
+		//gameplayManager.menuManager.SetMenuEnabled(true);
 	}
 
 	void FaceBoxPlay()

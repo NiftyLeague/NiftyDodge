@@ -404,7 +404,7 @@ public class MenuManager : Singleton<MenuManager>
 			SetMenuEnabled(true);
 			break;
 		case "GameplayQuit":
-			SceneManager.LoadScene(0);
+			SceneManager.LoadScene("MainMenu");
 			break;
 
 		case "GameplayTokenPurchase":
@@ -467,7 +467,7 @@ public class MenuManager : Singleton<MenuManager>
 			EventController.AddMatchStart(matchId, updateTicket);
 			UIVersion.SetSession(EventController.GetMatchShortId());
 			yield return new WaitForSeconds(0.25f);
-			SceneManager.LoadScene(1);
+			SceneManager.LoadScene("Gameplay");
 		}
 		else
 		{

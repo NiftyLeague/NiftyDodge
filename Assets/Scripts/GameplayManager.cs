@@ -80,8 +80,10 @@ public class GameplayManager : MonoBehaviour
 	public ObscuredFloat bonusWaveTimeLength = 20;
 	public ObscuredInt bonusWaveEvery = 5;
 	public ObscuredInt bossWaveNumber = 50;
+#if UNITY_EDITOR
 	[Space]
 	public ObscuredBool godMode;
+#endif
 
 	Coroutine currentScoreTextCoroutine;
 
@@ -456,10 +458,12 @@ public class GameplayManager : MonoBehaviour
 
 	public void LoseLife()
 	{
+#if UNITY_EDITOR
 		if (godMode)
 		{
 			return;
 		}
+#endif
 
 		lives--;
 		UpdateLives();

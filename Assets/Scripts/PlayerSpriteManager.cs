@@ -213,6 +213,11 @@ public class PlayerSpriteManager : MonoBehaviour
 			characterAnimator = FindObjectOfType<CharacterAnimator>();
 		}
 
+		if (characterAnimator == null)
+		{
+			return;
+		}
+
 		List<Sprite> spritesToUse = new List<Sprite>();
 
 		if (canChangeCharacters)

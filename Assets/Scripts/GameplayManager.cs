@@ -700,6 +700,37 @@ public class GameplayManager : MonoBehaviour
 		}
 	}
 
+	private IEnumerator PostUserReport(string category, string label, JObject metadata)
+	{
+		JObject jsonObject = JObject.Parse(@"{
+			'application': '$app',
+			'version': '$ver',
+			'platform': '$plat',
+			'session': '$session',
+			'device_id': '$device',
+			'events': [{
+				'timestamp': $ts,
+				'category': '$category',
+				'label': '$label',
+				'value': '',
+				'metadata': {}
+			}]
+		}".Replace("$ts", XUtils.Timestamp().ToString())
+		.Replace("$category", category)
+		.Replace("$label", label)
+		.Replace("$session", Launcher.sessionId)
+		.Replace("$device", XUtils.GetDeviceId())
+		.Replace("$plat", Application.platform.ToString().ToLower())
+		.Replace("$app", Application.productName.ToLower())
+		.Replace("$ver", Application.version.ToLower()));
+		if (metadata != null)
+		{
+			jsonObject["events"][0]["metadata"] = metadata;
+		}
+		print(jsonObject.ToString());
+		yield return WebRequestHelper.PostJsonRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/user-events/update", jsonObject.ToString(), true, true);
+	}
+
 	IEnumerator FireNextProjectile()
 	{
 		if (hasGameEnded)
@@ -786,5 +817,26 @@ public class GameplayManager : MonoBehaviour
 		totalProjectiles++;
 		EventController.AddProjectile();
 		IncreaseSpeed();
+	}
+
+	public void WonBossFight()
+	{
+		ScorePoint(500);
+		bossHasBeenDefeated = true;
+		JObject metadata = new JObject();
+		try
+		{
+			metadata["match_id"] = EventController.GetLastestMatchId();
+			metadata["degen_id"] = PlayerSpriteManager.lastDegenIdUsed;
+			metadata["wave"] = wave.ToString();
+			metadata["time_played"] = timePlayed.ToString();
+		}
+		catch { }
+		StartCoroutine(PostUserReport("game_event", "beat_boss", metadata));
+
+		Analytics.SendPlayerEvent("BeatBoss", new Dictionary<string, string>() {
+			{ "Wave", wave.ToString() },
+			{ "TimePlayed", timePlayed.ToString() }
+		});
 	}
 }

@@ -322,8 +322,7 @@ public class PengweevilController : MonoBehaviour
     public void WonBossFight()
     {
         EndBossFight();
-        gameplayManager.ScorePoint(500);
-        gameplayManager.bossHasBeenDefeated = true;
+        gameplayManager.WonBossFight();
         StartCoroutine(Dead());
     }
 

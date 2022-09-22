@@ -316,6 +316,32 @@ public class XUtils
 		return GetInt64HashCode(id);
 	}
 
+	public static string GetDeviceId()
+	{
+		var deviceId = "";
+		string platform = "";
+#if UNITY_EDITOR
+		deviceId = SystemInfo.deviceUniqueIdentifier;
+		platform = "e";
+#elif UNITY_ANDROID
+        AndroidJavaClass up = new AndroidJavaClass ("com.unity3d.player.UnityPlayer");
+        AndroidJavaObject currentActivity = up.GetStatic<AndroidJavaObject> ("currentActivity");
+        AndroidJavaObject contentResolver = currentActivity.Call<AndroidJavaObject> ("getContentResolver");
+        AndroidJavaClass secure = new AndroidJavaClass ("android.provider.Settings$Secure");
+        deviceId = secure.CallStatic<string> ("getString", contentResolver, "android_id");
+		platform = "a";
+#elif UNITY_WEBGL
+        if (!PlayerPrefs.HasKey("UniqueIdentifier"))
+            PlayerPrefs.SetString("UniqueIdentifier", Guid.NewGuid().ToString());
+        deviceId = PlayerPrefs.GetString("UniqueIdentifier");
+		platform = "w";
+#else
+        deviceId = SystemInfo.deviceUniqueIdentifier;
+		platform = "p";
+#endif
+		return $"{platform}x{Utils.GetSHA1Hash(deviceId)}";
+	}
+
 	public static string Scramble(string str)
 	{
 		char[] chars = str.ToCharArray();

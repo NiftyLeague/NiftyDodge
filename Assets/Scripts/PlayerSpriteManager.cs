@@ -55,7 +55,7 @@ public class PlayerSpriteManager : MonoBehaviour
 	private void Start()
 	{
 		Scene scene = SceneManager.GetActiveScene();
-		if (scene.buildIndex == 1)
+		if (scene.name == "Gameplay")
 		{
 			ChangeCharacter();
 		}
@@ -131,7 +131,7 @@ public class PlayerSpriteManager : MonoBehaviour
 		isLoadingADegen = false;
 
 		Scene scene = SceneManager.GetActiveScene();
-		if (scene.buildIndex == 1)
+		if (scene.name == "Gameplay")
 		{
 			currentCharacterSprites = importedCharacterSprites.Count - 1;
 

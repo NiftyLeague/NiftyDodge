@@ -369,6 +369,15 @@ public class GameplayManager : MonoBehaviour
 		}
 
 		StartCoroutine(waveScreenManager.GameOverTransition());
+		StartCoroutine(SubmitScoreAndGetResults());
+	}
+
+	private IEnumerator SubmitScoreAndGetResults()
+	{
+		EventController.AddMatchEnd(PlayerSpriteManager.lastDegenIdUsed);
+		yield return new WaitForSeconds(2f);
+		yield return GetMatchResults();
+		Analytics.SendPlayerEvent("EndMatch", new Dictionary<string, string>() { { "Score", score.ToString() } });
 	}
 
 	public void EndGame()
@@ -377,12 +386,8 @@ public class GameplayManager : MonoBehaviour
 		playerCharacter.HasLost();
 		hasGameEnded = true;
 
-		EventController.AddMatchEnd(PlayerSpriteManager.lastDegenIdUsed);
 		StartCoroutine(BringOutInfoPanelAnimation(0));
-
 		StartCoroutine(PlayGameOverScreen());
-
-		Analytics.SendPlayerEvent("EndMatch", new Dictionary<string, string>() { { "Score", score.ToString() } });
 		menuManager.UpdateLeaderboards();
 	}
 
@@ -635,8 +640,6 @@ public class GameplayManager : MonoBehaviour
 		//StartCoroutine(BringInInfoPanelAnimation(1));
 
 		//yield return new WaitUntil(() => gameOverTimer1 <= 0);
-		yield return new WaitForSeconds(3f);
-		yield return GetMatchResults();
 
 		gameOverTimer2 = 5;
 

@@ -637,7 +637,7 @@ public class GameplayManager : MonoBehaviour
 		//StartCoroutine(BringInInfoPanelAnimation(1));
 
 		//yield return new WaitUntil(() => gameOverTimer1 <= 0);
-		yield return new WaitForSeconds(2f);
+		yield return new WaitForSeconds(3f);
 		yield return GetMatchResults();
 
 		gameOverTimer2 = 5;
@@ -728,7 +728,6 @@ public class GameplayManager : MonoBehaviour
 		{
 			jsonObject["events"][0]["metadata"] = metadata;
 		}
-		print(jsonObject.ToString());
 		yield return WebRequestHelper.PostJsonRequest("https://odgwhiwhzb.execute-api.us-east-1.amazonaws.com/prod/user-events/update", jsonObject.ToString(), true, true);
 	}
 

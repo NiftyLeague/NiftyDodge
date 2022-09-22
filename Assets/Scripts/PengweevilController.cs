@@ -7,6 +7,7 @@ using CodeStage.AntiCheat.ObscuredTypes;
 
 public class PengweevilController : MonoBehaviour
 {
+    public const float PENG_DEATH_TIMESCALE = 0.1032f;
     public GameplayManager gameplayManager;
     public AudioManager audioManager;
     public DialogueManager dialogueManager;
@@ -650,7 +651,7 @@ public class PengweevilController : MonoBehaviour
         shaker.Shake(0.4f, 50);
         gameplayManager.cameraShake.Shake(1, 10);
         StartCoroutine(PlayPengweevilLastHitSounds());
-        Time.timeScale = 0.1f;
+        Time.timeScale = PENG_DEATH_TIMESCALE;
 
         Tween<float> pengweevilDefeatedScreenFlashAlpha = new Tween<float>(1, 0, 0.2f, TweenEaseType.CubicOut);
 

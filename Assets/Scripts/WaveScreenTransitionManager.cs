@@ -119,6 +119,24 @@ public class WaveScreenTransitionManager : MonoBehaviour
         transitionerCanvas.SetActive(false);
     }
 
+    public IEnumerator NextWaveTransition()
+    {
+        ResetEverything();
+        transitionerCanvas.SetActive(true);
+
+        gameplayManager.audioManager.PlaySound("ScreenTransitionGo");
+
+        Tween<float> wordMove6 = new Tween<float>(30, -30, 1.5f, TweenEaseType.Linear);
+
+        while (!wordMove6.IsEnded())
+        {
+            yield return new WaitForEndOfFrame();
+            goText.position = new Vector2(wordMove6.Update(Time.deltaTime), 0);
+        }
+
+        transitionerCanvas.SetActive(false);
+    }
+
     public IEnumerator BossFightTransition()
     {
         ResetEverything();

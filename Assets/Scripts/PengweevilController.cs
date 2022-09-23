@@ -245,11 +245,11 @@ public class PengweevilController : MonoBehaviour
 
         SetSpriteState(PengweevilSpriteState.Land);
 
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.2f);
 
         SetSpriteState(PengweevilSpriteState.Idle);
 
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
 
         StartCoroutine(dialogueManager.StartDialogue(true));
     }

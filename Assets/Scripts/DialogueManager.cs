@@ -59,11 +59,19 @@ public class DialogueManager : MonoBehaviour
 
 		if (input.PressedB)
 		{
-			if (!dialogueHasEnded && !waitingForNextText)
+			if (!dialogueHasEnded)
 			{
 				audioManager.PlaySound("MenuOptionSelect");
-				currentLetter = currentDialogueTextEntry.speechString[currentDialogue].Length;
-				return;
+				if (waitingForNextText)
+				{
+					nextDialogueTextTimer = timeBetweenNextText;
+					return;
+				}
+				else
+				{
+					currentLetter = currentDialogueTextEntry.speechString[currentDialogue].Length;
+					return;
+				}
 			}
 
 			if (gameplayManager.bossHasBeenDefeated && waitingForNextText)
@@ -260,7 +268,7 @@ public class DialogueManager : MonoBehaviour
 
 		gameplayManager.BringInPlayerInfo(0);
 
-		yield return new WaitForSeconds(0.5f);
+		//yield return new WaitForSeconds(0.5f);
 
 		gameplayManager.StartNextWave();
 	}

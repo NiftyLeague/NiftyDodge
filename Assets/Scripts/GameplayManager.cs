@@ -88,7 +88,7 @@ public class GameplayManager : MonoBehaviour
 	Coroutine currentScoreTextCoroutine;
 
 	ObscuredBool firingAProjectile = false;
-
+	ObscuredInt pengweevilDialogueEvery = 1;
 	ObscuredFloat invincibilityPowerupTimer;
 	ObscuredFloat slowPowerupTimer;
 	ObscuredFloat waveTimer;
@@ -127,7 +127,7 @@ public class GameplayManager : MonoBehaviour
 	{
 		InputReader.GetInput(input);
 
-		if (input.PressedA)
+		if (input.PressedB)
 		{
 			if (hasGameEnded)
 			{
@@ -251,9 +251,18 @@ public class GameplayManager : MonoBehaviour
 			waveText.text = "BOSS WAVE!";
 		}
 
-		if (pengweevilController.IsBossDead())
+		bool pengCanTalk = false;
+		pengweevilDialogueEvery--;
+		if (pengweevilDialogueEvery <= 0)
+		{
+			pengCanTalk = true;
+			pengweevilDialogueEvery = Random.Range(2, 6);
+		}
+
+		if (pengweevilController.IsBossDead() || !bonusWave && !pengCanTalk)
 		{
 			BringInPlayerInfo(0);
+			StartCoroutine(waveScreenManager.NextWaveTransition());
 			StartNextWave();
 		}
 		else
@@ -283,7 +292,7 @@ public class GameplayManager : MonoBehaviour
 		float a = signsOutY;
 		float b = signsInY;
 
-		Tween<float> moveTween = new Tween<float>(a, b, 0.6f, TweenEaseType.CubicIn);
+		Tween<float> moveTween = new Tween<float>(a, b, 1f, TweenEaseType.CubicIn);
 
 		audioManager.PlaySound("ScoreboardAppear");
 
@@ -299,7 +308,7 @@ public class GameplayManager : MonoBehaviour
 		float a = signsInY;
 		float b = signsOutY;
 
-		Tween<float> moveTween = new Tween<float>(a, b, 0.6f, TweenEaseType.CubicOut);
+		Tween<float> moveTween = new Tween<float>(a, b, 1f, TweenEaseType.CubicOut);
 
 		audioManager.PlaySound("ScoreboardDisappear");
 

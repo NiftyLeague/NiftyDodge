@@ -800,9 +800,16 @@ public class GameplayManager : MonoBehaviour
 			yield break;
 		}
 
-		launchersToChooseFrom[Random.Range(0, launchersToChooseFrom.Count)].CommenceLaunch();
-
-		firingAProjectile = false;
+		if (launchersToChooseFrom.Count <= 0)
+		{
+			firingAProjectile = false;
+			yield break;
+		}
+		else
+		{
+			launchersToChooseFrom[Random.Range(0, launchersToChooseFrom.Count)].CommenceLaunch();
+			firingAProjectile = false;
+		}
 	}
 
 	public float GetDoubleProjectileChance()

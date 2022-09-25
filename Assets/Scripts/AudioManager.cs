@@ -5,104 +5,104 @@ using System;
 
 public class AudioManager : MonoBehaviour
 {
-    public List<AudioSource> soundEffectAudioSources;
-    public List<Sound> soundList;
-    public List<AudioSource> musicList;
-    private Dictionary<string, Sound> soundDictionary;
-    private bool hasInitializedSoundDictionary;
-    private int lastAudioSourceUsed;
-    private int currentSong;
+	public List<AudioSource> soundEffectAudioSources;
+	public List<Sound> soundList;
+	public List<AudioSource> musicList;
+	private Dictionary<string, Sound> soundDictionary;
+	private bool hasInitializedSoundDictionary;
+	private int lastAudioSourceUsed;
+	private int currentSong;
 
-    private string lastSoundIDPlayed;
-    private float lastSoundTimer;
+	private string lastSoundIDPlayed;
+	private float lastSoundTimer;
 
-    private void Awake()
-    {
-        Initialize();
-    }
+	private void Awake()
+	{
+		Initialize();
+	}
 
-    void Update()
-    {
-        if (lastSoundTimer < 1)
-        {
-            lastSoundTimer += Time.unscaledDeltaTime;
-        }
-    }
+	void Update()
+	{
+		if (lastSoundTimer < 1)
+		{
+			lastSoundTimer += Time.unscaledDeltaTime;
+		}
+	}
 
-    public void Initialize()
-    {
-        if (hasInitializedSoundDictionary)
-        {
-            return;
-        }
-            
-        soundDictionary = new Dictionary<string, Sound>();
-            
-        foreach (Sound sound in soundList)   
-        {
-            soundDictionary.Add(sound.soundID, sound);        
-        }
-    
-        hasInitializedSoundDictionary = true;
-    }
+	public void Initialize()
+	{
+		if (hasInitializedSoundDictionary)
+		{
+			return;
+		}
 
-    public void PlaySound(string soundID, float volume = 1f, float addedPitch = 0)
-    {
-        PlaySound(soundID, Vector2.zero, volume, addedPitch);
-    }
+		soundDictionary = new Dictionary<string, Sound>();
 
-    public void PlaySound(string soundID, Vector2 soundPosition, float volume = 1f, float addedPitch = 0)
-    {
-        if (soundID == lastSoundIDPlayed)
-        {
-            if (lastSoundTimer < 0.05f)
-            {
-                return;
-            }
-        }
+		foreach (Sound sound in soundList)
+		{
+			soundDictionary.Add(sound.soundID, sound);
+		}
 
-        lastSoundTimer = 0;
-        lastSoundIDPlayed = soundID;
+		hasInitializedSoundDictionary = true;
+	}
 
-        List<AudioSource> audioSourcesInSound = new List<AudioSource>();
-        audioSourcesInSound = soundDictionary[soundID].audioSources;
-        AudioSource soundEffectSource = audioSourcesInSound[UnityEngine.Random.Range(0, audioSourcesInSound.Count)];
-        AudioSource currentEffectSource = soundEffectAudioSources[lastAudioSourceUsed];
-        currentEffectSource.clip = soundEffectSource.clip;
-        currentEffectSource.pitch = soundEffectSource.pitch + addedPitch + GetPitch(soundDictionary[soundID].pitchVariance);
-        currentEffectSource.volume = volume;
-        currentEffectSource.transform.position = soundPosition;
-        currentEffectSource.Play();
+	public void PlaySound(string soundID, float volume = 1f, float addedPitch = 0)
+	{
+		PlaySound(soundID, Vector2.zero, volume, addedPitch);
+	}
 
-        lastAudioSourceUsed++;
-        if (lastAudioSourceUsed >= 50)
-        {
-            lastAudioSourceUsed = 0;
-        }
-    }
+	public void PlaySound(string soundID, Vector2 soundPosition, float volume = 1f, float addedPitch = 0)
+	{
+		if (soundID == lastSoundIDPlayed)
+		{
+			if (lastSoundTimer < 0.05f)
+			{
+				return;
+			}
+		}
 
-    public void PlayMusic(int id)
-    {
-        musicList[currentSong].Stop();
+		lastSoundTimer = 0;
+		lastSoundIDPlayed = soundID;
 
-        if (PlayerPrefs.GetInt("MuteMusic") == 0)
-        {
-            musicList[id].Play();
-        }
-        
-        currentSong = id;
-    }
+		List<AudioSource> audioSourcesInSound = new List<AudioSource>();
+		audioSourcesInSound = soundDictionary[soundID].audioSources;
+		AudioSource soundEffectSource = audioSourcesInSound[UnityEngine.Random.Range(0, audioSourcesInSound.Count)];
+		AudioSource currentEffectSource = soundEffectAudioSources[lastAudioSourceUsed];
+		currentEffectSource.clip = soundEffectSource.clip;
+		currentEffectSource.pitch = soundEffectSource.pitch + addedPitch + GetPitch(soundDictionary[soundID].pitchVariance);
+		currentEffectSource.volume = volume;
+		currentEffectSource.transform.position = soundPosition;
+		currentEffectSource.Play();
 
-    private float GetPitch(float variance)
-    {
-        return UnityEngine.Random.Range(-variance, variance);
-    }
+		lastAudioSourceUsed++;
+		if (lastAudioSourceUsed >= 50)
+		{
+			lastAudioSourceUsed = 0;
+		}
+	}
 
-    [Serializable]
-    public class Sound
-    {
-        public List<AudioSource> audioSources;
-        public float pitchVariance;
-        public string soundID;
-    }
+	public void PlayMusic(int id, bool ignoreMuteState = false)
+	{
+		musicList[currentSong].Stop();
+
+		if (PlayerPrefs.GetInt("MuteMusic") == 0 || ignoreMuteState)
+		{
+			musicList[id].Play();
+		}
+
+		currentSong = id;
+	}
+
+	private float GetPitch(float variance)
+	{
+		return UnityEngine.Random.Range(-variance, variance);
+	}
+
+	[Serializable]
+	public class Sound
+	{
+		public List<AudioSource> audioSources;
+		public float pitchVariance;
+		public string soundID;
+	}
 }

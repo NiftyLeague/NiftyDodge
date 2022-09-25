@@ -115,7 +115,7 @@ public class DialogueManager : MonoBehaviour
 			{
 				audioManager.PlaySound("WeevilLetterType");
 			}
-			
+
 			if (currentLetter >= currentDialogueTextEntry.speechString[currentDialogue].Length)
 			{
 				currentLetter = currentDialogueTextEntry.speechString[currentDialogue].Length;
@@ -299,7 +299,7 @@ public class DialogueManager : MonoBehaviour
 			EndOfGameBackgroundSpriteRenderer.color = new Color(backgroundScreenToBlack.Update(Time.deltaTime), backgroundScreenToBlack.Update(Time.deltaTime), backgroundScreenToBlack.Update(Time.deltaTime), 1);
 		}
 
-		audioManager.PlayMusic(4);
+		audioManager.PlayMusic(4, true);
 
 		StartCoroutine(StartDialogue(false));
 	}

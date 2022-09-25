@@ -256,19 +256,25 @@ public class GameplayManager : MonoBehaviour
 		if (pengweevilDialogueEvery <= 0)
 		{
 			pengCanTalk = true;
-			pengweevilDialogueEvery = Random.Range(2, 6);
+			pengweevilDialogueEvery = Random.Range(1, 5);
 		}
 
 		if (pengweevilController.IsBossDead() || !bonusWave && !pengCanTalk)
 		{
-			BringInPlayerInfo(0);
-			StartCoroutine(waveScreenManager.NextWaveTransition());
-			StartNextWave();
+			StartCoroutine(NextWaveTransition());
 		}
 		else
 		{
 			dialogueManager.StartADialogueWithPengweevil();
 		}
+	}
+
+	private IEnumerator NextWaveTransition()
+	{
+		BringOutPlayerInfo(0);
+		yield return waveScreenManager.NextWaveTransition();
+		BringInPlayerInfo(0);
+		StartNextWave();
 	}
 
 	public void StartNextWave()
